@@ -22,12 +22,8 @@
 				e.preventDefault();
 
 				deepCatInputString = extractDeepCatInputString( searchInput );
-				if ( deepCatInputString.indexOf( ' ' ) != -1 ) {
-					deepCatCategory = deepCatInputString.substr( 0, deepCatInputString.indexOf( ' ' ) );
-					deepCatSearchWord = deepCatInputString.substr( deepCatInputString.indexOf( ' ' ) + 1 );
-				} else {
-					deepCatCategory = deepCatInputString;
-				}
+				deepCatCategory = extractDeepCatCategory( deepCatInputString );
+				deepCatSearchWord = extractDeepCatSearchWord( deepCatInputString );
 
 				log( "deepCatInputString: " + deepCatInputString );
 				log( "deepCatCategory: " + deepCatCategory );
@@ -50,6 +46,16 @@
 
 	function extractDeepCatInputString( input ) {
 		return input.replace( new RegExp( '^' + keyString + '[\\s]*' ), '' ).trim();
+	}
+
+	function extractDeepCatCategory( input ) {
+		var categoryString = input.replace( /^[\s]*(("[\w\s]*")|([\w]*))(.*)$/, '$1' ).trim();
+		categoryString = categoryString.replace( / /g, '_' );
+		return categoryString.replace( /"/g, '' );
+	}
+
+	function extractDeepCatSearchWord( input ) {
+		return input.replace( /^[\s]*(("[\w\s]*")|([\w]*))(.*)$/, '$4' ).trim();
 	}
 
 	function sendAjaxRequest( searchString ) {
