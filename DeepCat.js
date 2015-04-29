@@ -9,7 +9,9 @@
 	var keyString = 'deepCat:';
 	var maxDepth = 10;
 	var maxResults = 50;
-	var catSearchString = '';
+	var deepCatInputString = '';
+	var deepCatCategory = '';
+	var deepCatSearchWord = '';
 	var requestUrl = 'http://tools.wmflabs.org/catgraph-jsonp/gptest1wiki_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
 
 	$( function () {
@@ -19,25 +21,34 @@
 			if ( searchInput.match( new RegExp( keyString ) ) ) {
 				e.preventDefault();
 
-				catSearchString = extractCatSearchString( searchInput );
-				log( "catSearchString: " + catSearchString );
+				deepCatInputString = extractDeepCatInputString( searchInput );
+				if ( deepCatInputString.indexOf( ' ' ) != -1 ) {
+					deepCatCategory = deepCatInputString.substr( 0, deepCatInputString.indexOf( ' ' ) );
+					deepCatSearchWord = deepCatInputString.substr( deepCatInputString.indexOf( ' ' ) + 1 );
+				} else {
+					deepCatCategory = deepCatInputString;
+				}
+
+				log( "deepCatInputString: " + deepCatInputString );
+				log( "deepCatCategory: " + deepCatCategory );
+				log( "deepCatSearchWord: " + deepCatSearchWord );
 
 				//bugfix to sync search fields for better recovery of "deepCatSearch"
 				substituteInputValues( searchInput );
 
-				sendAjaxRequest( catSearchString );
+				sendAjaxRequest( deepCatCategory );
 			}
 		} );
 
 		var deepCatSearch = getUrlParameter( 'deepCatSearch' );
 
 		if ( deepCatSearch && deepCatSearch.match( new RegExp( keyString ) ) ) {
-			substituteInputValues( deepCatSearch );
+			substituteInputValues( deepCatSearch.replace( /\+/g, ' ' ) );
 		}
 
 	} );
 
-	function extractCatSearchString( input ) {
+	function extractDeepCatInputString( input ) {
 		return input.replace( new RegExp( '^' + keyString + '[\\s]*' ), '' ).trim();
 	}
 
@@ -61,11 +72,12 @@
 			log( "statusMessage: " + data['statusMessage'] );
 
 			searchString = 'incategory:id:' + data['result'].join( '|id:' );
+			searchString += ' ' + deepCatSearchWord;
 		} else {
 			log( "graph request failed" );
 			log( "statusMessage: " + data['statusMessage'] );
 
-			searchString = 'incategory:' + catSearchString;
+			searchString = 'incategory:' + deepCatInputString;
 		}
 
 		substituteSearchRequest( searchString );
@@ -75,7 +87,7 @@
 	function ajaxError( data ) {
 		log( "ajax request error: " + data );
 
-		substituteSearchRequest( 'incategory:' + catSearchString );
+		substituteSearchRequest( 'incategory:' + deepCatInputString );
 		$( '#searchform' ).submit();
 	}
 
