@@ -10,7 +10,11 @@ https://gerrit.wikimedia.org/r/#/c/191622/
 
 ### Testing
 
-Can be done here:
-http://gptest1.wmflabs.org/wiki/MediaWiki:Gadgets/DeepCat.js
+Can be currently done here (Test Wiki with limited content and categories): 
+http://gptest1.wmflabs.org/
 
-The default keyword to use the DeepCat-Search is "deepCat: [categoryname]"
+The Gadget is now per default activated in the MediaWiki:Common.js
+http://gptest1.wmflabs.org/wiki/MediaWiki:Gadgets/DeepCat.js 
+
+The default keyword to use the DeepCat-Search is "deepCat: [categoryname] [searchword]" e.g.
+    deepCat: Kunstgeschichte Monet
