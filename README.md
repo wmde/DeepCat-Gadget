@@ -10,12 +10,19 @@ https://gerrit.wikimedia.org/r/#/c/191622/
 
 ### Testing
 
-Can be currently done here (Test Wiki with limited content and categories): 
- - http://gptest1.wmflabs.org/
+Can be currently done here (Test Wiki with limited content and categories):
+- http://gptest1.wmflabs.org/
 
 The Gadget is now per default activated in the MediaWiki:Common.js
- - http://gptest1.wmflabs.org/wiki/MediaWiki:Gadgets/DeepCat.js 
+- http://gptest1.wmflabs.org/wiki/MediaWiki:Gadgets/DeepCat.js
 
-The default keyword to use the DeepCat-Search is "deepCat: [categoryname] [searchword]"
- - deepCat: Kunstgeschichte Monet
- - deepCat: "Geschichte der Physik" Newton
+The default keyword to use the DeepCat-Search is "deepCat:" and can be combined with a term in Cirrus-Syntax
+
+- deepCat: [category] [searchterm]
+- deepCat: Kunstgeschichte Monet
+- deepCat: Kunstgeschichte -Monet
+- deepCat: Physik intitle:System
+- deepCat: Physik -intitle:System
+- deepCat: Physik prefix:Sys
+- deepCat: "Geschichte der Physik" Newton
+- deepCat: Physik "Homogenes System"
