@@ -114,13 +114,13 @@
 	}
 
 	function addAjaxThrobber() {
-		$( '#searchButton, #mw-searchButton' ).addClass( 'deep-cat-thobber-small' );
-		$( '#searchText' ).addClass( 'deep-cat-thobber-big' );
+		$( '#searchButton, #mw-searchButton' ).addClass( 'deep-cat-throbber-small' );
+		$( '#searchText' ).addClass( 'deep-cat-throbber-big' );
 	}
 
 	function removeAjaxThrobber() {
-		$( '#searchButton, #mw-searchButton' ).removeClass( 'deep-cat-thobber-small' );
-		$( '#searchText' ).removeClass( 'deep-cat-thobber-big' );
+		$( '#searchButton, #mw-searchButton' ).removeClass( 'deep-cat-throbber-small' );
+		$( '#searchText' ).removeClass( 'deep-cat-throbber-big' );
 	}
 
 	function log( stuff ) {
