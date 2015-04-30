@@ -18,4 +18,9 @@ The Gadget is now per default activated in the MediaWiki:Common.js
 
 The default keyword to use the DeepCat-Search is "deepCat: [categoryname] [searchword]"
  - deepCat: Kunstgeschichte Monet
+ - deepCat: Kunstgeschichte -Monet
+ - deepCat: Physik intitle:System
+ - deepCat: Physik -intitle:System
+ - deepCat: Physik prefix:Sys
  - deepCat: "Geschichte der Physik" Newton
+ - deepCat: Physik "Homogenes System"
