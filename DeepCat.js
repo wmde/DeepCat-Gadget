@@ -50,13 +50,13 @@
 	}
 
 	function extractDeepCatCategory( input ) {
-		var categoryString = input.replace( /^[\s]*(("[^"]*")|([^"]*))(.*)$/, '$1' ).trim();
+		var categoryString = input.replace( /^[\s]*(("[^"]*")|([^"\s]*))(.*)$/, '$1' ).trim();
 		categoryString = categoryString.replace( / /g, '_' );
 		return categoryString.replace( /"/g, '' );
 	}
 
 	function extractDeepCatSearchWord( input ) {
-		return input.replace( /^[\s]*(("[^"]*")|([^"]*))(.*)$/, '$4' ).trim();
+		return input.replace( /^[\s]*(("[^"]*")|([^"\s]*))(.*)$/, '$4' ).trim();
 	}
 
 	function sendAjaxRequest( searchString ) {
