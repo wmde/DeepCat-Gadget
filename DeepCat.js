@@ -65,7 +65,9 @@
 			dataType: 'jsonp',
 			jsonp: 'callback',
 			success: ajaxHandler,
-			error: ajaxError
+			error: ajaxError,
+			beforeSend: addAjaxThrobber,
+			onComplete: removeAjaxThrobber
 		} )
 	}
 
@@ -109,6 +111,16 @@
 
 	function substituteInputValues( input ) {
 		$( '[name="search"]' ).val( input );
+	}
+
+	function addAjaxThrobber() {
+		$( '#searchButton, #mw-searchButton' ).addClass( 'deep-cat-thobber-small' );
+		$( '#searchText' ).addClass( 'deep-cat-thobber-big' );
+	}
+
+	function removeAjaxThrobber() {
+		$( '#searchButton, #mw-searchButton' ).removeClass( 'deep-cat-thobber-small' );
+		$( '#searchText' ).removeClass( 'deep-cat-thobber-big' );
 	}
 
 	function log( stuff ) {

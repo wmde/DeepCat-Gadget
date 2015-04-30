@@ -1,0 +1,16 @@
+/**
+* DeepCat Gadget for MediaWiki
+* @licence GNU GPL v2+
+* @author Christoph Fischer < christoph.fischer@wikimedia.de >
+*/
+
+.deep-cat-thobber-small {
+    background-image: url( "//upload.wikimedia.org/wikipedia/commons/4/42/Loading.gif" ) !important;
+}
+
+.deep-cat-thobber-big {
+    background-image: url( "//upload.wikimedia.org/wikipedia/commons/8/85/Throbber_allbackgrounds_circledots_32.gif" );
+    background-position: 99% center;
+    background-repeat: no-repeat;
+    background-size: 24px auto;
+}
