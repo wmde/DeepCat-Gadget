@@ -10,93 +10,116 @@
 	var keyString = 'deepCat:';
 	var maxDepth = 10;
 	var maxResults = 50;
-	var deepCatInputString = '';
-	var deepCatCategory = '';
-	var deepCatSearchWord = '';
+	var deepCatSearchTerms;
+	var deepCatSearchString;
+	var searchInput;
 	var requestUrl = 'http://tools.wmflabs.org/catgraph-jsonp/gptest1wiki_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
 
 	$( function () {
 		$( '#searchform, #search' ).on( 'submit', function ( e ) {
-			var searchInput = $( this ).find( '[name="search"]' ).val();
+			searchInput = $( this ).find( '[name="search"]' ).val();
 
-			if ( searchInput.match( new RegExp( keyString ) ) ) {
+			if ( searchInput.match( keyString ) ) {
 				e.preventDefault();
 
-				deepCatInputString = extractDeepCatInputString( searchInput );
-				deepCatCategory = extractDeepCatCategory( deepCatInputString );
-				deepCatSearchWord = extractDeepCatSearchWord( deepCatInputString );
+				deepCatSearchTerms = getDeepCatParams( searchInput );
+				deepCatSearchString = removeDeepCatParams( searchInput );
 
-				log( "deepCatInputString: " + deepCatInputString );
-				log( "deepCatCategory: " + deepCatCategory );
-				log( "deepCatSearchWord: " + deepCatSearchWord );
+				log( "deepCatSearchTerms: " + deepCatSearchTerms );
+				log( "deepCatSearchString: " + deepCatSearchString );
 
 				//bugfix to sync search fields for better recovery of "deepCatSearch"
 				substituteInputValues( searchInput );
 
-				sendAjaxRequest( deepCatCategory );
+				sendAjaxRequests( deepCatSearchTerms );
 			}
 		} );
 
+		//fake input field values
 		var deepCatSearch = getUrlParameter( 'deepCatSearch' );
 
 		if ( deepCatSearch && deepCatSearch.match( new RegExp( keyString ) ) ) {
 			substituteInputValues( deepCatSearch.replace( /\+/g, ' ' ) );
 		}
-
 	} );
 
-	function extractDeepCatInputString( input ) {
-		return input.replace( new RegExp( '^' + keyString + '[\\s]*' ), '' ).trim();
+	function sendAjaxRequests( searchTerms ) {
+		var requests = [];
+		addAjaxThrobber();
+
+		for ( var i = 0; i < searchTerms.length; i++ ) {
+			requests.push( getAjaxRequest( searchTerms[i] ) );
+		}
+
+		$.when.apply( this, requests ).done( receiveAjaxResponses );
 	}
 
-	function extractDeepCatCategory( input ) {
-		var categoryString = input.replace( /^[\s]*(("[^"]*")|([^"\s]*))(.*)$/, '$1' ).trim();
-		categoryString = categoryString.replace( / /g, '_' );
-		return categoryString.replace( /"/g, '' );
-	}
+	function getAjaxRequest( searchTerm ) {
+		var categoryString = extractDeepCatCategory( searchTerm );
 
-	function extractDeepCatSearchWord( input ) {
-		return input.replace( /^[\s]*(("[^"]*")|([^"\s]*))(.*)$/, '$4' ).trim();
-	}
-
-	function sendAjaxRequest( searchString ) {
-		$.ajax( {
-			url: String.format( requestUrl, searchString ),
+		return $.ajax( {
+			url: String.format( requestUrl, categoryString ),
 			dataType: 'jsonp',
-			jsonp: 'callback',
-			success: ajaxHandler,
-			error: ajaxError,
-			beforeSend: addAjaxThrobber,
-			onComplete: removeAjaxThrobber
+			jsonp: 'callback'
 		} )
 	}
 
-	function ajaxHandler( data ) {
-		log( "ajax request successful" );
+	function receiveAjaxResponses() {
+		var resultCategories = [];
+		removeAjaxThrobber();
 
-		var searchString;
-
-		if ( data['status'] === 'OK' ) {
-			log( "graph request successful" );
-			log( "statusMessage: " + data['statusMessage'] );
-
-			searchString = 'incategory:id:' + data['result'].join( '|id:' );
-			searchString += ' ' + deepCatSearchWord;
-		} else {
-			log( "graph request failed" );
-			log( "statusMessage: " + data['statusMessage'] );
-
-			searchString = 'incategory:' + deepCatInputString;
+		//single request leads to different variable structure
+		if ( typeof arguments[1] === 'string' ) {
+			arguments = [arguments];
 		}
 
-		substituteSearchRequest( searchString );
+		for ( var i = 0; i < arguments.length; i++ ) {
+			var ajaxResponse = arguments[i][0];
+
+			if ( arguments[i][1] !== 'success' ) {
+				ajaxError( arguments[i] );
+				return;
+			} else if ( ajaxResponse['status'] !== 'OK' ) {
+				graphError( ajaxResponse );
+				return;
+			}
+
+			resultCategories.push( ajaxSuccess( ajaxResponse ) );
+		}
+
+		substituteSearchRequest( composeNewSearchString( resultCategories ) );
+		$( '#searchform' ).submit();
+	}
+
+	function composeNewSearchString( categories ) {
+		var searchString = '';
+
+		for ( var i = 0; i < categories.length; i++ ) {
+			searchString += 'incategory:id:' + categories[i].join( '|id:' ) + ' ';
+		}
+
+		return searchString += ' ' + deepCatSearchString;
+	}
+
+	function ajaxSuccess( data ) {
+		log( "graph request successful" );
+		log( "statusMessage: " + data['statusMessage'] );
+
+		return data['result'];
+	}
+
+	function graphError( data ) {
+		log( "graph request failed" );
+		log( "statusMessage: " + data['statusMessage'] );
+
+		substituteSearchRequest( ' ' );
 		$( '#searchform' ).submit();
 	}
 
 	function ajaxError( data ) {
-		log( "ajax request error: " + data );
+		log( "ajax request error: " + JSON.stringify( data ) );
 
-		substituteSearchRequest( 'incategory:' + deepCatInputString );
+		substituteSearchRequest( ' ' );
 		$( '#searchform' ).submit();
 	}
 
@@ -111,6 +134,24 @@
 
 	function substituteInputValues( input ) {
 		$( '[name="search"]' ).val( input );
+	}
+
+	function deepCatRegExp( keyword ) {
+		return new RegExp( '(' + keyword + '(("[^"]*")|([^"\\s]*)))', 'g' );
+	}
+
+	function getDeepCatParams( input ) {
+		return input.match( deepCatRegExp( keyString ) );
+	}
+
+	function removeDeepCatParams( input ) {
+		return input.replace( deepCatRegExp( keyString ), '' );
+	}
+
+	function extractDeepCatCategory( searchTerm ) {
+		var categoryString = searchTerm.replace( keyString, '' );
+		categoryString = categoryString.replace( / /g, '_' );
+		return categoryString.replace( /"/g, '' );
 	}
 
 	function addAjaxThrobber() {
@@ -137,7 +178,7 @@
 		}
 
 		return s;
-	}
+	};
 
 	function getUrlParameter( sParam ) {
 		var sPageURL = window.location.search.substring( 1 );

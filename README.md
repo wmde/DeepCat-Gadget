@@ -18,11 +18,13 @@ The Gadget is now per default activated in the MediaWiki:Common.js
 
 The default keyword to use the DeepCat-Search is "deepCat:" and can be combined with a term in Cirrus-Syntax
 
-- deepCat: [category] [searchterm]
-- deepCat: Kunstgeschichte Monet
-- deepCat: Kunstgeschichte -Monet
-- deepCat: Physik intitle:System
-- deepCat: Physik -intitle:System
-- deepCat: Physik prefix:Sys
-- deepCat: "Geschichte der Physik" Newton
-- deepCat: Physik "Homogenes System"
+- 'deepCat:[category]'
+- 'deepCat:Kunstgeschichte' 
+- 'deepCat:Kunstgeschichte deepCat:Maler'
+- 'deepCat:Kunstgeschichte Monet'
+- '-Monet deepCat:Kunstgeschichte'
+- 'intitle:System deepCat:Physik'
+- 'deepCat:Physik -intitle:System'
+- 'deepCat:Physik prefix:Sys'
+- 'deepCat:"Geschichte der Physik" Newton'
+- 'deepCat:Physik "Homogenes System"'
