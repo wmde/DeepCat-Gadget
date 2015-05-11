@@ -19,10 +19,11 @@
 		$( '#searchform, #search' ).on( 'submit', function ( e ) {
 			searchInput = $( this ).find( '[name="search"]' ).val();
 
-			if ( searchInput.match( keyString ) ) {
+			deepCatSearchTerms = getDeepCatParams( searchInput );
+
+			if ( deepCatSearchTerms ) {
 				e.preventDefault();
 
-				deepCatSearchTerms = getDeepCatParams( searchInput );
 				deepCatSearchString = removeDeepCatParams( searchInput );
 
 				log( "deepCatSearchTerms: " + deepCatSearchTerms );
