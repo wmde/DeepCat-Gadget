@@ -61,7 +61,8 @@
 		return $.ajax( {
 			url: String.format( requestUrl, categoryString ),
 			dataType: 'jsonp',
-			jsonp: 'callback'
+			jsonp: 'callback',
+			error: fatalAjaxError
 		} )
 	}
 
@@ -122,6 +123,10 @@
 
 		substituteSearchRequest( ' ' );
 		$( '#searchform' ).submit();
+	}
+
+	function fatalAjaxError( data, error ) {
+		ajaxError( error );
 	}
 
 	function substituteSearchRequest( searchString ) {
