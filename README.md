@@ -28,3 +28,4 @@ The default keyword to use the DeepCat-Search is "deepCat:" and can be combined 
 - 'deepCat:Physik prefix:Sys'
 - 'deepCat:"Geschichte der Physik" Newton'
 - 'deepCat:Physik "Homogenes System"'
+- 'deepCat:"Geschichte der Physik" -deepCat:Kunstgeschichte'

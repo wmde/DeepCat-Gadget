@@ -57,9 +57,13 @@
 
 	function getAjaxRequest( searchTerm ) {
 		var categoryString = extractDeepCatCategory( searchTerm );
+		var userParameter = {
+			negativeSearch: ( searchTerm.charAt( 0 ) === '-' )
+		};
 
 		return $.ajax( {
 			url: String.format( requestUrl, categoryString ),
+			data: { userparam: JSON.stringify( userParameter ) },
 			dataType: 'jsonp',
 			jsonp: 'callback',
 			error: fatalAjaxError
@@ -67,7 +71,7 @@
 	}
 
 	function receiveAjaxResponses() {
-		var resultCategories = [];
+		var responses = [];
 		removeAjaxThrobber();
 
 		//single request leads to different variable structure
@@ -86,28 +90,33 @@
 				return;
 			}
 
-			resultCategories.push( ajaxSuccess( ajaxResponse ) );
+			ajaxSuccess( ajaxResponse );
+			responses.push( ajaxResponse );
 		}
 
-		substituteSearchRequest( composeNewSearchString( resultCategories ) );
+		substituteSearchRequest( composeNewSearchString( responses ) );
 		$( '#searchform' ).submit();
 	}
 
-	function composeNewSearchString( categories ) {
+	function composeNewSearchString( responses ) {
 		var searchString = '';
 
-		for ( var i = 0; i < categories.length; i++ ) {
-			searchString += 'incategory:id:' + categories[i].join( '|id:' ) + ' ';
+		for ( var i = 0; i < responses.length; i++ ) {
+			var userParameters = JSON.parse( responses[i]['userparam'] );
+
+			if ( userParameters['negativeSearch'] ) {
+				searchString += '-';
+			}
+
+			searchString += 'incategory:id:' + responses[i]['result'].join( '|id:' ) + ' ';
 		}
 
 		return searchString += ' ' + deepCatSearchString;
 	}
 
 	function ajaxSuccess( data ) {
-		log( "graph request successful" );
+		log( "graph & ajax request successful" );
 		log( "statusMessage: " + data['statusMessage'] );
-
-		return data['result'];
 	}
 
 	function graphError( data ) {
@@ -143,7 +152,7 @@
 	}
 
 	function deepCatRegExp( keyword ) {
-		return new RegExp( '(' + keyword + '(("[^"]*")|([^"\\s]*)))', 'g' );
+		return new RegExp( '(-?' + keyword + '(("[^"]*")|([^"\\s]*)))', 'g' );
 	}
 
 	function getDeepCatParams( input ) {
@@ -155,7 +164,7 @@
 	}
 
 	function extractDeepCatCategory( searchTerm ) {
-		var categoryString = searchTerm.replace( keyString, '' );
+		var categoryString = searchTerm.replace( new RegExp( '-?' + keyString ), '' );
 		categoryString = categoryString.replace( / /g, '_' );
 		return categoryString.replace( /"/g, '' );
 	}
