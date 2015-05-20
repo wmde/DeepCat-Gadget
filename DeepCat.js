@@ -13,7 +13,7 @@
 	var deepCatSearchTerms;
 	var deepCatSearchString;
 	var searchInput;
-	var requestUrl = 'http://tools.wmflabs.org/catgraph-jsonp/gptest1wiki_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
+	var requestUrl = '//tools.wmflabs.org/catgraph-jsonp/gptest1wiki_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
 
 	$( function () {
 		$( '#searchform, #search' ).on( 'submit', function ( e ) {
