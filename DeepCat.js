@@ -7,16 +7,12 @@
  */
 
 (function () {
-	var keyString = 'deepCat:';
-	var maxDepth = 10;
-	var maxResults = 50;
-	var deepCatSearchTerms;
-	var searchInput;
+	var keyString = 'deepCat:', maxDepth = 10, maxResults = 50, deepCatSearchTerms;
 	var requestUrl = '//tools.wmflabs.org/catgraph-jsonp/gptest1wiki_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
 
 	$( function () {
 		$( '#searchform, #search' ).on( 'submit', function ( e ) {
-			searchInput = $( this ).find( '[name="search"]' ).val();
+			var searchInput = $( this ).find( '[name="search"]' ).val();
 
 			if ( matchesDeepCatKeyword( searchInput ) ) {
 				deepCatSearchTerms = getSearchTerms( searchInput );
