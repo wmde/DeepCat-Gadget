@@ -157,8 +157,7 @@
 	}
 
 	function substituteTitle( input ) {
-		//TODO has to be changed to a more flexible approach using the language
-		document.title = document.title.replace( new RegExp( '„.*' ), '„' + input + '“' );
+		$( document ).prop( 'title', mw.message( 'searchresults-title', input ) );
 	}
 
 	function appendToSearchLinks( input ) {
