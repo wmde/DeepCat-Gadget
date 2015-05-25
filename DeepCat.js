@@ -32,7 +32,11 @@
 		var deepCatSearch = getUrlParameter( 'deepCatSearch' );
 
 		if ( deepCatSearch && matchesDeepCatKeyword( deepCatSearch ) ) {
-			substituteInputValues( deepCatSearch.replace( /\+/g, ' ' ) );
+			deepCatSearch = deepCatSearch.replace( /\+/g, ' ' );
+
+			substituteInputValues( deepCatSearch );
+			substituteTitle( deepCatSearch );
+			appendToSearchLinks( deepCatSearch );
 		}
 	} );
 
@@ -150,6 +154,18 @@
 
 	function searchTermRegExp( keyword ) {
 		return new RegExp( '(-?' + keyword + '([\\s]*)(("[^"]+")|([^"\\s]+)))|([^\\s]+)', 'g' );
+	}
+
+	function substituteTitle( input ) {
+		//TODO has to be changed to a more flexible approach using the language
+		document.title = document.title.replace( new RegExp( '„.*' ), '„' + input + '“' );
+	}
+
+	function appendToSearchLinks( input ) {
+		$( '.mw-prevlink, .mw-numlink, .mw-nextlink' ).each( function () {
+			var _href = $( this ).attr( "href" );
+			$( this ).attr( "href", _href + '&deepCatSearch=' + input );
+		} );
 	}
 
 	function getSearchTerms( input ) {
