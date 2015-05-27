@@ -7,27 +7,19 @@
  */
 
 (function () {
-	var keyString = 'deepCat:';
-	var maxDepth = 10;
-	var maxResults = 50;
-	var deepCatSearchTerms;
-	var deepCatSearchString;
-	var searchInput;
+	var keyString = 'deepCat:', maxDepth = 10, maxResults = 50, deepCatSearchTerms;
 	var requestUrl = '//tools.wmflabs.org/catgraph-jsonp/gptest1wiki_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
 
 	$( function () {
 		$( '#searchform, #search' ).on( 'submit', function ( e ) {
-			searchInput = $( this ).find( '[name="search"]' ).val();
+			var searchInput = $( this ).find( '[name="search"]' ).val();
 
-			deepCatSearchTerms = getDeepCatParams( searchInput );
+			if ( matchesDeepCatKeyword( searchInput ) ) {
+				deepCatSearchTerms = getSearchTerms( searchInput );
 
-			if ( deepCatSearchTerms ) {
 				e.preventDefault();
 
-				deepCatSearchString = removeDeepCatParams( searchInput );
-
 				log( "deepCatSearchTerms: " + deepCatSearchTerms );
-				log( "deepCatSearchString: " + deepCatSearchString );
 
 				//bugfix to sync search fields for better recovery of "deepCatSearch"
 				substituteInputValues( searchInput );
@@ -39,7 +31,7 @@
 		//fake input field values
 		var deepCatSearch = getUrlParameter( 'deepCatSearch' );
 
-		if ( deepCatSearch && deepCatSearch.match( new RegExp( keyString ) ) ) {
+		if ( deepCatSearch && matchesDeepCatKeyword( deepCatSearch ) ) {
 			substituteInputValues( deepCatSearch.replace( /\+/g, ' ' ) );
 		}
 	} );
@@ -49,16 +41,19 @@
 		addAjaxThrobber();
 
 		for ( var i = 0; i < searchTerms.length; i++ ) {
-			requests.push( getAjaxRequest( searchTerms[i] ) );
+			if ( matchesDeepCatKeyword( searchTerms[i] ) ) {
+				requests.push( getAjaxRequest( searchTerms[i], i ) );
+			}
 		}
 
 		$.when.apply( this, requests ).done( receiveAjaxResponses );
 	}
 
-	function getAjaxRequest( searchTerm ) {
+	function getAjaxRequest( searchTerm, num ) {
 		var categoryString = extractDeepCatCategory( searchTerm );
 		var userParameter = {
-			negativeSearch: ( searchTerm.charAt( 0 ) === '-' )
+			negativeSearch: ( searchTerm.charAt( 0 ) === '-' ),
+			searchTermNum: ( num )
 		};
 
 		return $.ajax( {
@@ -99,19 +94,21 @@
 	}
 
 	function composeNewSearchString( responses ) {
-		var searchString = '';
+		var newSearchTerms = deepCatSearchTerms;
 
 		for ( var i = 0; i < responses.length; i++ ) {
 			var userParameters = JSON.parse( responses[i]['userparam'] );
+			var newSearchTermString = '';
 
 			if ( userParameters['negativeSearch'] ) {
-				searchString += '-';
+				newSearchTermString += '-';
 			}
+			newSearchTermString += 'incategory:id:' + responses[i]['result'].join( '|id:' ) + ' ';
 
-			searchString += 'incategory:id:' + responses[i]['result'].join( '|id:' ) + ' ';
+			newSearchTerms[userParameters['searchTermNum']] = newSearchTermString;
 		}
 
-		return searchString += ' ' + deepCatSearchString;
+		return newSearchTerms.join( ' ' );
 	}
 
 	function ajaxSuccess( data ) {
@@ -151,16 +148,16 @@
 		$( '[name="search"]' ).val( input );
 	}
 
-	function deepCatRegExp( keyword ) {
-		return new RegExp( '(-?' + keyword + '(("[^"]*")|([^"\\s]*)))', 'g' );
+	function searchTermRegExp( keyword ) {
+		return new RegExp( '(-?' + keyword + '([\\s]*)(("[^"]+")|([^"\\s]+)))|([^\\s]+)', 'g' );
 	}
 
-	function getDeepCatParams( input ) {
-		return input.match( deepCatRegExp( keyString ) );
+	function getSearchTerms( input ) {
+		return input.match( searchTermRegExp( keyString ) );
 	}
 
-	function removeDeepCatParams( input ) {
-		return input.replace( deepCatRegExp( keyString ), '' );
+	function matchesDeepCatKeyword( input ) {
+		return input.match( new RegExp( keyString ) )
 	}
 
 	function extractDeepCatCategory( searchTerm ) {
