@@ -28,16 +28,7 @@
 			}
 		} );
 
-		//fake input field values
-		var deepCatSearch = getUrlParameter( 'deepCatSearch' );
-
-		if ( deepCatSearch && matchesDeepCatKeyword( deepCatSearch ) ) {
-			deepCatSearch = deepCatSearch.replace( /\+/g, ' ' );
-
-			substituteInputValues( deepCatSearch );
-			substituteTitle( deepCatSearch );
-			appendToSearchLinks( deepCatSearch );
-		}
+		refreshSearchTermMock();
 	} );
 
 	function sendAjaxRequests( searchTerms ) {
@@ -183,6 +174,18 @@
 		return categoryString.replace( /"/g, '' );
 	}
 
+	function refreshSearchTermMock() {
+		var deepCatSearch = mw.util.getParamValue( 'deepCatSearch' );
+
+		if ( deepCatSearch && matchesDeepCatKeyword( deepCatSearch ) ) {
+			deepCatSearch = deepCatSearch.replace( /\+/g, ' ' );
+
+			substituteInputValues( deepCatSearch );
+			substituteTitle( deepCatSearch );
+			appendToSearchLinks( deepCatSearch );
+		}
+	}
+
 	function addAjaxThrobber() {
 		$( '#searchButton, #mw-searchButton' ).addClass( 'deep-cat-throbber-small' );
 		$( '#searchText' ).addClass( 'deep-cat-throbber-big' );
@@ -208,17 +211,6 @@
 
 		return s;
 	};
-
-	function getUrlParameter( sParam ) {
-		var sPageURL = window.location.search.substring( 1 );
-		var sURLVariables = sPageURL.split( '&' );
-		for ( var i = 0; i < sURLVariables.length; i++ ) {
-			var sParameterName = sURLVariables[i].split( '=' );
-			if ( sParameterName[0] == sParam ) {
-				return decodeURIComponent( sParameterName[1] );
-			}
-		}
-	}
 
 	/** @return instance of jQuery.Promise */
 	function loadMessages( messages ) {
