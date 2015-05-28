@@ -19,7 +19,7 @@
 
 				e.preventDefault();
 
-				log( "deepCatSearchTerms: " + deepCatSearchTerms );
+				mw.log( "deepCatSearchTerms: " + deepCatSearchTerms );
 
 				//bugfix to sync search fields for better recovery of "deepCatSearch"
 				substituteInputValues( searchInput );
@@ -107,20 +107,20 @@
 	}
 
 	function ajaxSuccess( data ) {
-		log( "graph & ajax request successful" );
-		log( "statusMessage: " + data['statusMessage'] );
+		mw.log( "graph & ajax request successful" );
+		mw.log( "statusMessage: " + data['statusMessage'] );
 	}
 
 	function graphError( data ) {
-		log( "graph request failed" );
-		log( "statusMessage: " + data['statusMessage'] );
+		mw.log( "graph request failed" );
+		mw.log( "statusMessage: " + data['statusMessage'] );
 
 		substituteSearchRequest( ' ' );
 		$( '#searchform' ).submit();
 	}
 
 	function ajaxError( data ) {
-		log( "ajax request error: " + JSON.stringify( data ) );
+		mw.log( "ajax request error: " + JSON.stringify( data ) );
 
 		substituteSearchRequest( ' ' );
 		$( '#searchform' ).submit();
@@ -194,12 +194,6 @@
 	function removeAjaxThrobber() {
 		$( '#searchButton, #mw-searchButton' ).removeClass( 'deep-cat-throbber-small' );
 		$( '#searchText' ).removeClass( 'deep-cat-throbber-big' );
-	}
-
-	function log( stuff ) {
-		if ( console && console.log ) {
-			console.log( stuff );
-		}
 	}
 
 	String.format = function () {
