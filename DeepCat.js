@@ -178,7 +178,7 @@
 	}
 
 	function extractDeepCatCategory( searchTerm ) {
-		var categoryString = searchTerm.replace( new RegExp( '-?' + keyString ), '' );
+		var categoryString = searchTerm.replace( new RegExp( '-?' + keyString + '([\\s]*)' ), '' );
 		categoryString = categoryString.replace( / /g, '_' );
 		return categoryString.replace( /"/g, '' );
 	}
