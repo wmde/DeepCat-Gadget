@@ -28,7 +28,6 @@
 			} );
 			break;
 	}
-	;
 
 	$( function () {
 		$( '#searchform, #search' ).on( 'submit', function ( e ) {
