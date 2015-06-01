@@ -7,8 +7,27 @@
  */
 
 (function () {
-	var keyString = 'deepCat:', maxDepth = 10, maxResults = 50, deepCatSearchTerms;
+	var keyString = 'deepCat:', maxDepth = 10, maxResults = 50, ajaxTimeout = 10000, deepCatSearchTerms;
 	var requestUrl = '//tools.wmflabs.org/catgraph-jsonp/gptest1wiki_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
+
+	switch ( mw.config.get( 'wgUserLanguage' ) ) {
+		case 'de':
+		case 'de-at':
+		case 'de-ch':
+		case 'de-formal':
+			mw.messages.set( {
+				'deepcat-error-notfound': 'CatGraph konnte die Kategorie nicht finden.',
+				'deepcat-error-tooldown': 'CatGraph-Tool ist zur Zeit nicht erreichbar.'
+			} );
+			break;
+		case 'en':
+		default:
+			mw.messages.set( {
+				'deepcat-error-notfound': 'CatGraph could not find this category.',
+				'deepcat-error-tooldown': 'CatGraph-Tool is not reachable.'
+			} );
+			break;
+	}
 
 	$( function () {
 		$( '#searchform, #search' ).on( 'submit', function ( e ) {
@@ -29,6 +48,7 @@
 		} );
 
 		refreshSearchTermMock();
+		checkErrorMessage();
 	} );
 
 	function sendAjaxRequests( searchTerms ) {
@@ -54,6 +74,7 @@
 		return $.ajax( {
 			url: String.format( requestUrl, categoryString ),
 			data: { userparam: JSON.stringify( userParameter ) },
+			timeout: ajaxTimeout,
 			dataType: 'jsonp',
 			jsonp: 'callback',
 			error: fatalAjaxError
@@ -116,6 +137,7 @@
 		mw.log( "statusMessage: " + data['statusMessage'] );
 
 		substituteSearchRequest( ' ' );
+		addErrorField( 'deepcat-error-notfound' );
 		$( '#searchform' ).submit();
 	}
 
@@ -123,10 +145,12 @@
 		mw.log( "ajax request error: " + JSON.stringify( data ) );
 
 		substituteSearchRequest( ' ' );
+		addErrorField( 'deepcat-error-tooldown' );
 		$( '#searchform' ).submit();
 	}
 
 	function fatalAjaxError( data, error ) {
+		removeAjaxThrobber();
 		ajaxError( error );
 	}
 
@@ -137,6 +161,21 @@
 			name: 'search',
 			value: searchString
 		} ).appendTo( '#searchform' );
+	}
+
+	function addErrorField( mwErrorMessage ) {
+		$( '<input>' ).attr( {
+			type: 'hidden',
+			name: 'deepCatError',
+			value: mwErrorMessage
+		} ).appendTo( '#searchform' );
+	}
+
+	function showErrorMessage( mwMessage ) {
+		var output = mw.html.element( 'div', { class: 'searchresults' }, new mw.html.Raw(
+			mw.html.element( 'div', { class: 'error' }, mw.msg( mwMessage ) )
+		) );
+		$( '#search' ).after( output );
 	}
 
 	function substituteInputValues( input ) {
@@ -172,6 +211,14 @@
 		var categoryString = searchTerm.replace( new RegExp( '-?' + keyString + '([\\s]*)' ), '' );
 		categoryString = categoryString.replace( / /g, '_' );
 		return categoryString.replace( /"/g, '' );
+	}
+
+	function checkErrorMessage() {
+		var deepCatError = mw.util.getParamValue( 'deepCatError' );
+
+		if ( deepCatError ) {
+			showErrorMessage( deepCatError );
+		}
 	}
 
 	function refreshSearchTermMock() {
