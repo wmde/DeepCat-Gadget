@@ -19,7 +19,7 @@
 
 				e.preventDefault();
 
-				log( "deepCatSearchTerms: " + deepCatSearchTerms );
+				mw.log( "deepCatSearchTerms: " + deepCatSearchTerms );
 
 				//bugfix to sync search fields for better recovery of "deepCatSearch"
 				substituteInputValues( searchInput );
@@ -28,16 +28,7 @@
 			}
 		} );
 
-		//fake input field values
-		var deepCatSearch = getUrlParameter( 'deepCatSearch' );
-
-		if ( deepCatSearch && matchesDeepCatKeyword( deepCatSearch ) ) {
-			deepCatSearch = deepCatSearch.replace( /\+/g, ' ' );
-
-			substituteInputValues( deepCatSearch );
-			substituteTitle( deepCatSearch );
-			appendToSearchLinks( deepCatSearch );
-		}
+		refreshSearchTermMock();
 	} );
 
 	function sendAjaxRequests( searchTerms ) {
@@ -116,20 +107,20 @@
 	}
 
 	function ajaxSuccess( data ) {
-		log( "graph & ajax request successful" );
-		log( "statusMessage: " + data['statusMessage'] );
+		mw.log( "graph & ajax request successful" );
+		mw.log( "statusMessage: " + data['statusMessage'] );
 	}
 
 	function graphError( data ) {
-		log( "graph request failed" );
-		log( "statusMessage: " + data['statusMessage'] );
+		mw.log( "graph request failed" );
+		mw.log( "statusMessage: " + data['statusMessage'] );
 
 		substituteSearchRequest( ' ' );
 		$( '#searchform' ).submit();
 	}
 
 	function ajaxError( data ) {
-		log( "ajax request error: " + JSON.stringify( data ) );
+		mw.log( "ajax request error: " + JSON.stringify( data ) );
 
 		substituteSearchRequest( ' ' );
 		$( '#searchform' ).submit();
@@ -183,6 +174,18 @@
 		return categoryString.replace( /"/g, '' );
 	}
 
+	function refreshSearchTermMock() {
+		var deepCatSearch = mw.util.getParamValue( 'deepCatSearch' );
+
+		if ( deepCatSearch && matchesDeepCatKeyword( deepCatSearch ) ) {
+			deepCatSearch = deepCatSearch.replace( /\+/g, ' ' );
+
+			substituteInputValues( deepCatSearch );
+			substituteTitle( deepCatSearch );
+			appendToSearchLinks( deepCatSearch );
+		}
+	}
+
 	function addAjaxThrobber() {
 		$( '#searchButton, #mw-searchButton' ).addClass( 'deep-cat-throbber-small' );
 		$( '#searchText' ).addClass( 'deep-cat-throbber-big' );
@@ -191,12 +194,6 @@
 	function removeAjaxThrobber() {
 		$( '#searchButton, #mw-searchButton' ).removeClass( 'deep-cat-throbber-small' );
 		$( '#searchText' ).removeClass( 'deep-cat-throbber-big' );
-	}
-
-	function log( stuff ) {
-		if ( console && console.log ) {
-			console.log( stuff );
-		}
 	}
 
 	String.format = function () {
@@ -208,17 +205,6 @@
 
 		return s;
 	};
-
-	function getUrlParameter( sParam ) {
-		var sPageURL = window.location.search.substring( 1 );
-		var sURLVariables = sPageURL.split( '&' );
-		for ( var i = 0; i < sURLVariables.length; i++ ) {
-			var sParameterName = sURLVariables[i].split( '=' );
-			if ( sParameterName[0] == sParam ) {
-				return decodeURIComponent( sParameterName[1] );
-			}
-		}
-	}
 
 	/** @return instance of jQuery.Promise */
 	function loadMessages( messages ) {
