@@ -157,8 +157,8 @@
 	function getAjaxRequest( searchTerm, searchTermNum ) {
 		var categoryString = extractDeepCatCategory( searchTerm ),
 		 	userParameter = {
-				negativeSearch: ( searchTerm.charAt( 0 ) === '-' ),
-				searchTermNum: ( searchTermNum )
+				negativeSearch: searchTerm.charAt( 0 ) === '-',
+				searchTermNum: searchTermNum
 			};
 
 		return $.ajax( {
@@ -176,7 +176,7 @@
 			ajaxResponse,
 			responses = [],
 			errors = [],
-			newSearchTerms = deepCatSearchTerms;
+			newSearchTerms;
 
 		DeepCat.ResponseErrors.reset();
 		removeAjaxThrobber();
@@ -201,18 +201,19 @@
 			}
 		}
 
-		newSearchTerms = computeResponses( responses, newSearchTerms );
+		newSearchTerms = computeResponses( responses )
 		newSearchTerms = computeErrors( errors, newSearchTerms );
 
 		substituteSearchRequest( newSearchTerms.join( ' ' ) );
 		$( '#searchform' ).submit();
 	}
 
-	function computeResponses( responses, newSearchTerms ) {
+	function computeResponses( responses ) {
 		var i,
 			userParameters,
 			newSearchTermString,
-			errorMessages = [];
+			errorMessages = [],
+			newSearchTerms = deepCatSearchTerms.slice();
 
 		for ( i = 0; i < responses.length; i++ ) {
 			userParameters = JSON.parse( responses[i]['userparam'] );
@@ -342,9 +343,11 @@
 	}
 
 	function appendToSearchLinks( input ) {
-		$( '.mw-prevlink, .mw-numlink, .mw-nextlink' ).each( function() {
-			var _href = $( this ).attr( 'href' );
-			$( this ).attr( 'href', _href + '&deepCatSearch=' + input );
+		var attr = 'deepCatSearch=' + input;
+
+		$( '.mw-prevlink, .mw-numlink, .mw-nextlink' ).each( function( index, link ) {
+			var href = link.href.replace( /[?&]deepCatSearch=[^&]*/g, '' );
+			link.href = href + ( href.indexOf( '?' ) === -1 ? '?' : '&' ) + attr;
 		} );
 	}
 
@@ -353,12 +356,14 @@
 	 * @return {string[]}
 	 */
 	DeepCat.getSearchTerms = function( input ) {
-		return input.match( new RegExp(
-							'-?\\b' + keyString + '\\s*(?:'
-							+ '"(?:[^\\\\"]|\\\\.)+"' //quoted strings including spaces and escaped quotes
-							+ '|(?!-?' + keyString + ')\\S+' //unquoted strings, but skip duplicate keywords
-							+ ')|\\S+', //fetch remaining non-deepcat stuff
-							'gi' ) );
+		return input.match(
+			// Search for keyword:"term including \"escaped\" quotes" as well as keyword:term.
+			new RegExp(
+				'-?\\b' + keyString + '\\s*(?:'
+					+ '"(?:[^\\\\"]|\\\\.)+"' //quoted strings including spaces and escaped quotes
+					+ '|(?!-?' + keyString + ')\\S+' //unquoted strings, but skip duplicate keywords
+					+ ')|\\S+', //fetch remaining non-deepcat stuff
+				'gi' ) );
 	};
 
 	/**
@@ -460,7 +465,11 @@
 		hideSmallHint();
 		enableImeAndSuggestions();
 
-		mw.cookie.set( "-deepcat-hintboxshown", makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ), { 'expires': 60 * 60 * 24 * 7 * 4 /*4 weeks*/ } );
+		mw.cookie.set(
+			'-deepcat-hintboxshown',
+			makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ),
+			{ 'expires': 60 * 60 * 24 * 7 * 4 /* 4 weeks */ }
+		);
 	}
 
 	function hideSmallHint() {
@@ -490,7 +499,7 @@
 			i;
 
 		for ( i = 0; i < str.length; i++ ) {
-			hash = ( ( hash << 5 ) + hash ) + str.charCodeAt( i );
+			hash = ( hash << 5 ) + hash + str.charCodeAt( i );
 		}
 
 		return hash;
