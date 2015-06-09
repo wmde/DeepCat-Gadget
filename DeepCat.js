@@ -119,7 +119,7 @@
 			if ( userParameters['negativeSearch'] ) {
 				newSearchTermString += '-';
 			}
-			newSearchTermString += 'incategory:id:' + responses[i]['result'].join( '|id:' ) + ' ';
+			newSearchTermString += 'incategory:id:' + responses[i]['result'].join( '|id:' );
 
 			newSearchTerms[userParameters['searchTermNum']] = newSearchTermString;
 		}
