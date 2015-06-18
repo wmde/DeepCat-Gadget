@@ -8,8 +8,8 @@
 
 (function () {
 	var keyString = 'deepcat:', maxDepth = 10, maxResults = 50, ajaxTimeout = 10000, deepCatSearchTerms;
-	var contentLang = mw.config.get( 'wgContentLanguage' );
-	var requestUrl = '//tools.wmflabs.org/catgraph-jsonp/' + contentLang + 'wiki_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
+	var DBname = mw.config.get( 'wgDBname' );
+	var requestUrl = '//tools.wmflabs.org/catgraph-jsonp/' + DBname + '_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
 
 
 	switch ( mw.config.get( 'wgUserLanguage' ) ) {
