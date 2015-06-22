@@ -49,9 +49,18 @@
 			}
 		} );
 
+		showHint();
 		refreshSearchTermMock();
 		checkErrorMessage();
 	} );
+	
+	function showHint(  ) {
+		var parent= document.getElementById('mw-content-text');
+		var sresults= document.getElementsByClassName('searchresults')[0];
+		var d= parent.insertBefore(document.createElement('div'), sresults);
+		d.style.backgroundColor="blue";
+		d.innerHTML="foobar";
+	}
 
 	function sendAjaxRequests( searchTerms ) {
 		var requests = [];
@@ -121,7 +130,7 @@
 			if ( userParameters['negativeSearch'] ) {
 				newSearchTermString += '-';
 			}
-			newSearchTermString += 'incategory:id:' + responses[i]['result'].join( '|id:' );
+			newSearchTermString += 'incategory:id:' + responses[i]['result'].join( '|id:' ) + ' ';
 
 			newSearchTerms[userParameters['searchTermNum']] = newSearchTermString;
 		}
