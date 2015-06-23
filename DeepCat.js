@@ -21,7 +21,7 @@
 				'deepcat-error-notfound': 'CatGraph konnte die Kategorie nicht finden.',
 				'deepcat-error-tooldown': 'CatGraph-Tool ist zur Zeit nicht erreichbar.',
 				'hintbox-close': 'Ausblenden',
-				'hintbox-text': 'Du benutzt die <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-basierte Suche mit dem <a href="//github.com/wmde/DeepCat-Gadget">DeepCat-Gadget</a>. ' +
+				'hintbox-text': 'Du benutzt die <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-basierte Erweiterung der Suche mit dem <a href="//github.com/wmde/DeepCat-Gadget">DeepCat-Gadget</a>. ' +
 					'Diese Funktionalität befindet sich in der Testphase und unterliegt derzeit folgenden Einschr&auml;nkungen:' +
 					'<ul>' +
 					'<li>Die maximale Suchtiefe (Unterkategorien von Unterkategorien... usw) betr&auml;gt 10</li>' +
