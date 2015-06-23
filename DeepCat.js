@@ -19,14 +19,25 @@
 		case 'de-formal':
 			mw.messages.set( {
 				'deepcat-error-notfound': 'CatGraph konnte die Kategorie nicht finden.',
-				'deepcat-error-tooldown': 'CatGraph-Tool ist zur Zeit nicht erreichbar.'
+				'deepcat-error-tooldown': 'CatGraph-Tool ist zur Zeit nicht erreichbar.',
+				'hintbox-close': 'Ausblenden',
+				'hintbox-text': 'Du benutzt die <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-basierte Suche mit dem <a href="//github.com/wmde/DeepCat-Gadget">DeepCat-Gadget</a>. ' +
+					'Diese Funktionalität befindet sich in der Testphase und unterliegt derzeit folgenden Einschr&auml;nkungen:' +
+					'<ul>' +
+					'<li>Die maximale Suchtiefe (Unterkategorien von Unterkategorien... usw) betr&auml;gt 10</li>' +
+					'<li>Die höchste Anzahl an durchsuchten Kategorien pro <i>deepcat</i>-Keyword betr&auml;gt 50</li>' +
+					'</ul>' +
+					'Solltest du Fragen oder Vorschl&auml;ge haben oder Fehler bemerken, beteilige dich bitte an der '+
+						'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">Diskussion</a>.'
 			} );
 			break;
 		case 'en':
 		default:
 			mw.messages.set( {
 				'deepcat-error-notfound': 'CatGraph could not find this category.',
-				'deepcat-error-tooldown': 'CatGraph-Tool is not reachable.'
+				'deepcat-error-tooldown': 'CatGraph-Tool is not reachable.',
+				'hintbox-close': 'Hide',
+				'hintbox-text': 'Information about limits etc.'
 			} );
 			break;
 	}
@@ -49,17 +60,22 @@
 			}
 		} );
 
-		showHint();
-		refreshSearchTermMock();
+		if(refreshSearchTermMock())
+			showHint();
 		checkErrorMessage();
 	} );
-	
-	function showHint(  ) {
+
+	function showHint( ) {
 		var parent= document.getElementById('mw-content-text');
 		var sresults= document.getElementsByClassName('searchresults')[0];
 		var d= parent.insertBefore(document.createElement('div'), sresults);
-		d.style.backgroundColor="blue";
-		d.innerHTML="foobar";
+		d.style.marginTop= "1em";
+		d.style.marginBottom= "1em";
+		d.innerHTML=
+			'<div style="background:#8af; padding:.75em; width:75%">' +
+			mw.msg('hintbox-text') +
+			"<div align='right'><a href='#'>" + mw.msg('hintbox-close') + "</a></div>"
+			"</div>";
 	}
 
 	function sendAjaxRequests( searchTerms ) {
@@ -241,7 +257,9 @@
 			substituteInputValues( deepCatSearch );
 			substituteTitle( deepCatSearch );
 			appendToSearchLinks( deepCatSearch );
+			return true;
 		}
+		return false;
 	}
 
 	function addAjaxThrobber() {
