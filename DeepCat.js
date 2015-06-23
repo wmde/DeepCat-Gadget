@@ -22,10 +22,10 @@
 				'deepcat-error-tooldown': 'CatGraph-Tool ist zur Zeit nicht erreichbar.',
 				'hintbox-close': 'Ausblenden',
 				'hintbox-text': 'Du benutzt die <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-basierte Erweiterung der Suche mit dem <a href="//github.com/wmde/DeepCat-Gadget">DeepCat-Gadget</a>. ' +
-					'Diese Funktionalität befindet sich in der Testphase und unterliegt derzeit folgenden Einschr&auml;nkungen:' +
+					'Diese Funktionalit&auml;t befindet sich in Entwicklung und unterliegt derzeit folgenden Einschr&auml;nkungen:' +
 					'<ul>' +
 					'<li>Die maximale Suchtiefe (Unterkategorien von Unterkategorien... usw) betr&auml;gt 10</li>' +
-					'<li>Die höchste Anzahl an durchsuchten Kategorien pro <i>deepcat</i>-Keyword betr&auml;gt 50</li>' +
+					'<li>Die maximale Anzahl durchsuchter Kategorien pro <i>deepcat</i>-Keyword betr&auml;gt 50</li>' +
 					'</ul>' +
 					'Solltest du Fragen oder Vorschl&auml;ge haben oder Fehler bemerken, beteilige dich bitte an der '+
 						'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">Diskussion</a>.'
