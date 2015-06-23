@@ -263,7 +263,7 @@
 	}
 
 	function searchTermRegExp( keyword ) {
-		return new RegExp( '(-?' + keyword + '([\\s]*)(("[^"]+")|([^"\\s\\)\\(]+)))|([^\\s]+)', 'g' );
+		return new RegExp( '(-?' + keyword + '([\\s]*)(("[^"]*")|([^"\\s\\)\\(' + keyword + ']*)))|([^\\s]+)', 'g' );
 	}
 
 	function substituteTitle( input ) {
