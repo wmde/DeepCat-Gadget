@@ -11,7 +11,20 @@
 	var DBname = mw.config.get( 'wgDBname' );
 	var requestUrl = '//tools.wmflabs.org/catgraph-jsonp/' + DBname + '_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
 
-
+	// hash function for generating hint box cookie token.
+	// see http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
+	function djb2Code(str) {
+		var hash = 5381;
+		for (i = 0; i < str.length; i++) {
+			char = str.charCodeAt(i);
+			hash = ((hash << 5) + hash) + char; /* hash * 33 + c */
+		}
+		return hash;
+	};
+	function makeHintboxCookieToken(str) {
+		return "-deepcat-hintboxshown-" + String(djb2Code(str));
+	};
+	
 	switch ( mw.config.get( 'wgUserLanguage' ) ) {
 		case 'de':
 		case 'de-at':
@@ -65,17 +78,30 @@
 		checkErrorMessage();
 	} );
 
-	function showHint( ) {
-		var parent= document.getElementById('mw-content-text');
-		var sresults= document.getElementsByClassName('searchresults')[0];
-		var d= parent.insertBefore(document.createElement('div'), sresults);
-		d.style.marginTop= "1em";
-		d.style.marginBottom= "1em";
-		d.innerHTML=
-			'<div style="background:#8af; padding:.75em; width:75%">' +
-			mw.msg('hintbox-text') +
-			"<div align='right'><a href='#'>" + mw.msg('hintbox-close') + "</a></div>"
-			"</div>";
+	function showHint() {
+		if( !mw.cookie.get( makeHintboxCookieToken(mw.msg('hintbox-text'))) ) {
+			var parent= document.getElementById('mw-content-text');
+			var sresults= document.getElementsByClassName('searchresults')[0];
+			var d= parent.insertBefore(document.createElement('div'), sresults);
+			d.style.marginTop= "1em";
+			d.style.marginBottom= "1em";
+			d.innerHTML=
+				'<div id="deepcat-hintbox" style="background:#8af; padding:.75em; width:75%">' +
+				mw.msg('hintbox-text') +
+				"</div>";
+			var hideButton= document.createElement('button');
+			hideButton.innerHTML= mw.msg('hintbox-close');
+			hideButton.onclick= hideHint;
+			var buttonContainer= document.createElement('div');
+			buttonContainer.style.textAlign= "right";
+			buttonContainer.appendChild(hideButton);
+			document.getElementById('deepcat-hintbox').appendChild(buttonContainer);
+		}
+	}
+	
+	function hideHint() {
+		document.getElementById('deepcat-hintbox').style.display= "none";
+		mw.cookie.set( makeHintboxCookieToken(mw.msg('hintbox-text')), true, { 'expires': 60*60*24*7*4 /*4 weeks*/ } );
 	}
 
 	function sendAjaxRequests( searchTerms ) {
