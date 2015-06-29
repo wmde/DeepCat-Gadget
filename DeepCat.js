@@ -322,4 +322,4 @@ String.format = function () {
 			} );
 		} );
 	}
-}());
+}( jQuery, mediaWiki ) );
