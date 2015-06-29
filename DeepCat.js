@@ -39,8 +39,8 @@
 				'deepcat-error-notfound': 'CatGraph konnte die Kategorie \'{0}\' nicht finden.',
 				'deepcat-error-tooldown': 'CatGraph-Tool ist zur Zeit nicht erreichbar.',
 				'deepcat-missing-category': 'Bitte gib eine Kategorie ein.'
-				'hintbox-close': 'Ausblenden',
-				'hintbox-text': 'Du benutzt die <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-basierte Erweiterung der Suche mit dem <a href="//github.com/wmde/DeepCat-Gadget">DeepCat-Gadget</a>. ' +
+				'deepcat-hintbox-close': 'Ausblenden',
+				'deepcat-hintbox-text': 'Du benutzt die <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-basierte Erweiterung der Suche mit dem <a href="//github.com/wmde/DeepCat-Gadget">DeepCat-Gadget</a>. ' +
 					'Diese Funktionalit&auml;t befindet sich in Entwicklung und unterliegt derzeit folgenden Einschr&auml;nkungen:' +
 					'<ul>' +
 					'<li>Die maximale Suchtiefe (Unterkategorien von Unterkategorien... usw) betr&auml;gt 10</li>' +
@@ -56,8 +56,8 @@
 				'deepcat-error-notfound': 'CatGraph could not find the category \'{0}\'.',
 				'deepcat-error-tooldown': 'CatGraph-Tool is not reachable.',
 				'deepcat-missing-category': 'Please insert a category.'
-				'hintbox-close': 'Hide',
-				'hintbox-text': 'Information about limits etc.'
+				'deepcat-hintbox-close': 'Hide',
+				'deepcat-hintbox-text': 'Information about limits etc.'
 			} );
 			break;
 	}
@@ -86,7 +86,7 @@
 	} );
 
 	function showHint() {
-		if( !mw.cookie.get( makeHintboxCookieToken(mw.msg('hintbox-text'))) ) {
+		if( !mw.cookie.get( makeHintboxCookieToken(mw.msg('deepcat-hintbox-text'))) ) {
 			var parent= document.getElementById('mw-content-text');
 			var sresults= document.getElementsByClassName('searchresults')[0];
 			var d= parent.insertBefore(document.createElement('div'), sresults);
@@ -94,10 +94,10 @@
 			d.style.marginBottom= "1em";
 			d.innerHTML=
 				'<div id="deepcat-hintbox" style="background:#8af; padding:.75em; width:75%">' +
-				mw.msg('hintbox-text') +
+				mw.msg('deepcat-hintbox-text') +
 				"</div>";
 			var hideButton= document.createElement('button');
-			hideButton.innerHTML= mw.msg('hintbox-close');
+			hideButton.innerHTML= mw.msg('deepcat-hintbox-close');
 			hideButton.onclick= hideHint;
 			var buttonContainer= document.createElement('div');
 			buttonContainer.style.textAlign= "right";
@@ -108,7 +108,7 @@
 	
 	function hideHint() {
 		document.getElementById('deepcat-hintbox').style.display= "none";
-		mw.cookie.set( makeHintboxCookieToken(mw.msg('hintbox-text')), true, { 'expires': 60*60*24*7*4 /*4 weeks*/ } );
+		mw.cookie.set( makeHintboxCookieToken(mw.msg('deepcat-hintbox-text')), true, { 'expires': 60*60*24*7*4 /*4 weeks*/ } );
 	}
 
 	function sendAjaxRequests( searchTerms ) {
