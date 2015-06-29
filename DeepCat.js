@@ -6,14 +6,6 @@
  * @author Christoph Fischer < christoph.fischer@wikimedia.de >
  */
 
-String.format = function () {
-	var s = arguments[0];
-	for ( var i = 0; i < arguments.length - 1; i++ ) {
-		s = s.replace( new RegExp( "\\{" + i + "\\}", "gm" ), arguments[i + 1] );
-	}
-	return s;
-};
-
 (function () {
 	var keyString = 'deepcat:', maxDepth = 10, maxResults = 50, ajaxTimeout = 10000, deepCatSearchTerms;
 	var DBname = mw.config.get( 'wgDBname' );
@@ -83,7 +75,7 @@ String.format = function () {
 		};
 
 		return $.ajax( {
-			url: String.format( requestUrl, categoryString ),
+			url: stringFormat( requestUrl, categoryString ),
 			data: { userparam: JSON.stringify( userParameter ) },
 			timeout: ajaxTimeout,
 			dataType: 'jsonp',
@@ -271,7 +263,7 @@ String.format = function () {
 
 			for ( i = 0; i < deepCatErrors.length; i++ ) {
 				if ( deepCatErrors[i].parameter ) {
-					message = String.format( mw.msg( deepCatErrors[i].mwMessage ), deepCatErrors[i].parameter );
+					message = stringFormat( mw.msg( deepCatErrors[i].mwMessage ), deepCatErrors[i].parameter );
 				} else {
 					message = mw.msg( deepCatErrors[i].mwMessage );
 				}
@@ -300,6 +292,14 @@ String.format = function () {
 	function removeAjaxThrobber() {
 		$( '#searchButton, #mw-searchButton' ).removeClass( 'deep-cat-throbber-small' );
 		$( '#searchText' ).removeClass( 'deep-cat-throbber-big' );
+	}
+
+	function stringFormat() {
+		var s = arguments[0];
+		for ( var i = 0; i < arguments.length - 1; i++ ) {
+			s = s.replace( new RegExp( "\\{" + i + "\\}", "gm" ), arguments[i + 1] );
+		}
+		return s;
 	}
 
 	/** @return instance of jQuery.Promise */
