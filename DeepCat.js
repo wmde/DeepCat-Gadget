@@ -262,10 +262,6 @@
 		$( '[name="search"]' ).val( input );
 	}
 
-	function searchTermRegExp( keyword ) {
-		return new RegExp( '(-?' + keyword + '([\\s]*)(("[^"]*")|([^"\\s\\)\\(' + keyword + ']*)))|([^\\s]+)', 'g' );
-	}
-
 	function substituteTitle( input ) {
 		loadMessages( 'searchresults-title' ).done( function() {
 			$( document ).prop( 'title', mw.msg( 'searchresults-title', input ) );
@@ -284,15 +280,18 @@
 	 * @return {string[]}
 	 */
 	DeepCat.getSearchTerms = function( input ) {
-		return input.match( searchTermRegExp( keyString ) );
-	};
+		return input.match( '(-?\\b' + keyString + '\\s*'
+							+ '(?:("([^\\"]|\\.)+")' 			// search for keyword:"term including \"escaped\" quotes"
+							+ '|(?!' + keyString + ')\\S+))' 	// search for keyword:term excluding keyword term as parameter
+							+ '|(\\S+)', 'gi' ); 				// get remaining keyword unrelated stuff into the array
+	}
 
 	/**
 	 * @param {string} input
 	 * @return {boolean}
 	 */
 	function matchesDeepCatKeyword( input ) {
-		return input.match( new RegExp( keyString ) )
+		return new RegExp( '\\b' + keyString, 'i' ).test( input );
 	}
 
 	/**
@@ -300,9 +299,15 @@
 	 * @return {string}
 	 */
 	function extractDeepCatCategory( searchTerm ) {
-		var categoryString = searchTerm.replace( new RegExp( '-?' + keyString + '([\\s]*)' ), '' );
-		categoryString = categoryString.replace( / /g, '_' );
-		return categoryString.replace( /"/g, '' );
+		searchTerm = searchTerm.replace( new RegExp( '\\s*-?\\b' + keyString + '\\s*', 'i' ), '' );
+
+		if ( /^\s*"/.test( searchTerm ) ) {
+			searchTerm = searchTerm.replace( /^\s*"/, '' )
+				.replace( /"\s*$/, '' )
+				.replace( /\\(?=.)/g, '' );
+		}
+
+		return searchTerm.replace( /\s+/g, '_' );
 	}
 
 	function checkErrorMessage() {
