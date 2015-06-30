@@ -38,6 +38,7 @@
 			mw.messages.set( {
 				'deepcat-error-notfound': 'CatGraph konnte die Kategorie \'{0}\' nicht finden.',
 				'deepcat-error-tooldown': 'CatGraph-Tool ist zur Zeit nicht erreichbar.',
+				'deepcat-error-unknown-graph': 'Dieses Wiki wird von CatGraph nicht unterst&uuml;tzt.',
 				'deepcat-missing-category': 'Bitte gib eine Kategorie ein.',
 				'deepcat-hintbox-close': 'Ausblenden',
 				'deepcat-hintbox-text': 'Du benutzt die <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-basierte Erweiterung der Suche mit dem <a href="//github.com/wmde/DeepCat-Gadget">DeepCat-Gadget</a>. ' +
@@ -55,6 +56,7 @@
 			mw.messages.set( {
 				'deepcat-error-notfound': 'CatGraph could not find the category \'{0}\'.',
 				'deepcat-error-tooldown': 'CatGraph-Tool is not reachable.',
+				'deepcat-error-unknown-graph': 'The Wiki is not supported by CatGraph.',
 				'deepcat-missing-category': 'Please insert a category.',
 				'deepcat-hintbox-close': 'Hide',
 				'deepcat-hintbox-text': 'You are using the <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-based search extension with the <a href="//github.com/wmde/DeepCat-Gadget">DeepCat Gadget</a>. ' +
@@ -192,7 +194,7 @@
 			if ( userParameters['negativeSearch'] ) {
 				newSearchTermString += '-';
 			}
-			newSearchTermString += 'incategory:id:' + responses[i]['result'].join( '|id:' ) + ' ';
+			newSearchTermString += 'incategory:id:' + responses[i]['result'].join( '|id:' );
 
 			newSearchTerms[userParameters['searchTermNum']] = newSearchTermString;
 		}
@@ -209,6 +211,11 @@
 			categoryError = errors[i].statusMessage.match( /(RuntimeError: Category \')(.*)(\' not found in wiki.*)/ );
 
 			if ( !categoryError ) {
+				if ( 'Graph not found' == errors[i].statusMessage ) {
+					errorMessages.push(
+						createErrorMessage( 'deepcat-error-unknown-graph', null )
+					);
+				}
 			} else if ( categoryError[2].length === 0 ) {
 				errorMessages.push(
 					createErrorMessage( 'deepcat-missing-category', null )
