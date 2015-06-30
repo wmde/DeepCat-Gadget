@@ -7,6 +7,8 @@
  */
 
 ( function( $, mw ) {
+	var DeepCat = {};
+
 	var keyString = 'deepcat:',
 		maxDepth = 10,
 		maxResults = 50,
@@ -329,4 +331,6 @@
 			} );
 		} );
 	}
+
+	window.DeepCat = DeepCat;
 }( jQuery, mediaWiki ) );
