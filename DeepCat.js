@@ -57,7 +57,14 @@
 				'deepcat-error-tooldown': 'CatGraph-Tool is not reachable.',
 				'deepcat-missing-category': 'Please insert a category.',
 				'deepcat-hintbox-close': 'Hide',
-				'deepcat-hintbox-text': 'Information about limits etc.'
+				'deepcat-hintbox-text': 'You are using the <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-based search extension with the <a href="//github.com/wmde/DeepCat-Gadget">DeepCat Gadget</a>. ' +
+					'This functionality is under development. Currently it has the following limitations:' +
+					'<ul>' +
+					'<li>The maximum search depth (subcategories of subcategories... etc) is 10</li>' +
+					'<li>At most 50 categories are searched per <i>deepcat</i> keyword' +
+					'</ul>' +
+					'If you have questions or suggestions or if you experience problems, please join the '+
+						'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">discussion</a>.'
 			} );
 			break;
 	}
