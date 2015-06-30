@@ -253,9 +253,9 @@
 		} );
 	}
 
-	function getSearchTerms( input ) {
+	DeepCat.getSearchTerms = function( input ) {
 		return input.match( searchTermRegExp( keyString ) );
-	}
+	};
 
 	function matchesDeepCatKeyword( input ) {
 		return input.match( new RegExp( keyString ) )
