@@ -38,7 +38,7 @@
 			mw.messages.set( {
 				'deepcat-error-notfound': 'CatGraph konnte die Kategorie \'{0}\' nicht finden.',
 				'deepcat-error-tooldown': 'CatGraph-Tool ist zur Zeit nicht erreichbar.',
-				'deepcat-missing-category': 'Bitte gib eine Kategorie ein.'
+				'deepcat-missing-category': 'Bitte gib eine Kategorie ein.',
 				'deepcat-hintbox-close': 'Ausblenden',
 				'deepcat-hintbox-text': 'Du benutzt die <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-basierte Erweiterung der Suche mit dem <a href="//github.com/wmde/DeepCat-Gadget">DeepCat-Gadget</a>. ' +
 					'Diese Funktionalit&auml;t befindet sich in Entwicklung und unterliegt derzeit folgenden Einschr&auml;nkungen:' +
@@ -55,7 +55,7 @@
 			mw.messages.set( {
 				'deepcat-error-notfound': 'CatGraph could not find the category \'{0}\'.',
 				'deepcat-error-tooldown': 'CatGraph-Tool is not reachable.',
-				'deepcat-missing-category': 'Please insert a category.'
+				'deepcat-missing-category': 'Please insert a category.',
 				'deepcat-hintbox-close': 'Hide',
 				'deepcat-hintbox-text': 'Information about limits etc.'
 			} );
