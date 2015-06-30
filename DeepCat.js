@@ -27,7 +27,7 @@
 		return hash;
 	};
 	function makeHintboxCookieToken(str) {
-		return "-deepcat-hintboxshown-" + String(djb2Code(str));
+		return String(djb2Code(str));
 	};
 	
 	switch ( mw.config.get( 'wgUserLanguage' ) ) {
@@ -95,7 +95,7 @@
 	} );
 
 	function showHint() {
-		if( !mw.cookie.get( makeHintboxCookieToken(mw.msg('deepcat-hintbox-text'))) ) {
+		if( mw.cookie.get("-deepcat-hintboxshown") != makeHintboxCookieToken(mw.msg('deepcat-hintbox-text')) ) {
 			var parent= document.getElementById('mw-content-text');
 			var sresults= document.getElementsByClassName('searchresults')[0];
 			var d= parent.insertBefore(document.createElement('div'), sresults);
@@ -117,7 +117,7 @@
 	
 	function hideHint() {
 		document.getElementById('deepcat-hintbox').style.display= "none";
-		mw.cookie.set( makeHintboxCookieToken(mw.msg('deepcat-hintbox-text')), true, { 'expires': 60*60*24*7*4 /*4 weeks*/ } );
+		mw.cookie.set( "-deepcat-hintboxshown", makeHintboxCookieToken(mw.msg('deepcat-hintbox-text')), { 'expires': 60*60*24*7*4 /*4 weeks*/ } );
 	}
 
 	function sendAjaxRequests( searchTerms ) {
