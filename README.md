@@ -29,3 +29,8 @@ The default keyword to use the DeepCat-Search is "deepCat:" and can be combined 
 - 'deepcat:"Geschichte der Physik" Newton'
 - 'deepcat:Physik "Homogenes System"'
 - 'deepcat:"Geschichte der Physik" -deepcat:Kunstgeschichte'
+
+There are some unit tests under `tests` directory. Tests may be run be opening `tests/index.html` in browser or from command line e.g. using [node-qunit-phantomjs](https://github.com/jonkemp/node-qunit-phantomjs):
+```bash
+$ node-qunit-phantomjs ./tests/index.html
+```
