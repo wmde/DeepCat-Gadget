@@ -152,6 +152,11 @@
 			categoryError = errors[i].statusMessage.match( /(RuntimeError: Category \')(.*)(\' not found in wiki.*)/ );
 
 			if ( !categoryError ) {
+				if ( 'Graph not found' == errors[i].statusMessage ) {
+					errorMessages.push(
+						createErrorMessage( 'deepcat-error-unknown-graph', null )
+					);
+				}
 			} else if ( categoryError[2].length === 0 ) {
 				errorMessages.push(
 					createErrorMessage( 'deepcat-missing-category', null )
