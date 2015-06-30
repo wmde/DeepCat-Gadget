@@ -24,6 +24,7 @@
 			mw.messages.set( {
 				'deepcat-error-notfound': 'CatGraph konnte die Kategorie \'{0}\' nicht finden.',
 				'deepcat-error-tooldown': 'CatGraph-Tool ist zur Zeit nicht erreichbar.',
+				'deepcat-error-unknown-graph': 'Dieses Wiki wird von CatGraph nicht unterstützt.',
 				'deepcat-missing-category': 'Bitte gib eine Kategorie ein.'
 			} );
 			break;
@@ -32,6 +33,7 @@
 			mw.messages.set( {
 				'deepcat-error-notfound': 'CatGraph could not find the category \'{0}\'.',
 				'deepcat-error-tooldown': 'CatGraph-Tool is not reachable.',
+				'deepcat-error-unknown-graph': 'The Wiki is not supported by CatGraph.',
 				'deepcat-missing-category': 'Please insert a category.'
 			} );
 			break;
@@ -150,6 +152,11 @@
 			categoryError = errors[i].statusMessage.match( /(RuntimeError: Category \')(.*)(\' not found in wiki.*)/ );
 
 			if ( !categoryError ) {
+				if ( 'Graph not found' == errors[i].statusMessage ) {
+					errorMessages.push(
+						createErrorMessage( 'deepcat-error-unknown-graph', null )
+					);
+				}
 			} else if ( categoryError[2].length === 0 ) {
 				errorMessages.push(
 					createErrorMessage( 'deepcat-missing-category', null )
