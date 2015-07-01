@@ -38,7 +38,6 @@
 										'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">Diskussion</a>.'
 			} );
 			break;
-		case 'en':
 		default:
 			mw.messages.set( {
 				'deepcat-error-notfound': 'CatGraph could not find the category \'{0}\'.',
