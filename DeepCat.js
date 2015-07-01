@@ -58,7 +58,7 @@
 	}
 
 	$( function() {
-		$( '#searchform, #search' ).on( 'submit', function ( e ) {
+		$( '#searchform, #search' ).on( 'submit', function( e ) {
 			var searchInput = $( this ).find( '[name="search"]' ).val();
 
 			if ( matchesDeepCatKeyword( searchInput ) ) {
@@ -259,13 +259,13 @@
 	}
 
 	function substituteTitle( input ) {
-		loadMessages( 'searchresults-title' ).done( function () {
+		loadMessages( 'searchresults-title' ).done( function() {
 			$( document ).prop( 'title', mw.msg( 'searchresults-title', input ) );
 		} );
 	}
 
 	function appendToSearchLinks( input ) {
-		$( '.mw-prevlink, .mw-numlink, .mw-nextlink' ).each( function () {
+		$( '.mw-prevlink, .mw-numlink, .mw-nextlink' ).each( function() {
 			var _href = $( this ).attr( "href" );
 			$( this ).attr( "href", _href + '&deepCatSearch=' + input );
 		} );
@@ -385,8 +385,8 @@
 			meta: 'allmessages',
 			amlang: mw.config.get( 'wgUserLanguage' ),
 			ammessages: messages
-		} ).done( function ( data ) {
-			$.each( data.query.allmessages, function ( index, message ) {
+		} ).done( function( data ) {
+			$.each( data.query.allmessages, function( index, message ) {
 				if ( message.missing !== '' ) {
 					mw.messages.set( message.name, message['*'] );
 				}
