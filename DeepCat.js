@@ -11,7 +11,8 @@
 		maxDepth = 10,
 		maxResults = 50,
 		ajaxTimeout = 10000,
-		deepCatSearchTerms;
+		deepCatSearchTerms,
+		shouldHideHints = false;
 	var DBname = mw.config.get( 'wgDBname' );
 	var requestUrl = '//tools.wmflabs.org/catgraph-jsonp/' + DBname +
 		'_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
@@ -58,6 +59,8 @@
 	}
 
 	$( function() {
+		shouldHideHints = hasHintCookie();
+
 		$( '#searchform, #search' ).on( 'submit', function( e ) {
 			var searchInput = $( this ).find( '[name="search"]' ).val();
 
@@ -75,11 +78,11 @@
 			}
 		} );
 
-		addSearchFormHint();
+		if ( !shouldHideHints ) {
+			addSearchFormHint();
 
-		if ( !hasHintCookie() ) {
-			$( '#searchText' ).on( 'keypress', function() {
-				if ( matchesDeepCatKeyword( $( this ).val() ) ) {
+			$( '#searchText' ).on( 'keyup', function() {
+				if ( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
 					$( '#deepcat-hintbox' ).slideDown( 350 );
 				} else {
 					$( '#deepcat-hintbox' ).slideUp( 350 );
@@ -88,7 +91,9 @@
 		}
 
 		if ( refreshSearchTermMock() ) {
-			$( '#deepcat-hintbox' ).show();
+			if( !shouldHideHints ) {
+				$( '#deepcat-hintbox' ).show();
+			}
 			checkErrorMessage();
 		}
 	} );
@@ -352,7 +357,7 @@
 			"</div>";
 		var hideButton = document.createElement( 'button' );
 		hideButton.innerHTML = mw.msg( 'deepcat-hintbox-close' );
-		hideButton.onclick = hideHint;
+		hideButton.onclick = hideHints;
 		var buttonContainer = document.createElement( 'div' );
 		buttonContainer.style.textAlign = "right";
 		buttonContainer.appendChild( hideButton );
@@ -363,8 +368,9 @@
 		return mw.cookie.get( "-deepcat-hintboxshown" ) == makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) );
 	}
 
-	function hideHint() {
-		document.getElementById( 'deepcat-hintbox' ).style.display = "none";
+	function hideHints() {
+		shouldHideHints = true;
+		$( '#deepcat-hintbox' ).hide();
 		mw.cookie.set( "-deepcat-hintboxshown", makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ), { 'expires': 60 * 60 * 24 * 7 * 4 /*4 weeks*/ } );
 	}
 
