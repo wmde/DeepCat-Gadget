@@ -16,20 +16,6 @@
 	var requestUrl = '//tools.wmflabs.org/catgraph-jsonp/' + DBname +
 		'_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
 
-	// hash function for generating hint box cookie token.
-	// see http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
-	function djb2Code(str) {
-		var hash = 5381;
-		for (i = 0; i < str.length; i++) {
-			char = str.charCodeAt(i);
-			hash = ((hash << 5) + hash) + char; /* hash * 33 + c */
-		}
-		return hash;
-	};
-	function makeHintboxCookieToken(str) {
-		return String(djb2Code(str));
-	};
-	
 	switch ( mw.config.get( 'wgUserLanguage' ) ) {
 		case 'de':
 		case 'de-at':
@@ -42,13 +28,13 @@
 				'deepcat-missing-category': 'Bitte gib eine Kategorie ein.',
 				'deepcat-hintbox-close': 'Ausblenden',
 				'deepcat-hintbox-text': 'Du benutzt die <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-basierte Erweiterung der Suche mit dem <a href="//github.com/wmde/DeepCat-Gadget">DeepCat-Gadget</a>. ' +
-					'Diese Funktionalit&auml;t befindet sich in Entwicklung und unterliegt derzeit folgenden Einschr&auml;nkungen:' +
-					'<ul>' +
-					'<li>Die maximale Suchtiefe (Unterkategorien von Unterkategorien... usw) betr&auml;gt 10</li>' +
-					'<li>Die maximale Anzahl durchsuchter Kategorien pro <i>deepcat</i>-Keyword betr&auml;gt 50</li>' +
-					'</ul>' +
-					'Solltest du Fragen oder Vorschl&auml;ge haben oder Fehler bemerken, beteilige dich bitte an der '+
-						'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">Diskussion</a>.'
+				'Diese Funktionalit&auml;t befindet sich in Entwicklung und unterliegt derzeit folgenden Einschr&auml;nkungen:' +
+				'<ul>' +
+				'<li>Die maximale Suchtiefe (Unterkategorien von Unterkategorien... usw) betr&auml;gt 10</li>' +
+				'<li>Die maximale Anzahl durchsuchter Kategorien pro <i>deepcat</i>-Keyword betr&auml;gt 50</li>' +
+				'</ul>' +
+				'Solltest du Fragen oder Vorschl&auml;ge haben oder Fehler bemerken, beteilige dich bitte an der ' +
+				'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">Diskussion</a>.'
 			} );
 			break;
 		case 'en':
@@ -60,13 +46,13 @@
 				'deepcat-missing-category': 'Please insert a category.',
 				'deepcat-hintbox-close': 'Hide',
 				'deepcat-hintbox-text': 'You are using the <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-based search extension with the <a href="//github.com/wmde/DeepCat-Gadget">DeepCat Gadget</a>. ' +
-					'This functionality is under development. Currently it has the following limitations:' +
-					'<ul>' +
-					'<li>The maximum search depth (subcategories of subcategories... etc) is 10</li>' +
-					'<li>At most 50 categories are searched per <i>deepcat</i> keyword' +
-					'</ul>' +
-					'If you have questions or suggestions or if you experience problems, please join the '+
-						'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">discussion</a>.'
+				'This functionality is under development. Currently it has the following limitations:' +
+				'<ul>' +
+				'<li>The maximum search depth (subcategories of subcategories... etc) is 10</li>' +
+				'<li>At most 50 categories are searched per <i>deepcat</i> keyword' +
+				'</ul>' +
+				'If you have questions or suggestions or if you experience problems, please join the ' +
+				'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">discussion</a>.'
 			} );
 			break;
 	}
@@ -89,36 +75,11 @@
 			}
 		} );
 
-		if(refreshSearchTermMock())
+		if ( refreshSearchTermMock() ) {
 			showHint();
-		checkErrorMessage();
-	} );
-
-	function showHint() {
-		if( mw.cookie.get("-deepcat-hintboxshown") != makeHintboxCookieToken(mw.msg('deepcat-hintbox-text')) ) {
-			var parent= document.getElementById('mw-content-text');
-			var sresults= document.getElementsByClassName('searchresults')[0];
-			var d= parent.insertBefore(document.createElement('div'), sresults);
-			d.style.marginTop= "1em";
-			d.style.marginBottom= "1em";
-			d.innerHTML=
-				'<div id="deepcat-hintbox" style="background:#8af; padding:.75em; width:75%">' +
-				mw.msg('deepcat-hintbox-text') +
-				"</div>";
-			var hideButton= document.createElement('button');
-			hideButton.innerHTML= mw.msg('deepcat-hintbox-close');
-			hideButton.onclick= hideHint;
-			var buttonContainer= document.createElement('div');
-			buttonContainer.style.textAlign= "right";
-			buttonContainer.appendChild(hideButton);
-			document.getElementById('deepcat-hintbox').appendChild(buttonContainer);
+			checkErrorMessage();
 		}
-	}
-	
-	function hideHint() {
-		document.getElementById('deepcat-hintbox').style.display= "none";
-		mw.cookie.set( "-deepcat-hintboxshown", makeHintboxCookieToken(mw.msg('deepcat-hintbox-text')), { 'expires': 60*60*24*7*4 /*4 weeks*/ } );
-	}
+	} );
 
 	function sendAjaxRequests( searchTerms ) {
 		var requests = [];
@@ -365,6 +326,48 @@
 	function removeAjaxThrobber() {
 		$( '#searchButton, #mw-searchButton' ).removeClass( 'deep-cat-throbber-small' );
 		$( '#searchText' ).removeClass( 'deep-cat-throbber-big' );
+	}
+
+	function showHint() {
+		if ( mw.cookie.get( "-deepcat-hintboxshown" ) != makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ) ) {
+			var parent = document.getElementById( 'mw-content-text' );
+			var sresults = document.getElementsByClassName( 'searchresults' )[0];
+			var d = parent.insertBefore( document.createElement( 'div' ), sresults );
+			d.style.marginTop = "1em";
+			d.style.marginBottom = "1em";
+			d.innerHTML =
+				'<div id="deepcat-hintbox" style="background:#8af; padding:.75em; width:75%">' +
+				mw.msg( 'deepcat-hintbox-text' ) +
+				"</div>";
+			var hideButton = document.createElement( 'button' );
+			hideButton.innerHTML = mw.msg( 'deepcat-hintbox-close' );
+			hideButton.onclick = hideHint;
+			var buttonContainer = document.createElement( 'div' );
+			buttonContainer.style.textAlign = "right";
+			buttonContainer.appendChild( hideButton );
+			document.getElementById( 'deepcat-hintbox' ).appendChild( buttonContainer );
+		}
+	}
+
+	function hideHint() {
+		document.getElementById( 'deepcat-hintbox' ).style.display = "none";
+		mw.cookie.set( "-deepcat-hintboxshown", makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ), { 'expires': 60 * 60 * 24 * 7 * 4 /*4 weeks*/ } );
+	}
+
+	// hash function for generating hint box cookie token.
+	// see http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
+	function djb2Code( str ) {
+		var hash = 5381;
+		for ( i = 0; i < str.length; i++ ) {
+			char = str.charCodeAt( i );
+			hash = ((hash << 5) + hash) + char;
+			/* hash * 33 + c */
+		}
+		return hash;
+	}
+
+	function makeHintboxCookieToken( str ) {
+		return String( djb2Code( str ) );
 	}
 
 	function stringFormat() {
