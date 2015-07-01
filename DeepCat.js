@@ -11,10 +11,9 @@
 		maxDepth = 10,
 		maxResults = 50,
 		ajaxTimeout = 10000,
-		deepCatSearchTerms;
-	var DBname = mw.config.get( 'wgDBname' );
-	var requestUrl = '//tools.wmflabs.org/catgraph-jsonp/' + DBname +
-		'_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
+		deepCatSearchTerms,
+		requestUrl = '//tools.wmflabs.org/catgraph-jsonp/' + mw.config.get( 'wgDBname' )
+			+ '_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
 
 	switch ( mw.config.get( 'wgUserLanguage' ) ) {
 		case 'de':
@@ -82,10 +81,12 @@
 	} );
 
 	function sendAjaxRequests( searchTerms ) {
-		var requests = [];
+		var i,
+			requests = [];
+
 		addAjaxThrobber();
 
-		for ( var i = 0; i < searchTerms.length; i++ ) {
+		for ( i = 0; i < searchTerms.length; i++ ) {
 			if ( matchesDeepCatKeyword( searchTerms[i] ) ) {
 				requests.push( getAjaxRequest( searchTerms[i], i ) );
 			}
@@ -112,9 +113,11 @@
 	}
 
 	function receiveAjaxResponses() {
-		var responses = [], errors = [];
-		var newSearchTerms = deepCatSearchTerms;
-		var i, ajaxResponse;
+		var i,
+			ajaxResponse,
+			responses = [],
+			errors = [],
+			newSearchTerms = deepCatSearchTerms;
 
 		removeAjaxThrobber();
 
@@ -146,7 +149,9 @@
 	}
 
 	function computeResponses( responses, newSearchTerms ) {
-		var i, userParameters, newSearchTermString;
+		var i,
+			userParameters,
+			newSearchTermString;
 
 		for ( i = 0; i < responses.length; i++ ) {
 			userParameters = JSON.parse( responses[i]['userparam'] );
@@ -164,8 +169,10 @@
 	}
 
 	function computeErrors( errors, newSearchTerms ) {
-		var errorMessages = [];
-		var i, userParameters, categoryError;
+		var i,
+			userParameters,
+			categoryError,
+			errorMessages = [];
 
 		for ( i = 0; i < errors.length; i++ ) {
 			userParameters = JSON.parse( errors[i]['userparam'] );
@@ -286,8 +293,9 @@
 	}
 
 	function checkErrorMessage() {
-		var i, message;
-		var deepCatErrors = mw.util.getParamValue( 'deepCatError' );
+		var deepCatErrors = mw.util.getParamValue( 'deepCatError' ),
+			i,
+			message;
 
 		if ( deepCatErrors ) {
 			deepCatErrors = JSON.parse( deepCatErrors );
@@ -371,10 +379,13 @@
 	}
 
 	function stringFormat() {
-		var s = arguments[0];
-		for ( var i = 0; i < arguments.length - 1; i++ ) {
+		var i,
+			s = arguments[0];
+
+		for ( i = 0; i < arguments.length - 1; i++ ) {
 			s = s.replace( new RegExp( "\\{" + i + "\\}", "gm" ), arguments[i + 1] );
 		}
+
 		return s;
 	}
 
