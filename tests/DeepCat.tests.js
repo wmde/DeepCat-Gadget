@@ -22,4 +22,4 @@
 		assert.deepEqual( DeepCat.getSearchTerms( 'deepcat:' ), [ 'deepcat:' ], 'getSearchTerms: empty DeepCat search terms are recognized' );
 		assert.deepEqual( DeepCat.getSearchTerms( 'Foo: Bar' ), [ 'Foo:', 'Bar' ], 'getSearchTerms: not every word followed by colon is considered a keyword' );
 	} );
-}( DeepCat, jQuery, QUnit ) );
+}( mediaWiki.libs.deepCat, jQuery, QUnit ) );

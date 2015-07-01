@@ -332,5 +332,5 @@
 		} );
 	}
 
-	window.DeepCat = DeepCat;
+	mw.libs.deepCat = DeepCat;
 }( jQuery, mediaWiki ) );

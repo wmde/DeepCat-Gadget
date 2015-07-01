@@ -4,6 +4,7 @@ mediaWiki = {
 			return 'foo';
 		}
 	},
+	libs: {},
 	messages: {
 		set: function() {}
 	},
