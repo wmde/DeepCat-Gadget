@@ -346,22 +346,14 @@
 	}
 
 	function addSearchFormHint() {
-		var parent = document.getElementById( 'mw-content-text' );
-		var sresults = document.getElementsByClassName( 'searchresults' )[0];
-		var d = parent.insertBefore( document.createElement( 'div' ), sresults );
-		d.style.marginTop = "1em";
-		d.style.marginBottom = "1em";
-		d.innerHTML =
-			'<div id="deepcat-hintbox" style="background:#8af; padding:.75em; width:75%; display: none">' +
-			mw.msg( 'deepcat-hintbox-text' ) +
-			"</div>";
-		var hideButton = document.createElement( 'button' );
-		hideButton.innerHTML = mw.msg( 'deepcat-hintbox-close' );
-		hideButton.onclick = hideHints;
-		var buttonContainer = document.createElement( 'div' );
-		buttonContainer.style.textAlign = "right";
-		buttonContainer.appendChild( hideButton );
-		document.getElementById( 'deepcat-hintbox' ).appendChild( buttonContainer );
+		var hintBox = '<div style="margin-top: 1em; margin-bottom: 1em;">'
+						+ '<div id="deepcat-hintbox" style="background: #8af; padding: .75em; width: 75%; display: none">'
+							+ mw.msg( 'deepcat-hintbox-text' )
+							+ '<div style="text-align: right;">'
+								+ '<button id="deepcat-hint-hide">' + mw.msg( 'deepcat-hintbox-close' ) + '</button>'
+						+ '</div></div></div>';
+		$( '#search' ).after( hintBox );
+		$( '#deepcat-hint-hide' ).on( 'click', hideHints );
 	}
 
 	function hasHintCookie() {
