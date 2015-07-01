@@ -357,12 +357,13 @@
 	// hash function for generating hint box cookie token.
 	// see http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
 	function djb2Code( str ) {
-		var hash = 5381;
+		var hash = 5381,
+			i;
+
 		for ( i = 0; i < str.length; i++ ) {
-			char = str.charCodeAt( i );
-			hash = ((hash << 5) + hash) + char;
-			/* hash * 33 + c */
+			hash =  ( ( hash << 5 ) + hash ) + str.charCodeAt( i );
 		}
+
 		return hash;
 	}
 
