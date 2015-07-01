@@ -22,7 +22,7 @@
 		case 'de-ch':
 		case 'de-formal':
 			mw.messages.set( {
-				'deepcat-error-notfound': 'CatGraph konnte die Kategorie \'{0}\' nicht finden.',
+				'deepcat-error-notfound': 'Die Kategorie \'{0}\' konnte nicht gefunden werden.',
 				'deepcat-error-tooldown': 'CatGraph-Tool ist zur Zeit nicht erreichbar.',
 				'deepcat-error-unknown-graph': 'Dieses Wiki wird von CatGraph nicht unterst&uuml;tzt.',
 				'deepcat-missing-category': 'Bitte gib eine Kategorie ein.',
