@@ -73,5 +73,25 @@
 			[ 'Foo:', 'Bar' ],
 			'getSearchTerms: not every word followed by colon is considered a keyword'
 		);
+		assert.deepEqual(
+			deepCat.getSearchTerms( 'deepcat:a:b' ),
+			[ 'deepcat:a:b' ],
+			'getSearchTerms: DeepCat search terms may include colon'
+		);
+		assert.deepEqual(
+			deepCat.getSearchTerms( 'deepcat:"a b' ),
+			[ 'deepcat:"a', 'b' ],
+			'getSearchTerms: Unmatched quote does not introduce multi-word DeepCat search term'
+		);
+		assert.deepEqual(
+			deepCat.getSearchTerms( 'deepcat:a"b' ),
+			[ 'deepcat:a', '"b' ],
+			'getSearchTerms: Unmatched quote does not introduce multi-word search term'
+		);
+		assert.deepEqual(
+			deepCat.getSearchTerms( 'deepcat:a" b' ),
+			[ 'deepcat:a', '"', 'b' ],
+			'getSearchTerms: Unmatched quote does not introduce multi-word search term'
+		);
 	} );
 }( mediaWiki.libs.deepCat, jQuery, QUnit ) );
