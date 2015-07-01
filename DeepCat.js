@@ -75,8 +75,20 @@
 			}
 		} );
 
+		addSearchFormHint();
+
+		if ( !hasHintCookie() ) {
+			$( '#searchText' ).on( 'keypress', function() {
+				if ( matchesDeepCatKeyword( $( this ).val() ) ) {
+					$( '#deepcat-hintbox' ).slideDown( 350 );
+				} else {
+					$( '#deepcat-hintbox' ).slideUp( 350 );
+				}
+			} );
+		}
+
 		if ( refreshSearchTermMock() ) {
-			showHint();
+			$( '#deepcat-hintbox' ).show();
 			checkErrorMessage();
 		}
 	} );
@@ -328,25 +340,27 @@
 		$( '#searchText' ).removeClass( 'deep-cat-throbber-big' );
 	}
 
-	function showHint() {
-		if ( mw.cookie.get( "-deepcat-hintboxshown" ) != makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ) ) {
-			var parent = document.getElementById( 'mw-content-text' );
-			var sresults = document.getElementsByClassName( 'searchresults' )[0];
-			var d = parent.insertBefore( document.createElement( 'div' ), sresults );
-			d.style.marginTop = "1em";
-			d.style.marginBottom = "1em";
-			d.innerHTML =
-				'<div id="deepcat-hintbox" style="background:#8af; padding:.75em; width:75%">' +
-				mw.msg( 'deepcat-hintbox-text' ) +
-				"</div>";
-			var hideButton = document.createElement( 'button' );
-			hideButton.innerHTML = mw.msg( 'deepcat-hintbox-close' );
-			hideButton.onclick = hideHint;
-			var buttonContainer = document.createElement( 'div' );
-			buttonContainer.style.textAlign = "right";
-			buttonContainer.appendChild( hideButton );
-			document.getElementById( 'deepcat-hintbox' ).appendChild( buttonContainer );
-		}
+	function addSearchFormHint() {
+		var parent = document.getElementById( 'mw-content-text' );
+		var sresults = document.getElementsByClassName( 'searchresults' )[0];
+		var d = parent.insertBefore( document.createElement( 'div' ), sresults );
+		d.style.marginTop = "1em";
+		d.style.marginBottom = "1em";
+		d.innerHTML =
+			'<div id="deepcat-hintbox" style="background:#8af; padding:.75em; width:75%; display: none">' +
+			mw.msg( 'deepcat-hintbox-text' ) +
+			"</div>";
+		var hideButton = document.createElement( 'button' );
+		hideButton.innerHTML = mw.msg( 'deepcat-hintbox-close' );
+		hideButton.onclick = hideHint;
+		var buttonContainer = document.createElement( 'div' );
+		buttonContainer.style.textAlign = "right";
+		buttonContainer.appendChild( hideButton );
+		document.getElementById( 'deepcat-hintbox' ).appendChild( buttonContainer );
+	}
+
+	function hasHintCookie() {
+		return mw.cookie.get( "-deepcat-hintboxshown" ) == makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) );
 	}
 
 	function hideHint() {
