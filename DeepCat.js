@@ -27,7 +27,7 @@
 				'deepcat-error-tooldown': 'CatGraph-Tool ist zur Zeit nicht erreichbar.',
 				'deepcat-error-unknown-graph': 'Dieses Wiki wird von CatGraph nicht unterst&uuml;tzt.',
 				'deepcat-missing-category': 'Bitte gib eine Kategorie ein.',
-				'deepcat-hintbox-close': 'Ausblenden',
+				'deepcat-hintbox-close': 'Zunk&uuml;nftig ausblenden',
 				'deepcat-hintbox-text': 'Du benutzt die <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-basierte Erweiterung der Suche mit dem <a href="//github.com/wmde/DeepCat-Gadget">DeepCat-Gadget</a>. ' +
 										'Diese Funktionalit&auml;t befindet sich in Entwicklung und unterliegt derzeit folgenden Einschr&auml;nkungen:' +
 										'<ul>' +
@@ -45,7 +45,7 @@
 				'deepcat-error-tooldown': 'CatGraph-Tool is not reachable.',
 				'deepcat-error-unknown-graph': 'The Wiki is not supported by CatGraph.',
 				'deepcat-missing-category': 'Please insert a category.',
-				'deepcat-hintbox-close': 'Hide',
+				'deepcat-hintbox-close': 'hide in the future',
 				'deepcat-hintbox-text': 'You are using the <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-based search extension with the <a href="//github.com/wmde/DeepCat-Gadget">DeepCat Gadget</a>. ' +
 										'This functionality is under development. Currently it has the following limitations:' +
 										'<ul>' +
