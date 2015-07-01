@@ -32,7 +32,8 @@
 											'<li>Die maximale Anzahl durchsuchter Kategorien pro <i>deepcat</i>-Keyword betr&auml;gt 50</li>' +
 										'</ul>' +
 										'Solltest du Fragen oder Vorschl&auml;ge haben oder Fehler bemerken, beteilige dich bitte an der ' +
-										'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">Diskussion</a>.'
+										'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">Diskussion</a>.',
+				'deepcat-hintbox-small': 'Max. Kategoriensuchtiefe: 10<br/>Max. Kategorienanzahl: 50'
 			} );
 			break;
 		default:
@@ -49,7 +50,8 @@
 											'<li>At most 50 categories are searched per <i>deepcat</i> keyword' +
 										'</ul>' +
 										'If you have questions or suggestions or if you experience problems, please join the ' +
-										'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">discussion</a>.'
+										'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">discussion</a>.',
+				'deepcat-hintbox-small': 'Max. search depth for categories: 10<br/>Max. number of categories: 50'
 			} );
 			break;
 	}
@@ -371,6 +373,15 @@
 						+ '</div></div></div>';
 		$( '#search' ).after( hintBox );
 		$( '#deepcat-hint-hide' ).on( 'click', hideHints );
+	}
+
+	function addSmallFormHint() {
+		var smallHintBox = '<div id="deepcat-hintbox" style="background: #8af; padding: 0.35em;  margin-top: 0.25em; font-size:13px">'
+						+ '<img id="deepcat-smallhint-hide" title="' + mw.msg( 'deepcat-hintbox-close' ) + '" style="float: right;" src="https://upload.wikimedia.org/wikipedia/commons/4/44/Curation_bar_icon_close.png">'
+						+ mw.msg( 'deepcat-hintbox-small' ) +
+						+ '</div>';
+		$( '#searchform' ).after( smallHintBox );
+		$( '#deepcat-smallhint-hide' ).on( 'click', hideHints );
 	}
 
 	function hasHintCookie() {
