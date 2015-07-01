@@ -1,9 +1,8 @@
 /**
-* DeepCat Gadget for MediaWiki
-* @licence GNU GPL v2+
-* @author Christoph Fischer < christoph.fischer@wikimedia.de >
-*/
-
+ * DeepCat Gadget for MediaWiki
+ * @licence GNU GPL v2+
+ * @author Christoph Fischer < christoph.fischer@wikimedia.de >
+ */
 .deep-cat-throbber-small {
     background-image: url( "//upload.wikimedia.org/wikipedia/commons/4/42/Loading.gif" ) !important;
 }

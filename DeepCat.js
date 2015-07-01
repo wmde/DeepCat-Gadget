@@ -5,7 +5,6 @@
  * @licence GNU GPL v2+
  * @author Christoph Fischer < christoph.fischer@wikimedia.de >
  */
-
 ( function( $, mw ) {
 	var keyString = 'deepcat:',
 		maxDepth = 10,
@@ -278,14 +277,26 @@
 		} );
 	}
 
+	/**
+	 * @param {string} input
+	 * @returns {string[]}
+	 */
 	function getSearchTerms( input ) {
 		return input.match( searchTermRegExp( keyString ) );
 	}
 
+	/**
+	 * @param {string} input
+	 * @returns {boolean}
+	 */
 	function matchesDeepCatKeyword( input ) {
 		return input.match( new RegExp( keyString ) )
 	}
 
+	/**
+	 * @param {string} searchTerm
+	 * @returns {string}
+	 */
 	function extractDeepCatCategory( searchTerm ) {
 		var categoryString = searchTerm.replace( new RegExp( '-?' + keyString + '([\\s]*)' ), '' );
 		categoryString = categoryString.replace( / /g, '_' );
@@ -362,8 +373,12 @@
 		mw.cookie.set( "-deepcat-hintboxshown", makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ), { 'expires': 60 * 60 * 24 * 7 * 4 /*4 weeks*/ } );
 	}
 
-	// hash function for generating hint box cookie token.
-	// see http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
+	/**
+	 * Hash function for generating hint box cookie token.
+	 * @see http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
+	 * @param {string} str
+	 * @returns {number}
+	 */
 	function djb2Code( str ) {
 		var hash = 5381,
 			i;
@@ -375,10 +390,17 @@
 		return hash;
 	}
 
+	/**
+	 * @param {string} str
+	 * @returns {string}
+	 */
 	function makeHintboxCookieToken( str ) {
 		return String( djb2Code( str ) );
 	}
 
+	/**
+	 * @returns {string}
+	 */
 	function stringFormat() {
 		var i,
 			s = arguments[0];
@@ -405,4 +427,5 @@
 			} );
 		} );
 	}
+
 }( jQuery, mediaWiki ) );
