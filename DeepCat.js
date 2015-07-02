@@ -366,8 +366,8 @@
 	}
 
 	function addSearchFormHint() {
-		var hintBox = '<div id="deepcat-hintbox">'
-						+ '<img id="deepcat-info-img" src="//upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Information_icon4.svg/40px-Information_icon4.svg.png" style="display: none;"/>  '
+		var hintBox = '<div id="deepcat-hintbox" style="display: none;">'
+						+ '<img id="deepcat-info-img" src="//upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Information_icon4.svg/40px-Information_icon4.svg.png"/>  '
 						+ '<div>'
 							+ mw.msg( 'deepcat-hintbox-text' )
 							+ '&nbsp;<a id="deepcat-hint-hide">' + mw.msg( 'deepcat-hintbox-close' ) + '</a>'
