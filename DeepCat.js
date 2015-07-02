@@ -65,7 +65,7 @@
 
 				e.preventDefault();
 
-				mw.log( "deepCatSearchTerms: " + deepCatSearchTerms );
+				mw.log( 'deepCatSearchTerms: ' + deepCatSearchTerms );
 
 				//bugfix to sync search fields for better recovery of "deepCatSearch"
 				substituteInputValues( searchInput );
@@ -223,17 +223,17 @@
 	}
 
 	function ajaxSuccess( data ) {
-		mw.log( "graph & ajax request successful" );
-		mw.log( "statusMessage: " + data['statusMessage'] );
+		mw.log( 'graph & ajax request successful' );
+		mw.log( 'statusMessage: ' + data['statusMessage'] );
 	}
 
 	function graphError( data ) {
-		mw.log( "graph request failed" );
-		mw.log( "statusMessage: " + data['statusMessage'] );
+		mw.log( 'graph request failed' );
+		mw.log( 'statusMessage: ' + data['statusMessage'] );
 	}
 
 	function ajaxError( data ) {
-		mw.log( "ajax request error: " + JSON.stringify( data ) );
+		mw.log( 'ajax request error: ' + JSON.stringify( data ) );
 		addErrorMsgField( [createErrorMessage( 'deepcat-error-tooldown', null )] );
 
 		substituteSearchRequest( ' ' );
@@ -287,14 +287,14 @@
 
 	function appendToSearchLinks( input ) {
 		$( '.mw-prevlink, .mw-numlink, .mw-nextlink' ).each( function() {
-			var _href = $( this ).attr( "href" );
-			$( this ).attr( "href", _href + '&deepCatSearch=' + input );
+			var _href = $( this ).attr( 'href' );
+			$( this ).attr( 'href', _href + '&deepCatSearch=' + input );
 		} );
 	}
 
 	/**
 	 * @param {string} input
-	 * @returns {string[]}
+	 * @return {string[]}
 	 */
 	function getSearchTerms( input ) {
 		return input.match( searchTermRegExp( keyString ) );
@@ -302,7 +302,7 @@
 
 	/**
 	 * @param {string} input
-	 * @returns {boolean}
+	 * @return {boolean}
 	 */
 	function matchesDeepCatKeyword( input ) {
 		return input.match( new RegExp( keyString ) )
@@ -310,7 +310,7 @@
 
 	/**
 	 * @param {string} searchTerm
-	 * @returns {string}
+	 * @return {string}
 	 */
 	function extractDeepCatCategory( searchTerm ) {
 		var categoryString = searchTerm.replace( new RegExp( '-?' + keyString + '([\\s]*)' ), '' );
@@ -387,14 +387,14 @@
 	 * Hash function for generating hint box cookie token.
 	 * @see http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
 	 * @param {string} str
-	 * @returns {number}
+	 * @return {number}
 	 */
 	function djb2Code( str ) {
 		var hash = 5381,
 			i;
 
 		for ( i = 0; i < str.length; i++ ) {
-			hash =  ( ( hash << 5 ) + hash ) + str.charCodeAt( i );
+			hash = ( ( hash << 5 ) + hash ) + str.charCodeAt( i );
 		}
 
 		return hash;
@@ -402,21 +402,21 @@
 
 	/**
 	 * @param {string} str
-	 * @returns {string}
+	 * @return {string}
 	 */
 	function makeHintboxCookieToken( str ) {
 		return String( djb2Code( str ) );
 	}
 
 	/**
-	 * @returns {string}
+	 * @return {string}
 	 */
 	function stringFormat() {
 		var i,
 			s = arguments[0];
 
 		for ( i = 0; i < arguments.length - 1; i++ ) {
-			s = s.replace( new RegExp( "\\{" + i + "\\}", "gm" ), arguments[i + 1] );
+			s = s.replace( new RegExp( '\\{' + i + '\\}', 'gm' ), arguments[i + 1] );
 		}
 
 		return s;
