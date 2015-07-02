@@ -41,7 +41,7 @@
 				'deepcat-error-tooldown': 'CatGraph-Tool is not reachable.',
 				'deepcat-error-unknown-graph': 'The Wiki is not supported by CatGraph.',
 				'deepcat-missing-category': 'Please insert a category.',
-				'deepcat-hintbox-close': 'Hide in the future',
+				'deepcat-hintbox-close': 'Do not show again',
 				'deepcat-hintbox-text': 'You are using the <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-based search extension with the <a href="//github.com/wmde/DeepCat-Gadget">DeepCat Gadget</a>. ' +
 										'This functionality is under development. Currently it has the following limitations:' +
 										'<ul>' +
