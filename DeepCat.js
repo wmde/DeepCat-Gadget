@@ -376,19 +376,18 @@
 	}
 
 	function addSearchFormHint() {
-		var hintBox = '<div style="margin-top: 1em; margin-bottom: 1em;">'
-						+ '<div id="deepcat-hintbox" style="background: #8af; padding: .75em; width: 75%; display: none">'
-							+ mw.msg( 'deepcat-hintbox-text' )
-							+ '<div style="text-align: right;">'
-								+ '<button id="deepcat-hint-hide">' + mw.msg( 'deepcat-hintbox-close' ) + '</button>'
-						+ '</div></div></div>';
+		var hintBox = '<div id="deepcat-hintbox">'
+						+ mw.msg( 'deepcat-hintbox-text' )
+						+ '<div style="text-align: right;">'
+							+ '<button id="deepcat-hint-hide">' + mw.msg( 'deepcat-hintbox-close' ) + '</button>'
+						+ '</div></div>';
 		$( '#search' ).after( hintBox );
 		$( '#deepcat-hint-hide' ).on( 'click', hideHints );
 	}
 
 	function addSmallFormHint() {
-		var smallHintBox = '<div id="deepcat-smallhint" style="background: #8af; padding: 0.35em;  font-size:13px; display: none">'
-						+ '<img id="deepcat-smallhint-hide" title="' + mw.msg( 'deepcat-hintbox-close' ) + '" style="float: right;" src="https://upload.wikimedia.org/wikipedia/commons/4/44/Curation_bar_icon_close.png">'
+		var smallHintBox = '<div id="deepcat-smallhint">'
+						+ '<img id="deepcat-smallhint-hide" title="' + mw.msg( 'deepcat-hintbox-close' ) + '" src="https://upload.wikimedia.org/wikipedia/commons/4/44/Curation_bar_icon_close.png">'
 						+ mw.msg( 'deepcat-hintbox-small' )
 						+ '</div>';
 		$( '#searchform' ).after( smallHintBox );

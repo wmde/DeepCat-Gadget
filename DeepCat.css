@@ -13,3 +13,24 @@
     background-repeat: no-repeat;
     background-size: 24px auto;
 }
+
+#deepcat-hintbox {
+    background: #8af;
+    padding: .75em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    width: 75%;
+    display: none;
+}
+
+#deepcat-smallhint {
+    background: #8af;
+    padding: 0.30em;
+    font-size: 13px;
+    display: none;
+}
+
+#deepcat-smallhint-hide {
+    float: right;
+    cursor: pointer;
+}
