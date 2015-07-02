@@ -56,7 +56,7 @@
 	}
 
 	$( function() {
-		$( '#searchform, #search' ).on( 'submit', function ( e ) {
+		$( '#searchform, #search' ).on( 'submit', function( e ) {
 			var searchInput = $( this ).find( '[name="search"]' ).val();
 
 			if ( matchesDeepCatKeyword( searchInput ) ) {
@@ -64,7 +64,7 @@
 
 				e.preventDefault();
 
-				mw.log( "deepCatSearchTerms: " + deepCatSearchTerms );
+				mw.log( 'deepCatSearchTerms: ' + deepCatSearchTerms );
 
 				//bugfix to sync search fields for better recovery of "deepCatSearch"
 				substituteInputValues( searchInput );
@@ -208,17 +208,17 @@
 	}
 
 	function ajaxSuccess( data ) {
-		mw.log( "graph & ajax request successful" );
-		mw.log( "statusMessage: " + data['statusMessage'] );
+		mw.log( 'graph & ajax request successful' );
+		mw.log( 'statusMessage: ' + data['statusMessage'] );
 	}
 
 	function graphError( data ) {
-		mw.log( "graph request failed" );
-		mw.log( "statusMessage: " + data['statusMessage'] );
+		mw.log( 'graph request failed' );
+		mw.log( 'statusMessage: ' + data['statusMessage'] );
 	}
 
 	function ajaxError( data ) {
-		mw.log( "ajax request error: " + JSON.stringify( data ) );
+		mw.log( 'ajax request error: ' + JSON.stringify( data ) );
 		addErrorMsgField( [createErrorMessage( 'deepcat-error-tooldown', null )] );
 
 		substituteSearchRequest( ' ' );
@@ -265,21 +265,21 @@
 	}
 
 	function substituteTitle( input ) {
-		loadMessages( 'searchresults-title' ).done( function () {
+		loadMessages( 'searchresults-title' ).done( function() {
 			$( document ).prop( 'title', mw.msg( 'searchresults-title', input ) );
 		} );
 	}
 
 	function appendToSearchLinks( input ) {
-		$( '.mw-prevlink, .mw-numlink, .mw-nextlink' ).each( function () {
-			var _href = $( this ).attr( "href" );
-			$( this ).attr( "href", _href + '&deepCatSearch=' + input );
+		$( '.mw-prevlink, .mw-numlink, .mw-nextlink' ).each( function() {
+			var _href = $( this ).attr( 'href' );
+			$( this ).attr( 'href', _href + '&deepCatSearch=' + input );
 		} );
 	}
 
 	/**
 	 * @param {string} input
-	 * @returns {string[]}
+	 * @return {string[]}
 	 */
 	function getSearchTerms( input ) {
 		return input.match( searchTermRegExp( keyString ) );
@@ -287,7 +287,7 @@
 
 	/**
 	 * @param {string} input
-	 * @returns {boolean}
+	 * @return {boolean}
 	 */
 	function matchesDeepCatKeyword( input ) {
 		return input.match( new RegExp( keyString ) )
@@ -295,7 +295,7 @@
 
 	/**
 	 * @param {string} searchTerm
-	 * @returns {string}
+	 * @return {string}
 	 */
 	function extractDeepCatCategory( searchTerm ) {
 		var categoryString = searchTerm.replace( new RegExp( '-?' + keyString + '([\\s]*)' ), '' );
@@ -348,43 +348,43 @@
 	}
 
 	function showHint() {
-		if ( mw.cookie.get( "-deepcat-hintboxshown" ) != makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ) ) {
+		if ( mw.cookie.get( '-deepcat-hintboxshown' ) != makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ) ) {
 			var parent = document.getElementById( 'mw-content-text' );
 			var sresults = document.getElementsByClassName( 'searchresults' )[0];
 			var d = parent.insertBefore( document.createElement( 'div' ), sresults );
-			d.style.marginTop = "1em";
-			d.style.marginBottom = "1em";
+			d.style.marginTop = '1em';
+			d.style.marginBottom = '1em';
 			d.innerHTML =
 				'<div id="deepcat-hintbox" style="background:#8af; padding:.75em; width:75%">' +
 				mw.msg( 'deepcat-hintbox-text' ) +
-				"</div>";
+				'</div>';
 			var hideButton = document.createElement( 'button' );
 			hideButton.innerHTML = mw.msg( 'deepcat-hintbox-close' );
 			hideButton.onclick = hideHint;
 			var buttonContainer = document.createElement( 'div' );
-			buttonContainer.style.textAlign = "right";
+			buttonContainer.style.textAlign = 'right';
 			buttonContainer.appendChild( hideButton );
 			document.getElementById( 'deepcat-hintbox' ).appendChild( buttonContainer );
 		}
 	}
 
 	function hideHint() {
-		document.getElementById( 'deepcat-hintbox' ).style.display = "none";
-		mw.cookie.set( "-deepcat-hintboxshown", makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ), { 'expires': 60 * 60 * 24 * 7 * 4 /*4 weeks*/ } );
+		document.getElementById( 'deepcat-hintbox' ).style.display = 'none';
+		mw.cookie.set( '-deepcat-hintboxshown', makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ), { 'expires': 60 * 60 * 24 * 7 * 4 /*4 weeks*/ } );
 	}
 
 	/**
 	 * Hash function for generating hint box cookie token.
 	 * @see http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
 	 * @param {string} str
-	 * @returns {number}
+	 * @return {number}
 	 */
 	function djb2Code( str ) {
 		var hash = 5381,
 			i;
 
 		for ( i = 0; i < str.length; i++ ) {
-			hash =  ( ( hash << 5 ) + hash ) + str.charCodeAt( i );
+			hash = ( ( hash << 5 ) + hash ) + str.charCodeAt( i );
 		}
 
 		return hash;
@@ -392,21 +392,21 @@
 
 	/**
 	 * @param {string} str
-	 * @returns {string}
+	 * @return {string}
 	 */
 	function makeHintboxCookieToken( str ) {
 		return String( djb2Code( str ) );
 	}
 
 	/**
-	 * @returns {string}
+	 * @return {string}
 	 */
 	function stringFormat() {
 		var i,
 			s = arguments[0];
 
 		for ( i = 0; i < arguments.length - 1; i++ ) {
-			s = s.replace( new RegExp( "\\{" + i + "\\}", "gm" ), arguments[i + 1] );
+			s = s.replace( new RegExp( '\\{' + i + '\\}', 'gm' ), arguments[i + 1] );
 		}
 
 		return s;
@@ -419,8 +419,8 @@
 			meta: 'allmessages',
 			amlang: mw.config.get( 'wgUserLanguage' ),
 			ammessages: messages
-		} ).done( function ( data ) {
-			$.each( data.query.allmessages, function ( index, message ) {
+		} ).done( function( data ) {
+			$.each( data.query.allmessages, function( index, message ) {
 				if ( message.missing !== '' ) {
 					mw.messages.set( message.name, message['*'] );
 				}
