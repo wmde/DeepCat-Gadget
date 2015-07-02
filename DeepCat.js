@@ -72,19 +72,19 @@
 
 			$( '#searchText' ).on( 'keyup', function() {
 				if ( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
-					$( '#deepcat-hintbox' ).slideDown( 350 );
+					$( '#deepcat-hintbox' ).slideDown();
 				} else {
-					$( '#deepcat-hintbox' ).slideUp( 350 );
+					$( '#deepcat-hintbox' ).slideUp();
 				}
 			} );
 
 			$( '#searchInput' ).on( 'keyup', function() {
 				if ( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
 					disableImeAndSuggestions();
-					$( '#deepcat-smallhint' ).slideDown( 100 );
+					$( '#deepcat-smallhint' ).slideDown( 'fast' );
 				} else {
 					enableImeAndSuggestions();
-					$( '#deepcat-smallhint' ).slideUp( 100 );
+					$( '#deepcat-smallhint' ).slideUp( 'fast' );
 				}
 			} );
 		}
