@@ -14,23 +14,39 @@
     background-size: 24px auto;
 }
 
-#deepcat-hintbox {
-    background: #8af;
-    padding: .75em;
-    margin-top: 1em;
-    margin-bottom: 1em;
-    width: 75%;
+#deepcat-hintbox, #deepcat-smallhint {
+    background: #f3f3f3;
+    border: 1px solid silver;
+    font-size: 13px;
     display: none;
 }
 
+#deepcat-hintbox {
+    padding: .75em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    width: 38em;
+}
+
+#deepcat-info-img {
+    margin-right: 0.75em;
+    margin-bottom: 1em;
+    float: left;
+}
+
 #deepcat-smallhint {
-    background: #8af;
-    padding: 0.30em;
-    font-size: 13px;
-    display: none;
+    padding: .30em;
+}
+
+#deepcat-hintbox a {
+    cursor: pointer;
 }
 
 #deepcat-smallhint-hide {
     float: right;
     cursor: pointer;
+}
+
+#deepcat-hint-hide {
+    float: right;
 }

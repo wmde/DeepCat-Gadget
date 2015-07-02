@@ -25,14 +25,9 @@
 				'deepcat-error-unknown-graph': 'Dieses Wiki wird von CatGraph nicht unterst&uuml;tzt.',
 				'deepcat-missing-category': 'Bitte gib eine Kategorie ein.',
 				'deepcat-hintbox-close': 'Zunk&uuml;nftig ausblenden',
-				'deepcat-hintbox-text': 'Du benutzt die <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-basierte Erweiterung der Suche mit dem <a href="//github.com/wmde/DeepCat-Gadget">DeepCat-Gadget</a>. ' +
-										'Diese Funktionalit&auml;t befindet sich in Entwicklung und unterliegt derzeit folgenden Einschr&auml;nkungen:' +
-										'<ul>' +
-											'<li>Die maximale Suchtiefe (Unterkategorien von Unterkategorien... usw) betr&auml;gt 10</li>' +
-											'<li>Die maximale Anzahl durchsuchter Kategorien pro <i>deepcat</i>-Keyword betr&auml;gt 50</li>' +
-										'</ul>' +
-										'Solltest du Fragen oder Vorschl&auml;ge haben oder Fehler bemerken, beteilige dich bitte an der ' +
-										'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">Diskussion</a>.',
+				'deepcat-hintbox-text': 'Momentane Einschränkung des DeepCat-Gadgets pro Suchbegriff:<br/>' +
+										'Max. Kategoriensuchtiefe: 10 / Max. Kategorienanzahl: 50<br/>' +
+										'<a style="float:left" href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_W%C3%BCnsche/Top_20#Prototyp_.E2.80.9EDeepcat.E2.80.9C-Gadget:_Einladung_zum_ersten_Testen" target="_blank">Weitere Informationen</a>',
 				'deepcat-hintbox-small': 'Max. Kategoriensuchtiefe: 10<br/>Max. Kategorienanzahl: 50'
 			} );
 			break;
@@ -43,14 +38,9 @@
 				'deepcat-error-unknown-graph': 'The Wiki is not supported by CatGraph.',
 				'deepcat-missing-category': 'Please insert a category.',
 				'deepcat-hintbox-close': 'Do not show again',
-				'deepcat-hintbox-text': 'You are using the <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-based search extension with the <a href="//github.com/wmde/DeepCat-Gadget">DeepCat Gadget</a>. ' +
-										'This functionality is under development. Currently it has the following limitations:' +
-										'<ul>' +
-											'<li>The maximum search depth (subcategories of subcategories... etc) is 10</li>' +
-											'<li>At most 50 categories are searched per <i>deepcat</i> keyword' +
-										'</ul>' +
-										'If you have questions or suggestions or if you experience problems, please join the ' +
-										'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">discussion</a>.',
+				'deepcat-hintbox-text': 'Current limits of the DeepCat-Gadgets per search word:<br/>' +
+										'Max. search depth: 10 / Max. result categories: 50<br/>' +
+										'<a style="float:left" href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_W%C3%BCnsche/Top_20#Prototyp_.E2.80.9EDeepcat.E2.80.9C-Gadget:_Einladung_zum_ersten_Testen"  target="_blank">Additional information</a>',
 				'deepcat-hintbox-small': 'Max. category-depth: 10<br/>Max. categories: 50'
 			} );
 			break;
@@ -377,9 +367,10 @@
 
 	function addSearchFormHint() {
 		var hintBox = '<div id="deepcat-hintbox">'
-						+ mw.msg( 'deepcat-hintbox-text' )
-						+ '<div style="text-align: right;">'
-							+ '<button id="deepcat-hint-hide">' + mw.msg( 'deepcat-hintbox-close' ) + '</button>'
+						+ '<img id="deepcat-info-img" src="//upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Information_icon4.svg/40px-Information_icon4.svg.png" style="display: none;"/>  '
+						+ '<div>'
+							+ mw.msg( 'deepcat-hintbox-text' )
+							+ '&nbsp;<a id="deepcat-hint-hide">' + mw.msg( 'deepcat-hintbox-close' ) + '</a>'
 						+ '</div></div>';
 		$( '#search' ).after( hintBox );
 		$( '#deepcat-hint-hide' ).on( 'click', hideHints );
