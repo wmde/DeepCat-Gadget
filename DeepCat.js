@@ -51,7 +51,7 @@
 										'</ul>' +
 										'If you have questions or suggestions or if you experience problems, please join the ' +
 										'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">discussion</a>.',
-				'deepcat-hintbox-small': 'Max. search depth for categories: 10<br/>Max. number of categories: 50'
+				'deepcat-hintbox-small': 'Max. category-depth: 10<br/>Max. categories: 50'
 			} );
 			break;
 	}
@@ -78,12 +78,23 @@
 
 		if ( !shouldHideHints ) {
 			addSearchFormHint();
+			addSmallFormHint();
 
 			$( '#searchText' ).on( 'keyup', function() {
 				if ( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
 					$( '#deepcat-hintbox' ).slideDown( 350 );
 				} else {
 					$( '#deepcat-hintbox' ).slideUp( 350 );
+				}
+			} );
+
+			$( '#searchInput' ).on( 'keyup', function() {
+				if ( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
+					disableSuggestions();
+					$( '#deepcat-smallhint' ).slideDown( 100 );
+				} else {
+					enableSuggestions();
+					$( '#deepcat-smallhint' ).slideUp( 100 );
 				}
 			} );
 		}
@@ -376,9 +387,9 @@
 	}
 
 	function addSmallFormHint() {
-		var smallHintBox = '<div id="deepcat-hintbox" style="background: #8af; padding: 0.35em;  margin-top: 0.25em; font-size:13px">'
+		var smallHintBox = '<div id="deepcat-smallhint" style="background: #8af; padding: 0.35em;  font-size:13px; display: none">'
 						+ '<img id="deepcat-smallhint-hide" title="' + mw.msg( 'deepcat-hintbox-close' ) + '" style="float: right;" src="https://upload.wikimedia.org/wikipedia/commons/4/44/Curation_bar_icon_close.png">'
-						+ mw.msg( 'deepcat-hintbox-small' ) +
+						+ mw.msg( 'deepcat-hintbox-small' )
 						+ '</div>';
 		$( '#searchform' ).after( smallHintBox );
 		$( '#deepcat-smallhint-hide' ).on( 'click', hideHints );
@@ -390,8 +401,20 @@
 
 	function hideHints() {
 		shouldHideHints = true;
+
 		$( '#deepcat-hintbox' ).hide();
+		$( '#deepcat-smallhint' ).hide();
+		enableSuggestions();
+
 		mw.cookie.set( "-deepcat-hintboxshown", makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ), { 'expires': 60 * 60 * 24 * 7 * 4 /*4 weeks*/ } );
+	}
+
+	function disableSuggestions() {
+		$( '.suggestions' ).css( 'z-index', -1 );
+	}
+
+	function enableSuggestions() {
+		$( '.suggestions' ).css( 'z-index', 'auto' );
 	}
 
 	/**
