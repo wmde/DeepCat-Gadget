@@ -80,10 +80,10 @@
 
 			$( '#searchInput' ).on( 'keyup', function() {
 				if ( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
-					disableSuggestions();
+					disableImeAndSuggestions();
 					$( '#deepcat-smallhint' ).slideDown( 100 );
 				} else {
-					enableSuggestions();
+					enableImeAndSuggestions();
 					$( '#deepcat-smallhint' ).slideUp( 100 );
 				}
 			} );
@@ -394,17 +394,19 @@
 
 		$( '#deepcat-hintbox' ).hide();
 		$( '#deepcat-smallhint' ).hide();
-		enableSuggestions();
+		enableImeAndSuggestions();
 
 		mw.cookie.set( "-deepcat-hintboxshown", makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ), { 'expires': 60 * 60 * 24 * 7 * 4 /*4 weeks*/ } );
 	}
 
-	function disableSuggestions() {
+	function disableImeAndSuggestions() {
 		$( '.suggestions' ).css( 'z-index', -1 );
+		$( '.imeselector' ).css( 'z-index', -1 );
 	}
 
-	function enableSuggestions() {
+	function enableImeAndSuggestions() {
 		$( '.suggestions' ).css( 'z-index', 'auto' );
+		$( '.imeselector' ).css( 'z-index', 'auto' );
 	}
 
 	/**
