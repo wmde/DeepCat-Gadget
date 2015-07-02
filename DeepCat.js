@@ -5,7 +5,6 @@
  * @licence GNU GPL v2+
  * @author Christoph Fischer < christoph.fischer@wikimedia.de >
  */
-
 ( function( $, mw ) {
 	var DeepCat = {};
 
@@ -13,10 +12,9 @@
 		maxDepth = 10,
 		maxResults = 50,
 		ajaxTimeout = 10000,
-		deepCatSearchTerms;
-	var DBname = mw.config.get( 'wgDBname' );
-	var requestUrl = '//tools.wmflabs.org/catgraph-jsonp/' + DBname +
-		'_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
+		deepCatSearchTerms,
+		requestUrl = '//tools.wmflabs.org/catgraph-jsonp/' + mw.config.get( 'wgDBname' )
+			+ '_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
 
 	switch ( mw.config.get( 'wgUserLanguage' ) ) {
 		case 'de':
@@ -24,10 +22,19 @@
 		case 'de-ch':
 		case 'de-formal':
 			mw.messages.set( {
-				'deepcat-error-notfound': 'CatGraph konnte die Kategorie \'{0}\' nicht finden.',
+				'deepcat-error-notfound': 'Die Kategorie \'{0}\' konnte nicht gefunden werden.',
 				'deepcat-error-tooldown': 'CatGraph-Tool ist zur Zeit nicht erreichbar.',
-				'deepcat-error-unknown-graph': 'Dieses Wiki wird von CatGraph nicht unterstützt.',
-				'deepcat-missing-category': 'Bitte gib eine Kategorie ein.'
+				'deepcat-error-unknown-graph': 'Dieses Wiki wird von CatGraph nicht unterst&uuml;tzt.',
+				'deepcat-missing-category': 'Bitte gib eine Kategorie ein.',
+				'deepcat-hintbox-close': 'Ausblenden',
+				'deepcat-hintbox-text': 'Du benutzt die <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-basierte Erweiterung der Suche mit dem <a href="//github.com/wmde/DeepCat-Gadget">DeepCat-Gadget</a>. ' +
+				'Diese Funktionalit&auml;t befindet sich in Entwicklung und unterliegt derzeit folgenden Einschr&auml;nkungen:' +
+				'<ul>' +
+				'<li>Die maximale Suchtiefe (Unterkategorien von Unterkategorien... usw) betr&auml;gt 10</li>' +
+				'<li>Die maximale Anzahl durchsuchter Kategorien pro <i>deepcat</i>-Keyword betr&auml;gt 50</li>' +
+				'</ul>' +
+				'Solltest du Fragen oder Vorschl&auml;ge haben oder Fehler bemerken, beteilige dich bitte an der ' +
+				'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">Diskussion</a>.'
 			} );
 			break;
 		case 'en':
@@ -36,7 +43,16 @@
 				'deepcat-error-notfound': 'CatGraph could not find the category \'{0}\'.',
 				'deepcat-error-tooldown': 'CatGraph-Tool is not reachable.',
 				'deepcat-error-unknown-graph': 'The Wiki is not supported by CatGraph.',
-				'deepcat-missing-category': 'Please insert a category.'
+				'deepcat-missing-category': 'Please insert a category.',
+				'deepcat-hintbox-close': 'Hide',
+				'deepcat-hintbox-text': 'You are using the <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-based search extension with the <a href="//github.com/wmde/DeepCat-Gadget">DeepCat Gadget</a>. ' +
+				'This functionality is under development. Currently it has the following limitations:' +
+				'<ul>' +
+				'<li>The maximum search depth (subcategories of subcategories... etc) is 10</li>' +
+				'<li>At most 50 categories are searched per <i>deepcat</i> keyword' +
+				'</ul>' +
+				'If you have questions or suggestions or if you experience problems, please join the ' +
+				'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">discussion</a>.'
 			} );
 			break;
 	}
@@ -59,15 +75,19 @@
 			}
 		} );
 
-		refreshSearchTermMock();
-		checkErrorMessage();
+		if ( refreshSearchTermMock() ) {
+			showHint();
+			checkErrorMessage();
+		}
 	} );
 
 	function sendAjaxRequests( searchTerms ) {
-		var requests = [];
+		var i,
+			requests = [];
+
 		addAjaxThrobber();
 
-		for ( var i = 0; i < searchTerms.length; i++ ) {
+		for ( i = 0; i < searchTerms.length; i++ ) {
 			if ( matchesDeepCatKeyword( searchTerms[i] ) ) {
 				requests.push( getAjaxRequest( searchTerms[i], i ) );
 			}
@@ -94,9 +114,11 @@
 	}
 
 	function receiveAjaxResponses() {
-		var responses = [], errors = [];
-		var newSearchTerms = deepCatSearchTerms;
-		var i, ajaxResponse;
+		var i,
+			ajaxResponse,
+			responses = [],
+			errors = [],
+			newSearchTerms = deepCatSearchTerms;
 
 		removeAjaxThrobber();
 
@@ -128,7 +150,9 @@
 	}
 
 	function computeResponses( responses, newSearchTerms ) {
-		var i, userParameters, newSearchTermString;
+		var i,
+			userParameters,
+			newSearchTermString;
 
 		for ( i = 0; i < responses.length; i++ ) {
 			userParameters = JSON.parse( responses[i]['userparam'] );
@@ -146,8 +170,10 @@
 	}
 
 	function computeErrors( errors, newSearchTerms ) {
-		var errorMessages = [];
-		var i, userParameters, categoryError;
+		var i,
+			userParameters,
+			categoryError,
+			errorMessages = [];
 
 		for ( i = 0; i < errors.length; i++ ) {
 			userParameters = JSON.parse( errors[i]['userparam'] );
@@ -253,14 +279,26 @@
 		} );
 	}
 
+	/**
+	 * @param {string} input
+	 * @returns {string[]}
+	 */
 	DeepCat.getSearchTerms = function( input ) {
 		return input.match( searchTermRegExp( keyString ) );
 	};
 
+	/**
+	 * @param {string} input
+	 * @returns {boolean}
+	 */
 	function matchesDeepCatKeyword( input ) {
 		return input.match( new RegExp( keyString ) )
 	}
 
+	/**
+	 * @param {string} searchTerm
+	 * @returns {string}
+	 */
 	function extractDeepCatCategory( searchTerm ) {
 		var categoryString = searchTerm.replace( new RegExp( '-?' + keyString + '([\\s]*)' ), '' );
 		categoryString = categoryString.replace( / /g, '_' );
@@ -268,8 +306,9 @@
 	}
 
 	function checkErrorMessage() {
-		var i, message;
-		var deepCatErrors = mw.util.getParamValue( 'deepCatError' );
+		var deepCatErrors = mw.util.getParamValue( 'deepCatError' ),
+			i,
+			message;
 
 		if ( deepCatErrors ) {
 			deepCatErrors = JSON.parse( deepCatErrors );
@@ -295,7 +334,9 @@
 			substituteInputValues( deepCatSearch );
 			substituteTitle( deepCatSearch );
 			appendToSearchLinks( deepCatSearch );
+			return true;
 		}
+		return false;
 	}
 
 	function addAjaxThrobber() {
@@ -308,11 +349,68 @@
 		$( '#searchText' ).removeClass( 'deep-cat-throbber-big' );
 	}
 
+	function showHint() {
+		if ( mw.cookie.get( "-deepcat-hintboxshown" ) != makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ) ) {
+			var parent = document.getElementById( 'mw-content-text' );
+			var sresults = document.getElementsByClassName( 'searchresults' )[0];
+			var d = parent.insertBefore( document.createElement( 'div' ), sresults );
+			d.style.marginTop = "1em";
+			d.style.marginBottom = "1em";
+			d.innerHTML =
+				'<div id="deepcat-hintbox" style="background:#8af; padding:.75em; width:75%">' +
+				mw.msg( 'deepcat-hintbox-text' ) +
+				"</div>";
+			var hideButton = document.createElement( 'button' );
+			hideButton.innerHTML = mw.msg( 'deepcat-hintbox-close' );
+			hideButton.onclick = hideHint;
+			var buttonContainer = document.createElement( 'div' );
+			buttonContainer.style.textAlign = "right";
+			buttonContainer.appendChild( hideButton );
+			document.getElementById( 'deepcat-hintbox' ).appendChild( buttonContainer );
+		}
+	}
+
+	function hideHint() {
+		document.getElementById( 'deepcat-hintbox' ).style.display = "none";
+		mw.cookie.set( "-deepcat-hintboxshown", makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ), { 'expires': 60 * 60 * 24 * 7 * 4 /*4 weeks*/ } );
+	}
+
+	/**
+	 * Hash function for generating hint box cookie token.
+	 * @see http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
+	 * @param {string} str
+	 * @returns {number}
+	 */
+	function djb2Code( str ) {
+		var hash = 5381,
+			i;
+
+		for ( i = 0; i < str.length; i++ ) {
+			hash =  ( ( hash << 5 ) + hash ) + str.charCodeAt( i );
+		}
+
+		return hash;
+	}
+
+	/**
+	 * @param {string} str
+	 * @returns {string}
+	 */
+	function makeHintboxCookieToken( str ) {
+		return String( djb2Code( str ) );
+	}
+
+	/**
+	 * @returns {string}
+	 */
 	function stringFormat() {
-		var s = arguments[0];
-		for ( var i = 0; i < arguments.length - 1; i++ ) {
+		var i,
+			s = arguments[0];
+
+		for ( i = 0; i < arguments.length - 1; i++ ) {
 			s = s.replace( new RegExp( "\\{" + i + "\\}", "gm" ), arguments[i + 1] );
 		}
+
 		return s;
 	}
 
@@ -333,4 +431,5 @@
 	}
 
 	mw.libs.deepCat = DeepCat;
+
 }( jQuery, mediaWiki ) );
