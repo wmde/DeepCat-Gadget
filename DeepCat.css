@@ -18,7 +18,6 @@
     background: #f3f3f3;
     border: 1px solid silver;
     font-size: 13px;
-    display: none;
 }
 
 #deepcat-hintbox {
@@ -36,6 +35,7 @@
 
 #deepcat-smallhint {
     padding: .30em;
+    display: none;
 }
 
 #deepcat-hintbox a {
