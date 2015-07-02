@@ -280,10 +280,11 @@
 	 * @return {string[]}
 	 */
 	DeepCat.getSearchTerms = function( input ) {
-		return input.match( '(-?\\b' + keyString + '\\s*'
+		return input.match( new RegExp(
+							'(-?\\b' + keyString + '\\s*'
 							+ '(?:("([^\\"]|\\.)+")' 			// search for keyword:"term including \"escaped\" quotes"
 							+ '|(?!' + keyString + ')\\S+))' 	// search for keyword:term excluding keyword term as parameter
-							+ '|(\\S+)', 'gi' ); 				// get remaining keyword unrelated stuff into the array
+							+ '|(\\S+)', 'gi' ) ); 				// get remaining keyword unrelated stuff into the array
 	}
 
 	/**
