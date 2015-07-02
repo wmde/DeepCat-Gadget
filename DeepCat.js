@@ -6,6 +6,8 @@
  * @author Christoph Fischer < christoph.fischer@wikimedia.de >
  */
 ( function( $, mw ) {
+	var DeepCat = {};
+
 	var keyString = 'deepcat:',
 		maxDepth = 10,
 		maxResults = 50,
@@ -281,9 +283,9 @@
 	 * @param {string} input
 	 * @return {string[]}
 	 */
-	function getSearchTerms( input ) {
+	DeepCat.getSearchTerms = function( input ) {
 		return input.match( searchTermRegExp( keyString ) );
-	}
+	};
 
 	/**
 	 * @param {string} input
@@ -427,5 +429,7 @@
 			} );
 		} );
 	}
+
+	mw.libs.deepCat = DeepCat;
 
 }( jQuery, mediaWiki ) );
