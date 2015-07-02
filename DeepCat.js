@@ -5,17 +5,14 @@
  * @licence GNU GPL v2+
  * @author Christoph Fischer < christoph.fischer@wikimedia.de >
  */
-
 ( function( $, mw ) {
 	var keyString = 'deepcat:',
 		maxDepth = 10,
 		maxResults = 50,
 		ajaxTimeout = 10000,
 		deepCatSearchTerms,
-		shouldHideHints = false;
-	var DBname = mw.config.get( 'wgDBname' );
-	var requestUrl = '//tools.wmflabs.org/catgraph-jsonp/' + DBname +
-		'_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
+		requestUrl = '//tools.wmflabs.org/catgraph-jsonp/' + mw.config.get( 'wgDBname' )
+			+ '_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
 
 	switch ( mw.config.get( 'wgUserLanguage' ) ) {
 		case 'de':
@@ -23,7 +20,7 @@
 		case 'de-ch':
 		case 'de-formal':
 			mw.messages.set( {
-				'deepcat-error-notfound': 'CatGraph konnte die Kategorie \'{0}\' nicht finden.',
+				'deepcat-error-notfound': 'Die Kategorie \'{0}\' konnte nicht gefunden werden.',
 				'deepcat-error-tooldown': 'CatGraph-Tool ist zur Zeit nicht erreichbar.',
 				'deepcat-error-unknown-graph': 'Dieses Wiki wird von CatGraph nicht unterst&uuml;tzt.',
 				'deepcat-missing-category': 'Bitte gib eine Kategorie ein.',
@@ -98,10 +95,12 @@
 	} );
 
 	function sendAjaxRequests( searchTerms ) {
-		var requests = [];
+		var i,
+			requests = [];
+
 		addAjaxThrobber();
 
-		for ( var i = 0; i < searchTerms.length; i++ ) {
+		for ( i = 0; i < searchTerms.length; i++ ) {
 			if ( matchesDeepCatKeyword( searchTerms[i] ) ) {
 				requests.push( getAjaxRequest( searchTerms[i], i ) );
 			}
@@ -128,9 +127,11 @@
 	}
 
 	function receiveAjaxResponses() {
-		var responses = [], errors = [];
-		var newSearchTerms = deepCatSearchTerms;
-		var i, ajaxResponse;
+		var i,
+			ajaxResponse,
+			responses = [],
+			errors = [],
+			newSearchTerms = deepCatSearchTerms;
 
 		removeAjaxThrobber();
 
@@ -162,7 +163,9 @@
 	}
 
 	function computeResponses( responses, newSearchTerms ) {
-		var i, userParameters, newSearchTermString;
+		var i,
+			userParameters,
+			newSearchTermString;
 
 		for ( i = 0; i < responses.length; i++ ) {
 			userParameters = JSON.parse( responses[i]['userparam'] );
@@ -180,8 +183,10 @@
 	}
 
 	function computeErrors( errors, newSearchTerms ) {
-		var errorMessages = [];
-		var i, userParameters, categoryError;
+		var i,
+			userParameters,
+			categoryError,
+			errorMessages = [];
 
 		for ( i = 0; i < errors.length; i++ ) {
 			userParameters = JSON.parse( errors[i]['userparam'] );
@@ -287,14 +292,26 @@
 		} );
 	}
 
+	/**
+	 * @param {string} input
+	 * @returns {string[]}
+	 */
 	function getSearchTerms( input ) {
 		return input.match( searchTermRegExp( keyString ) );
 	}
 
+	/**
+	 * @param {string} input
+	 * @returns {boolean}
+	 */
 	function matchesDeepCatKeyword( input ) {
 		return input.match( new RegExp( keyString ) )
 	}
 
+	/**
+	 * @param {string} searchTerm
+	 * @returns {string}
+	 */
 	function extractDeepCatCategory( searchTerm ) {
 		var categoryString = searchTerm.replace( new RegExp( '-?' + keyString + '([\\s]*)' ), '' );
 		categoryString = categoryString.replace( / /g, '_' );
@@ -302,8 +319,9 @@
 	}
 
 	function checkErrorMessage() {
-		var i, message;
-		var deepCatErrors = mw.util.getParamValue( 'deepCatError' );
+		var deepCatErrors = mw.util.getParamValue( 'deepCatError' ),
+			i,
+			message;
 
 		if ( deepCatErrors ) {
 			deepCatErrors = JSON.parse( deepCatErrors );
@@ -365,27 +383,42 @@
 		mw.cookie.set( "-deepcat-hintboxshown", makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ), { 'expires': 60 * 60 * 24 * 7 * 4 /*4 weeks*/ } );
 	}
 
-	// hash function for generating hint box cookie token.
-	// see http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
+	/**
+	 * Hash function for generating hint box cookie token.
+	 * @see http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
+	 * @param {string} str
+	 * @returns {number}
+	 */
 	function djb2Code( str ) {
-		var hash = 5381;
+		var hash = 5381,
+			i;
+
 		for ( i = 0; i < str.length; i++ ) {
-			char = str.charCodeAt( i );
-			hash = ((hash << 5) + hash) + char;
-			/* hash * 33 + c */
+			hash =  ( ( hash << 5 ) + hash ) + str.charCodeAt( i );
 		}
+
 		return hash;
 	}
 
+	/**
+	 * @param {string} str
+	 * @returns {string}
+	 */
 	function makeHintboxCookieToken( str ) {
 		return String( djb2Code( str ) );
 	}
 
+	/**
+	 * @returns {string}
+	 */
 	function stringFormat() {
-		var s = arguments[0];
-		for ( var i = 0; i < arguments.length - 1; i++ ) {
+		var i,
+			s = arguments[0];
+
+		for ( i = 0; i < arguments.length - 1; i++ ) {
 			s = s.replace( new RegExp( "\\{" + i + "\\}", "gm" ), arguments[i + 1] );
 		}
+
 		return s;
 	}
 
@@ -404,4 +437,5 @@
 			} );
 		} );
 	}
+
 }( jQuery, mediaWiki ) );
