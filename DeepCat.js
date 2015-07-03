@@ -13,7 +13,6 @@
 		maxResults = 50,
 		ajaxTimeout = 10000,
 		deepCatSearchTerms,
-		errors = [],
 		requestUrl = '//tools.wmflabs.org/catgraph-jsonp/' + mw.config.get( 'wgDBname' )
 			+ '_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
 
@@ -84,6 +83,21 @@
 		}
 	} );
 
+	DeepCat.ResponseErrors = {};
+
+	DeepCat.ResponseErrors.reset = function() {
+		this.errors = [];
+	};
+
+	DeepCat.ResponseErrors.addError = function( err ) {
+		this.errors.push( err );
+	};
+
+	DeepCat.ResponseErrors.getErrors = function() {
+		return this.errors ? this.errors : [];
+	};
+
+
 	function sendAjaxRequests( searchTerms ) {
 		var i,
 			requests = [];
@@ -120,10 +134,10 @@
 		var i,
 			ajaxResponse,
 			responses = [],
+			errors = [],
 			newSearchTerms = deepCatSearchTerms;
 
-		errors = [];
-
+		DeepCat.ResponseErrors.reset();
 		removeAjaxThrobber();
 
 		//single request leads to different variable structure
@@ -184,8 +198,7 @@
 	function computeErrors( errors, newSearchTerms ) {
 		var i,
 			userParameters,
-			categoryError,
-			errorMessages = [];
+			categoryError;
 
 		for ( i = 0; i < errors.length; i++ ) {
 			userParameters = JSON.parse( errors[i]['userparam'] );
@@ -193,16 +206,16 @@
 
 			if ( !categoryError ) {
 				if ( 'Graph not found' == errors[i].statusMessage ) {
-					errorMessages.push(
+					DeepCat.ResponseErrors.addError(
 						createErrorMessage( 'deepcat-error-unknown-graph', null )
 					);
 				}
 			} else if ( categoryError[2].length === 0 ) {
-				errorMessages.push(
+				DeepCat.ResponseErrors.addError(
 					createErrorMessage( 'deepcat-missing-category', null )
 				);
 			} else if ( categoryError[2].length > 0 ) {
-				errorMessages.push(
+				DeepCat.ResponseErrors.addError(
 					createErrorMessage( 'deepcat-error-notfound', categoryError[2] )
 				);
 			}
@@ -210,7 +223,7 @@
 			newSearchTerms[userParameters['searchTermNum']] = '';
 		}
 
-		addErrorMsgField( errorMessages );
+		addErrorMsgField( DeepCat.ResponseErrors.getErrors() );
 		return newSearchTerms;
 	}
 
