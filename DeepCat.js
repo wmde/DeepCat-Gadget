@@ -13,6 +13,7 @@
 		maxResults = 50,
 		ajaxTimeout = 10000,
 		deepCatSearchTerms,
+		errors = [],
 		requestUrl = '//tools.wmflabs.org/catgraph-jsonp/' + mw.config.get( 'wgDBname' )
 			+ '_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
 
@@ -25,6 +26,7 @@
 				'deepcat-error-notfound': 'Die Kategorie \'{0}\' konnte nicht gefunden werden.',
 				'deepcat-error-tooldown': 'CatGraph-Tool ist zur Zeit nicht erreichbar.',
 				'deepcat-error-unknown-graph': 'Dieses Wiki wird von CatGraph nicht unterst&uuml;tzt.',
+				'deepcat-error-unexpected-response': "CatGraph-Tool lieferte ein unerwartetes Ergebnis.",
 				'deepcat-missing-category': 'Bitte gib eine Kategorie ein.',
 				'deepcat-hintbox-close': 'Ausblenden',
 				'deepcat-hintbox-text': 'Du benutzt die <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-basierte Erweiterung der Suche mit dem <a href="//github.com/wmde/DeepCat-Gadget">DeepCat-Gadget</a>. ' +
@@ -43,6 +45,7 @@
 				'deepcat-error-notfound': 'CatGraph could not find the category \'{0}\'.',
 				'deepcat-error-tooldown': 'CatGraph-Tool is not reachable.',
 				'deepcat-error-unknown-graph': 'The Wiki is not supported by CatGraph.',
+				'deepcat-error-unexpected-response': "CatGraph-Tool returned an unexpected response.",
 				'deepcat-missing-category': 'Please insert a category.',
 				'deepcat-hintbox-close': 'Hide',
 				'deepcat-hintbox-text': 'You are using the <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-based search extension with the <a href="//github.com/wmde/DeepCat-Gadget">DeepCat Gadget</a>. ' +
@@ -117,8 +120,9 @@
 		var i,
 			ajaxResponse,
 			responses = [],
-			errors = [],
 			newSearchTerms = deepCatSearchTerms;
+
+		errors = [];
 
 		removeAjaxThrobber();
 
@@ -152,11 +156,17 @@
 	function computeResponses( responses, newSearchTerms ) {
 		var i,
 			userParameters,
-			newSearchTermString;
+			newSearchTermString,
+			errorMessages = [];
 
 		for ( i = 0; i < responses.length; i++ ) {
 			userParameters = JSON.parse( responses[i]['userparam'] );
 			newSearchTermString = '';
+
+			if ( !responses[i]['result'] || responses[i]['result'].length == 0) {
+				errorMessages[0] = createErrorMessage( 'deepcat-error-unexpected-response', null );
+				newSearchTerms[userParameters['searchTermNum']] = '';
+			}
 
 			if ( userParameters['negativeSearch'] ) {
 				newSearchTermString += '-';
@@ -165,6 +175,8 @@
 
 			newSearchTerms[userParameters['searchTermNum']] = newSearchTermString;
 		}
+
+		errors.concat(errorMessages);
 
 		return newSearchTerms;
 	}
