@@ -11,6 +11,7 @@
 		maxResults = 50,
 		ajaxTimeout = 10000,
 		deepCatSearchTerms,
+		shouldHideHints = false,
 		requestUrl = '//tools.wmflabs.org/catgraph-jsonp/' + mw.config.get( 'wgDBname' )
 			+ '_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
 
