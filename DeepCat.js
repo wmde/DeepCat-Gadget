@@ -201,14 +201,14 @@
 			}
 		}
 
-		newSearchTerms = computeResponses( responses, newSearchTerms );
+		newSearchTerms = DeepCat.computeResponses( responses, newSearchTerms );
 		newSearchTerms = computeErrors( errors, newSearchTerms );
 
 		substituteSearchRequest( newSearchTerms.join( ' ' ) );
 		$( '#searchform' ).submit();
 	}
 
-	function computeResponses( responses, newSearchTerms ) {
+	DeepCat.computeResponses = function( responses, newSearchTerms ) {
 		var i,
 			userParameters,
 			newSearchTermString,
