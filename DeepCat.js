@@ -167,7 +167,7 @@
 		}
 
 		return newSearchTerms;
-	}
+	};
 
 	function computeErrors( errors, newSearchTerms ) {
 		var i,
@@ -249,7 +249,7 @@
 				value: JSON.stringify( errorMessages )
 			} ).appendTo( '#searchform' );
 		}
-	}
+	};
 
 	function showErrorMessage( message ) {
 		var output = mw.html.element( 'div', { class: 'searchresults' }, new mw.html.Raw(
