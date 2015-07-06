@@ -96,38 +96,38 @@
 		);
 	} );
 
-    QUnit.test( 'computeResponses', function( assert ) {
-        var responseForTerm0 = {
-                result: [[1],[2],[3]],
-                userparam: '{"negativeSearch":false,"searchTermNum":0}'
-            },
-            responseForTerm2 = {
-                result: [[4],[5]],
-                userparam: '{"negativeSearch":false,"searchTermNum":2}'
-            },
-            responseWithNegativeSearch = {
-                result: [[6],[7]],
-                userparam: '{"negativeSearch":true,"searchTermNum":0}'
-            };
-        assert.deepEqual(
-            deepCat.computeResponses( [], []),
-            [],
-            'computeResponses: Empty response returns empty search terms'
-        );
-        assert.deepEqual(
-            deepCat.computeResponses( [responseForTerm0], ['deepcat:a', 'b']),
-            [ 'incategory:id:1|id:2|id:3', 'b' ],
-            'computeResponses: deepcat terms are replaced with incategory search terms computed from response'
-        );
-        assert.deepEqual(
-            deepCat.computeResponses( [responseForTerm2, responseForTerm0], ['deepcat:a', 'c', 'deepcat:b']),
-            [ 'incategory:id:1|id:2|id:3', 'c', 'incategory:id:4|id:5' ],
-            'computeResponses: Multiple responses are placed in the right order, regardless of response order'
-        );
-        assert.deepEqual(
-            deepCat.computeResponses( [responseWithNegativeSearch], ['-deepcat:c', 'b']),
-            [ '-incategory:id:6|id:7', 'b' ],
-            'computeResponses: NegativeSearch in responses create minus prefix for incategory search terms'
-        );
-    } );
+	QUnit.test( 'computeResponses', function( assert ) {
+		var responseForTerm0 = {
+				result: [[1],[2],[3]],
+				userparam: '{"negativeSearch":false,"searchTermNum":0}'
+			},
+			responseForTerm2 = {
+				result: [[4],[5]],
+				userparam: '{"negativeSearch":false,"searchTermNum":2}'
+			},
+			responseWithNegativeSearch = {
+				result: [[6],[7]],
+				userparam: '{"negativeSearch":true,"searchTermNum":0}'
+			};
+		assert.deepEqual(
+			deepCat.computeResponses( [], []),
+			[],
+			'computeResponses: Empty response returns empty search terms'
+		);
+		assert.deepEqual(
+			deepCat.computeResponses( [responseForTerm0], ['deepcat:a', 'b']),
+			[ 'incategory:id:1|id:2|id:3', 'b' ],
+			'computeResponses: deepcat terms are replaced with incategory search terms computed from response'
+		);
+		assert.deepEqual(
+			deepCat.computeResponses( [responseForTerm2, responseForTerm0], ['deepcat:a', 'c', 'deepcat:b']),
+			[ 'incategory:id:1|id:2|id:3', 'c', 'incategory:id:4|id:5' ],
+			'computeResponses: Multiple responses are placed in the right order, regardless of response order'
+		);
+		assert.deepEqual(
+			deepCat.computeResponses( [responseWithNegativeSearch], ['-deepcat:c', 'b']),
+			[ '-incategory:id:6|id:7', 'b' ],
+			'computeResponses: NegativeSearch in responses create minus prefix for incategory search terms'
+		);
+	} );
 }( mediaWiki.libs.deepCat, jQuery, QUnit ) );
