@@ -209,6 +209,10 @@
 					DeepCat.ResponseErrors.addError(
 						createErrorMessage( 'deepcat-error-unknown-graph', null )
 					);
+				} else { // Unknown error message, shouldn't happen
+					DeepCat.ResponseErrors.addError(
+						createErrorMessage( 'deepcat-error-unexpected-response', null )
+					);
 				}
 			} else if ( categoryError[2].length === 0 ) {
 				DeepCat.ResponseErrors.addError(
