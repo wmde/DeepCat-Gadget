@@ -190,7 +190,7 @@
 			newSearchTerms[userParameters['searchTermNum']] = newSearchTermString;
 		}
 
-		errors.concat(errorMessages);
+		DeepCat.ResponseErrors.addError(errorMessages);
 
 		return newSearchTerms;
 	}
