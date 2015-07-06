@@ -198,7 +198,7 @@
 			newSearchTerms[userParameters['searchTermNum']] = '';
 		}
 
-		addErrorMsgField( errorMessages );
+		DeepCat.addErrorMsgField( errorMessages );
 		return newSearchTerms;
 	}
 
@@ -221,7 +221,7 @@
 
 	function ajaxError( data ) {
 		mw.log( 'ajax request error: ' + JSON.stringify( data ) );
-		addErrorMsgField( [createErrorMessage( 'deepcat-error-tooldown', null )] );
+		DeepCat.addErrorMsgField( [createErrorMessage( 'deepcat-error-tooldown', null )] );
 
 		substituteSearchRequest( ' ' );
 		$( '#searchform' ).submit();
@@ -241,7 +241,7 @@
 		} ).appendTo( '#searchform' );
 	}
 
-	function addErrorMsgField( errorMessages ) {
+	DeepCat.addErrorMsgField = function( errorMessages ) {
 		if ( errorMessages.length > 0 ) {
 			$( '<input>' ).attr( {
 				type: 'hidden',
