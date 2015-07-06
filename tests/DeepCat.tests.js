@@ -154,5 +154,51 @@
 			[ '-incategory:id:6|id:7', 'b' ],
 			'computeResponses: NegativeSearch in responses create minus prefix for incategory search terms'
 		);
+		// TODO test error handling for empty results when pull request https://github.com/wmde/DeepCat-Gadget/pull/39 is done.
+	} );
+
+	QUnit.test( 'computeErrors', function( assert ) {
+		var oldAddErrorMsgField, lastError, testError,
+			searchTerms = ['deepcat:a', 'b'];
+		oldAddErrorMsgField = deepCat.addErrorMsgField;
+		// mock function to check for side effects of computeErrors
+		deepCat.addErrorMsgField = function (errors) {
+			lastError = errors;
+		};
+		testError = [{statusMessage:'Graph not found', userparam: '{"searchTermNum":0}'}];
+		assert.deepEqual(
+			deepCat.computeErrors(testError, searchTerms),
+			['', 'b'],
+			'computeErrors: Clear search term if wiki is not supported.'
+		);
+		assert.deepEqual(
+			lastError,
+			[{mwMessage: 'deepcat-error-unknown-graph', parameter: null}],
+			'computeErrors: "Graph not found" error creates correct message.'
+		);
+		testError = [{statusMessage:'RuntimeError: Category \'a\' not found in wiki', userparam: '{"searchTermNum":0}'}];
+		assert.deepEqual(
+			deepCat.computeErrors(testError, searchTerms),
+			['', 'b'],
+			'computeErrors: Clear search term if category is not found.'
+		);
+		assert.deepEqual(
+			lastError,
+			[{mwMessage: 'deepcat-error-notfound', parameter: 'a'}],
+			'computeErrors: "Category x not found" error creates correct message and returns x.'
+		);
+		testError = [{statusMessage:'RuntimeError: Category \'\' not found in wiki', userparam: '{"searchTermNum":0}'}];
+		assert.deepEqual(
+			deepCat.computeErrors(testError, searchTerms),
+			['', 'b'],
+			'computeErrors: Clear search term if category is missing.'
+		);
+		assert.deepEqual(
+			lastError,
+			[{mwMessage: 'deepcat-missing-category', parameter: null}],
+			'computeErrors: "Category not found" error creates correct message.'
+		);
+		// restore original function
+		deepCat.addErrorMsgField = oldAddErrorMsgField;
 	} );
 }( mediaWiki.libs.deepCat, jQuery, QUnit ) );
