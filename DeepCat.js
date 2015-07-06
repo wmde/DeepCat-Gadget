@@ -62,7 +62,7 @@
 			var searchInput = $( this ).find( '[name="search"]' ).val();
 
 			if ( matchesDeepCatKeyword( searchInput ) ) {
-				deepCatSearchTerms = getSearchTerms( searchInput );
+				deepCatSearchTerms = DeepCat.getSearchTerms( searchInput );
 
 				e.preventDefault();
 
