@@ -171,6 +171,12 @@
 		} )
 	}
 
+	/**
+	 * Process all the AJAX responses from catgraph-jsonp, modify the search string and
+	 * re-submit the search form.
+	 *
+	 * This function can receive an arbitrary number of parameters.
+	 */
 	function receiveAjaxResponses() {
 		var i,
 			ajaxResponse,
