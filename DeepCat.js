@@ -143,7 +143,7 @@
 		}
 
 		newSearchTerms = DeepCat.computeResponses( responses, newSearchTerms );
-		newSearchTerms = computeErrors( errors, newSearchTerms );
+		newSearchTerms = DeepCat.computeErrors( errors, newSearchTerms );
 
 		substituteSearchRequest( newSearchTerms.join( ' ' ) );
 		$( '#searchform' ).submit();
@@ -169,7 +169,7 @@
 		return newSearchTerms;
 	};
 
-	function computeErrors( errors, newSearchTerms ) {
+	DeepCat.computeErrors = function( errors, newSearchTerms ) {
 		var i,
 			userParameters,
 			categoryError,
@@ -200,7 +200,7 @@
 
 		DeepCat.addErrorMsgField( errorMessages );
 		return newSearchTerms;
-	}
+	};
 
 	function createErrorMessage( mwMessage, parameter ) {
 		return {
