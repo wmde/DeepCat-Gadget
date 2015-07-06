@@ -237,7 +237,7 @@
 		}
 
 		return newSearchTerms;
-	}
+	};
 
 	function computeErrors( errors, newSearchTerms ) {
 		var i,
@@ -271,7 +271,7 @@
 			newSearchTerms[userParameters['searchTermNum']] = '';
 		}
 
-		addErrorMsgField( DeepCat.ResponseErrors.getErrors() );
+		DeepCat.addErrorMsgField( DeepCat.ResponseErrors.getErrors() );
 		return newSearchTerms;
 	}
 
@@ -294,7 +294,7 @@
 
 	function ajaxError( data ) {
 		mw.log( 'ajax request error: ' + JSON.stringify( data ) );
-		addErrorMsgField( [createErrorMessage( 'deepcat-error-tooldown', null )] );
+		DeepCat.addErrorMsgField( [createErrorMessage( 'deepcat-error-tooldown', null )] );
 
 		substituteSearchRequest( ' ' );
 		$( '#searchform' ).submit();
@@ -314,7 +314,7 @@
 		} ).appendTo( '#searchform' );
 	}
 
-	function addErrorMsgField( errorMessages ) {
+	DeepCat.addErrorMsgField = function( errorMessages ) {
 		if ( errorMessages.length > 0 ) {
 			$( '<input>' ).attr( {
 				type: 'hidden',
@@ -322,7 +322,7 @@
 				value: JSON.stringify( errorMessages )
 			} ).appendTo( '#searchform' );
 		}
-	}
+	};
 
 	function showErrorMessage( message ) {
 		var output = mw.html.element( 'div', { class: 'searchresults' }, new mw.html.Raw(
