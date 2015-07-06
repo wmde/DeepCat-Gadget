@@ -209,6 +209,13 @@
 		$( '#searchform' ).submit();
 	}
 
+	/**
+	 * Replace "deepcat:" search terms with "incategory:" terms from DeepCat response
+	 *
+	 * @param {array} responses Category search results
+	 * @param {array} newSearchTerms Original search terms provided by the user
+	 * @returns {array} Modified newSearchTerms
+	 */
 	DeepCat.computeResponses = function( responses, newSearchTerms ) {
 		var i,
 			userParameters,
@@ -241,6 +248,13 @@
 		return newSearchTerms;
 	};
 
+	/**
+	 * Add error messages to search form, remove erroneous search terms
+	 *
+	 * @param {array} errors Errors from DeepCat
+	 * @param {array} newSearchTerms Original search terms provided by the user
+	 * @returns {array} Modified newSearchTerms
+	 */
 	DeepCat.computeErrors = function( errors, newSearchTerms ) {
 		var i,
 			userParameters,
