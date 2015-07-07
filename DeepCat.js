@@ -113,7 +113,7 @@
 	 * @returns {Array}
 	 */
 	DeepCat.ResponseErrors.getErrors = function() {
-		return this.errors ? this.errors : [];
+		return this.errors || [];
 	};
 
 
