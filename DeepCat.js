@@ -83,16 +83,35 @@
 		}
 	} );
 
-	DeepCat.ResponseErrors = {};
+	/**
+	 * ResponseErrors is a storage object that collects error messages in
+	 * methods that process the AJAX responses from CatGraph
+	 *
+	 * @type {{errors: Array}}
+	 */
+	DeepCat.ResponseErrors = {
+		errors:[]
+	};
 
+	/**
+	 * Remove all previously collected errors
+	 */
 	DeepCat.ResponseErrors.reset = function() {
 		this.errors = [];
 	};
 
+	/**
+	 * Append an error message
+	 * @param {Object} err Error message object containing mwMessage and parameters
+	 */
 	DeepCat.ResponseErrors.addError = function( err ) {
 		this.errors.push( err );
 	};
 
+	/**
+	 * Return collected errors
+	 * @returns {Array}
+	 */
 	DeepCat.ResponseErrors.getErrors = function() {
 		return this.errors ? this.errors : [];
 	};
