@@ -281,10 +281,11 @@
 	 */
 	DeepCat.getSearchTerms = function( input ) {
 		return input.match( new RegExp(
-							'(-?\\b' + keyString + '\\s*'
-							+ '(?:("([^\\"]|\\.)+")' 			// search for keyword:"term including \"escaped\" quotes"
-							+ '|(?!' + keyString + ')\\S+))' 	// search for keyword:term excluding keyword term as parameter
-							+ '|(\\S+)', 'gi' ) ); 				// get remaining keyword unrelated stuff into the array
+							'-?\\b' + keyString + '\\s*(?:'
+							+ '"(?:[^\\\\"]|\\\\.)+"' //quoted strings including spaces and escaped quotes
+							+ '|(?!-?' + keyString + ')\\S+' //unquoted strings, but skip duplicate keywords
+							+ ')|\\S+', //fetch remaining non-deepcat stuff
+							'gi' ) );
 	};
 
 	/**
