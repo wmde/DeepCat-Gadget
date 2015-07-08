@@ -69,6 +69,16 @@
 			'getSearchTerms: empty DeepCat search terms are recognized'
 		);
 		assert.deepEqual(
+			deepCat.getSearchTerms( 'deepcat: deepcat:' ),
+			[ 'deepcat:', 'deepcat:' ],
+			'getSearchTerms: repeating empty DeepCat search terms are recognized'
+		);
+		assert.deepEqual(
+			deepCat.getSearchTerms( 'deepcat: "deepcat:"' ),
+			[ 'deepcat: "deepcat:"' ],
+			'getSearchTerms: match keyword as parameter when surrounded by colons'
+		);
+		assert.deepEqual(
 			deepCat.getSearchTerms( 'Foo: Bar' ),
 			[ 'Foo:', 'Bar' ],
 			'getSearchTerms: not every word followed by colon is considered a keyword'
@@ -92,6 +102,21 @@
 			deepCat.getSearchTerms( 'deepcat:a" b' ),
 			[ 'deepcat:a"', 'b' ],
 			'getSearchTerms: Unmatched quote does not introduce multi-word search term'
+		);
+		assert.deepEqual(
+			deepCat.getSearchTerms( 'deepcat:Kunst (Berlin OR Hamburg)' ),
+			[ 'deepcat:Kunst', '(Berlin', 'OR', 'Hamburg)' ],
+			'getSearchTerms: Match complexer terms with brackets'
+		);
+		assert.deepEqual(
+			deepCat.getSearchTerms( 'deepcat:Physik intitle: System' ),
+			[ 'deepcat:Physik', 'intitle:', 'System' ],
+			'getSearchTerms: Match terms when used with other keywords'
+		);
+		assert.deepEqual(
+			deepCat.getSearchTerms( '-deepcat:Kunst' ),
+			[ '-deepcat:Kunst' ],
+			'getSearchTerms: Match keyword with minus'
 		);
 	} );
 }( mediaWiki.libs.deepCat, jQuery, QUnit ) );
