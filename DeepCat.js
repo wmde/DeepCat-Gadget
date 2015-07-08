@@ -154,12 +154,12 @@
 		$.when.apply( this, requests ).done( receiveAjaxResponses );
 	}
 
-	function getAjaxRequest( searchTerm, num ) {
-		var categoryString = extractDeepCatCategory( searchTerm );
-		var userParameter = {
-			negativeSearch: ( searchTerm.charAt( 0 ) === '-' ),
-			searchTermNum: ( num )
-		};
+	function getAjaxRequest( searchTerm, searchTermNum ) {
+		var categoryString = extractDeepCatCategory( searchTerm ),
+		 	userParameter = {
+				negativeSearch: ( searchTerm.charAt( 0 ) === '-' ),
+				searchTermNum: ( searchTermNum )
+			};
 
 		return $.ajax( {
 			url: stringFormat( requestUrl, categoryString ),
