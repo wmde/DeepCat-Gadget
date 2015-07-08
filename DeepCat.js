@@ -377,7 +377,7 @@
 							+ '&nbsp;<a id="deepcat-hint-hide">' + mw.msg( 'deepcat-hintbox-close' ) + '</a>'
 						+ '</div></div>';
 		$( '#search' ).after( hintBox );
-		$( '#deepcat-hint-hide' ).on( 'click', hideSmallHint );
+		$( '#deepcat-hint-hide' ).on( 'click', hideHints );
 	}
 
 	function addSmallFormHint() {
@@ -386,7 +386,7 @@
 						+ mw.msg( 'deepcat-hintbox-small' )
 						+ '</div>';
 		$( '#searchform' ).after( smallHintBox );
-		$( '#deepcat-smallhint-hide' ).on( 'click', hideHints );
+		$( '#deepcat-smallhint-hide' ).on( 'click', hideSmallHint );
 	}
 
 	function hasHintCookie() {
