@@ -11,6 +11,8 @@
 		maxResults = 50,
 		ajaxTimeout = 10000,
 		deepCatSearchTerms,
+		shouldHideHints = false,
+		shouldHideSmallHint = false,
 		requestUrl = '//tools.wmflabs.org/catgraph-jsonp/' + mw.config.get( 'wgDBname' )
 			+ '_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
 
@@ -25,14 +27,11 @@
 				'deepcat-error-unknown-graph': 'Dieses Wiki wird von CatGraph nicht unterst&uuml;tzt.',
 				'deepcat-missing-category': 'Bitte gib eine Kategorie ein.',
 				'deepcat-hintbox-close': 'Zunk&uuml;nftig ausblenden',
-				'deepcat-hintbox-text': 'Du benutzt die <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-basierte Erweiterung der Suche mit dem <a href="//github.com/wmde/DeepCat-Gadget">DeepCat-Gadget</a>. ' +
-										'Diese Funktionalit&auml;t befindet sich in Entwicklung und unterliegt derzeit folgenden Einschr&auml;nkungen:' +
-										'<ul>' +
-											'<li>Die maximale Suchtiefe (Unterkategorien von Unterkategorien... usw) betr&auml;gt 10</li>' +
-											'<li>Die maximale Anzahl durchsuchter Kategorien pro <i>deepcat</i>-Keyword betr&auml;gt 50</li>' +
-										'</ul>' +
-										'Solltest du Fragen oder Vorschl&auml;ge haben oder Fehler bemerken, beteilige dich bitte an der ' +
-										'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">Diskussion</a>.'
+				'deepcat-smallhint-close': 'Ausblenden',
+				'deepcat-hintbox-text': 'Momentane Einschränkung des DeepCat-Gadgets pro Suchbegriff:<br/>' +
+										'Max. Kategoriensuchtiefe: ' + maxDepth + ' / Max. Kategorienanzahl: ' + maxResults + '<br/>' +
+										'<a style="float:left" href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_W%C3%BCnsche/Top_20#Prototyp_.E2.80.9EDeepcat.E2.80.9C-Gadget:_Einladung_zum_ersten_Testen" target="_blank">Weitere Informationen</a>',
+				'deepcat-hintbox-small': 'Max. Kategoriensuchtiefe: ' + maxDepth + '<br/>Max. Kategorienanzahl: ' + maxResults + ''
 			} );
 			break;
 		default:
@@ -42,14 +41,11 @@
 				'deepcat-error-unknown-graph': 'The Wiki is not supported by CatGraph.',
 				'deepcat-missing-category': 'Please insert a category.',
 				'deepcat-hintbox-close': 'Do not show again',
-				'deepcat-hintbox-text': 'You are using the <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-based search extension with the <a href="//github.com/wmde/DeepCat-Gadget">DeepCat Gadget</a>. ' +
-										'This functionality is under development. Currently it has the following limitations:' +
-										'<ul>' +
-											'<li>The maximum search depth (subcategories of subcategories... etc) is 10</li>' +
-											'<li>At most 50 categories are searched per <i>deepcat</i> keyword' +
-										'</ul>' +
-										'If you have questions or suggestions or if you experience problems, please join the ' +
-										'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">discussion</a>.'
+				'deepcat-smallhint-close': 'Close',
+				'deepcat-hintbox-text': 'Current limits of the DeepCat-Gadgets per search word:<br/>' +
+										'Max. search depth: ' + maxDepth + ' / Max. result categories: ' + maxResults + '<br/>' +
+										'<a style="float:left" href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_W%C3%BCnsche/Top_20#Prototyp_.E2.80.9EDeepcat.E2.80.9C-Gadget:_Einladung_zum_ersten_Testen"  target="_blank">Additional information</a>',
+				'deepcat-hintbox-small': 'Max. category-depth: ' + maxDepth + '<br/>Max. categories: ' + maxResults + ''
 			} );
 			break;
 	}
@@ -76,12 +72,23 @@
 
 		if ( !shouldHideHints ) {
 			addSearchFormHint();
+			addSmallFormHint();
 
 			$( '#searchText' ).on( 'keyup', function() {
 				if ( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
-					$( '#deepcat-hintbox' ).slideDown( 350 );
+					$( '#deepcat-hintbox' ).slideDown();
 				} else {
-					$( '#deepcat-hintbox' ).slideUp( 350 );
+					$( '#deepcat-hintbox' ).slideUp();
+				}
+			} );
+
+			$( '#searchInput' ).on( 'keyup', function() {
+				if ( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints && !shouldHideSmallHint ) {
+					disableImeAndSuggestions();
+					$( '#deepcat-smallhint' ).slideDown( 'fast' );
+				} else {
+					enableImeAndSuggestions();
+					$( '#deepcat-smallhint' ).slideUp( 'fast' );
 				}
 			} );
 		}
@@ -155,7 +162,7 @@
 			}
 		}
 
-		newSearchTerms = computeResponses( responses, newSearchTerms )
+		newSearchTerms = computeResponses( responses, newSearchTerms );
 		newSearchTerms = computeErrors( errors, newSearchTerms );
 
 		substituteSearchRequest( newSearchTerms.join( ' ' ) );
@@ -363,14 +370,23 @@
 	}
 
 	function addSearchFormHint() {
-		var hintBox = '<div style="margin-top: 1em; margin-bottom: 1em;">'
-						+ '<div id="deepcat-hintbox" style="background: #8af; padding: .75em; width: 75%; display: none">'
+		var hintBox = '<div id="deepcat-hintbox" style="display: none;">'
+						+ '<img id="deepcat-info-img" src="//upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Information_icon4.svg/40px-Information_icon4.svg.png"/>  '
+						+ '<div>'
 							+ mw.msg( 'deepcat-hintbox-text' )
-							+ '<div style="text-align: right;">'
-								+ '<button id="deepcat-hint-hide">' + mw.msg( 'deepcat-hintbox-close' ) + '</button>'
-						+ '</div></div></div>';
+							+ '&nbsp;<a id="deepcat-hint-hide">' + mw.msg( 'deepcat-hintbox-close' ) + '</a>'
+						+ '</div></div>';
 		$( '#search' ).after( hintBox );
 		$( '#deepcat-hint-hide' ).on( 'click', hideHints );
+	}
+
+	function addSmallFormHint() {
+		var smallHintBox = '<div id="deepcat-smallhint">'
+						+ '<img id="deepcat-smallhint-hide" title="' + mw.msg( 'deepcat-smallhint-close' ) + '" src="https://upload.wikimedia.org/wikipedia/commons/4/44/Curation_bar_icon_close.png">'
+						+ mw.msg( 'deepcat-hintbox-small' )
+						+ '</div>';
+		$( '#searchform' ).after( smallHintBox );
+		$( '#deepcat-smallhint-hide' ).on( 'click', hideSmallHint );
 	}
 
 	function hasHintCookie() {
@@ -379,8 +395,28 @@
 
 	function hideHints() {
 		shouldHideHints = true;
+
 		$( '#deepcat-hintbox' ).hide();
+		hideSmallHint();
+		enableImeAndSuggestions();
+
 		mw.cookie.set( "-deepcat-hintboxshown", makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ), { 'expires': 60 * 60 * 24 * 7 * 4 /*4 weeks*/ } );
+	}
+
+	function hideSmallHint() {
+		shouldHideSmallHint = true;
+
+		$( '#deepcat-smallhint' ).hide();
+	}
+
+	function disableImeAndSuggestions() {
+		$( '.suggestions' ).css( 'z-index', -1 );
+		$( '.imeselector' ).css( 'z-index', -1 );
+	}
+
+	function enableImeAndSuggestions() {
+		$( '.suggestions' ).css( 'z-index', 'auto' );
+		$( '.imeselector' ).css( 'z-index', 'auto' );
 	}
 
 	/**

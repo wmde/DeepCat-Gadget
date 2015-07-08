@@ -13,3 +13,40 @@
     background-repeat: no-repeat;
     background-size: 24px auto;
 }
+
+#deepcat-hintbox, #deepcat-smallhint {
+    background: #f3f3f3;
+    border: 1px solid silver;
+    font-size: 13px;
+}
+
+#deepcat-hintbox {
+    padding: .75em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    width: 38em;
+}
+
+#deepcat-info-img {
+    margin-right: 0.75em;
+    margin-bottom: 1em;
+    float: left;
+}
+
+#deepcat-smallhint {
+    padding: .30em;
+    display: none;
+}
+
+#deepcat-hintbox a {
+    cursor: pointer;
+}
+
+#deepcat-smallhint-hide {
+    float: right;
+    cursor: pointer;
+}
+
+#deepcat-hint-hide {
+    float: right;
+}
