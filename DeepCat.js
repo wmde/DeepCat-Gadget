@@ -505,17 +505,17 @@
 	}
 
 	/**
+	 * @param {string} message
 	 * @return {string}
 	 */
-	function stringFormat() {
-		var i,
-			s = arguments[0];
+	function stringFormat( message ) {
+		var i;
 
 		for ( i = 0; i < arguments.length - 1; i++ ) {
-			s = s.replace( new RegExp( '\\{' + i + '\\}', 'gm' ), arguments[i + 1] );
+			message = message.replace( new RegExp( '\\{' + i + '\\}', 'g' ), arguments[i + 1] );
 		}
 
-		return s;
+		return message;
 	}
 
 	/** @return instance of jQuery.Promise */
