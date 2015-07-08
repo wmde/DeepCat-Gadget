@@ -26,6 +26,7 @@
 				'deepcat-error-unknown-graph': 'Dieses Wiki wird von CatGraph nicht unterst&uuml;tzt.',
 				'deepcat-missing-category': 'Bitte gib eine Kategorie ein.',
 				'deepcat-hintbox-close': 'Zunk&uuml;nftig ausblenden',
+				'deepcat-smallhint-close': 'Ausblenden',
 				'deepcat-hintbox-text': 'Momentane Einschränkung des DeepCat-Gadgets pro Suchbegriff:<br/>' +
 										'Max. Kategoriensuchtiefe: ' + maxDepth + ' / Max. Kategorienanzahl: ' + maxResults + '<br/>' +
 										'<a style="float:left" href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_W%C3%BCnsche/Top_20#Prototyp_.E2.80.9EDeepcat.E2.80.9C-Gadget:_Einladung_zum_ersten_Testen" target="_blank">Weitere Informationen</a>',
@@ -39,6 +40,7 @@
 				'deepcat-error-unknown-graph': 'The Wiki is not supported by CatGraph.',
 				'deepcat-missing-category': 'Please insert a category.',
 				'deepcat-hintbox-close': 'Do not show again',
+				'deepcat-smallhint-close': 'Close',
 				'deepcat-hintbox-text': 'Current limits of the DeepCat-Gadgets per search word:<br/>' +
 										'Max. search depth: ' + maxDepth + ' / Max. result categories: ' + maxResults + '<br/>' +
 										'<a style="float:left" href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_W%C3%BCnsche/Top_20#Prototyp_.E2.80.9EDeepcat.E2.80.9C-Gadget:_Einladung_zum_ersten_Testen"  target="_blank">Additional information</a>',
@@ -379,7 +381,7 @@
 
 	function addSmallFormHint() {
 		var smallHintBox = '<div id="deepcat-smallhint">'
-						+ '<img id="deepcat-smallhint-hide" title="' + mw.msg( 'deepcat-hintbox-close' ) + '" src="https://upload.wikimedia.org/wikipedia/commons/4/44/Curation_bar_icon_close.png">'
+						+ '<img id="deepcat-smallhint-hide" title="' + mw.msg( 'deepcat-smallhint-close' ) + '" src="https://upload.wikimedia.org/wikipedia/commons/4/44/Curation_bar_icon_close.png">'
 						+ mw.msg( 'deepcat-hintbox-small' )
 						+ '</div>';
 		$( '#searchform' ).after( smallHintBox );
