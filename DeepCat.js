@@ -197,6 +197,7 @@
 			newSearchTermString = '';
 
 			if ( !responses[i]['result'] || responses[i]['result'].length == 0) {
+				// ensure we only display the message once, even when we have multiple empty results
 				errorMessages[0] = createErrorMessage( 'deepcat-error-unexpected-response', null );
 				newSearchTerms[userParameters['searchTermNum']] = '';
 			}
@@ -209,7 +210,9 @@
 			newSearchTerms[userParameters['searchTermNum']] = newSearchTermString;
 		}
 
-		DeepCat.ResponseErrors.addError(errorMessages);
+		for ( i = 0; i < errorMessages.length; i++ ) {
+			DeepCat.ResponseErrors.addError(errorMessages);
+		}
 
 		return newSearchTerms;
 	}
