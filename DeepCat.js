@@ -25,6 +25,7 @@
 				'deepcat-error-notfound': 'Die Kategorie \'{0}\' konnte nicht gefunden werden.',
 				'deepcat-error-tooldown': 'CatGraph-Tool ist zur Zeit nicht erreichbar.',
 				'deepcat-error-unknown-graph': 'Dieses Wiki wird von CatGraph nicht unterst&uuml;tzt.',
+				'deepcat-error-unexpected-response': "CatGraph-Tool lieferte ein unerwartetes Ergebnis.",
 				'deepcat-missing-category': 'Bitte gib eine Kategorie ein.',
 				'deepcat-hintbox-close': 'Ausblenden',
 				'deepcat-hintbox-text': 'Du benutzt die <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-basierte Erweiterung der Suche mit dem <a href="//github.com/wmde/DeepCat-Gadget">DeepCat-Gadget</a>. ' +
@@ -43,6 +44,7 @@
 				'deepcat-error-notfound': 'CatGraph could not find the category \'{0}\'.',
 				'deepcat-error-tooldown': 'CatGraph-Tool is not reachable.',
 				'deepcat-error-unknown-graph': 'The Wiki is not supported by CatGraph.',
+				'deepcat-error-unexpected-response': "CatGraph-Tool returned an unexpected response.",
 				'deepcat-missing-category': 'Please insert a category.',
 				'deepcat-hintbox-close': 'Hide',
 				'deepcat-hintbox-text': 'You are using the <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-based search extension with the <a href="//github.com/wmde/DeepCat-Gadget">DeepCat Gadget</a>. ' +
@@ -80,6 +82,40 @@
 			checkErrorMessage();
 		}
 	} );
+
+	/**
+	 * ResponseErrors is a storage object that collects error messages in
+	 * methods that process the AJAX responses from CatGraph
+	 *
+	 * @type {{errors: Array}}
+	 */
+	DeepCat.ResponseErrors = {
+		errors:[]
+	};
+
+	/**
+	 * Remove all previously collected errors
+	 */
+	DeepCat.ResponseErrors.reset = function() {
+		this.errors = [];
+	};
+
+	/**
+	 * Append an error message
+	 * @param {Object} err Error message object containing mwMessage and parameters
+	 */
+	DeepCat.ResponseErrors.addError = function( err ) {
+		this.errors.push( err );
+	};
+
+	/**
+	 * Return collected errors
+	 * @returns {Array}
+	 */
+	DeepCat.ResponseErrors.getErrors = function() {
+		return this.errors || [];
+	};
+
 
 	function sendAjaxRequests( searchTerms ) {
 		var i,
@@ -120,6 +156,7 @@
 			errors = [],
 			newSearchTerms = deepCatSearchTerms;
 
+		DeepCat.ResponseErrors.reset();
 		removeAjaxThrobber();
 
 		//single request leads to different variable structure
@@ -152,11 +189,18 @@
 	function computeResponses( responses, newSearchTerms ) {
 		var i,
 			userParameters,
-			newSearchTermString;
+			newSearchTermString,
+			errorMessages = [];
 
 		for ( i = 0; i < responses.length; i++ ) {
 			userParameters = JSON.parse( responses[i]['userparam'] );
 			newSearchTermString = '';
+
+			if ( !responses[i]['result'] || responses[i]['result'].length == 0) {
+				// ensure we only display the message once, even when we have multiple empty results
+				errorMessages[0] = createErrorMessage( 'deepcat-error-unexpected-response', null );
+				newSearchTerms[userParameters['searchTermNum']] = '';
+			}
 
 			if ( userParameters['negativeSearch'] ) {
 				newSearchTermString += '-';
@@ -166,14 +210,17 @@
 			newSearchTerms[userParameters['searchTermNum']] = newSearchTermString;
 		}
 
+		for ( i = 0; i < errorMessages.length; i++ ) {
+			DeepCat.ResponseErrors.addError( errorMessages[i] );
+		}
+
 		return newSearchTerms;
 	}
 
 	function computeErrors( errors, newSearchTerms ) {
 		var i,
 			userParameters,
-			categoryError,
-			errorMessages = [];
+			categoryError;
 
 		for ( i = 0; i < errors.length; i++ ) {
 			userParameters = JSON.parse( errors[i]['userparam'] );
@@ -181,16 +228,20 @@
 
 			if ( !categoryError ) {
 				if ( 'Graph not found' == errors[i].statusMessage ) {
-					errorMessages.push(
+					DeepCat.ResponseErrors.addError(
 						createErrorMessage( 'deepcat-error-unknown-graph', null )
+					);
+				} else { // Unknown error message, shouldn't happen
+					DeepCat.ResponseErrors.addError(
+						createErrorMessage( 'deepcat-error-unexpected-response', null )
 					);
 				}
 			} else if ( categoryError[2].length === 0 ) {
-				errorMessages.push(
+				DeepCat.ResponseErrors.addError(
 					createErrorMessage( 'deepcat-missing-category', null )
 				);
 			} else if ( categoryError[2].length > 0 ) {
-				errorMessages.push(
+				DeepCat.ResponseErrors.addError(
 					createErrorMessage( 'deepcat-error-notfound', categoryError[2] )
 				);
 			}
@@ -198,7 +249,7 @@
 			newSearchTerms[userParameters['searchTermNum']] = '';
 		}
 
-		addErrorMsgField( errorMessages );
+		addErrorMsgField( DeepCat.ResponseErrors.getErrors() );
 		return newSearchTerms;
 	}
 
