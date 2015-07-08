@@ -211,7 +211,7 @@
 		}
 
 		for ( i = 0; i < errorMessages.length; i++ ) {
-			DeepCat.ResponseErrors.addError(errorMessages);
+			DeepCat.ResponseErrors.addError(errorMessages[i]);
 		}
 
 		return newSearchTerms;
