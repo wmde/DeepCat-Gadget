@@ -26,7 +26,7 @@
 				'deepcat-error-tooldown': 'CatGraph-Tool ist zur Zeit nicht erreichbar.',
 				'deepcat-error-unknown-graph': 'Dieses Wiki wird von CatGraph nicht unterst&uuml;tzt.',
 				'deepcat-missing-category': 'Bitte gib eine Kategorie ein.',
-				'deepcat-hintbox-close': 'Zunk&uuml;nftig ausblenden',
+				'deepcat-hintbox-close': 'Zuk&uuml;nftig ausblenden',
 				'deepcat-smallhint-close': 'Ausblenden',
 				'deepcat-hintbox-text': 'Momentane Einschränkung des DeepCat-Gadgets pro Suchbegriff:<br/>' +
 										'Max. Kategoriensuchtiefe: ' + maxDepth + ' / Max. Kategorienanzahl: ' + maxResults + '<br/>' +
