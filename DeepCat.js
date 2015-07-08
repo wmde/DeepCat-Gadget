@@ -12,6 +12,7 @@
 		ajaxTimeout = 10000,
 		deepCatSearchTerms,
 		shouldHideHints = false,
+		shouldHideSmallHint = false,
 		requestUrl = '//tools.wmflabs.org/catgraph-jsonp/' + mw.config.get( 'wgDBname' )
 			+ '_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
 
@@ -82,7 +83,7 @@
 			} );
 
 			$( '#searchInput' ).on( 'keyup', function() {
-				if ( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
+				if ( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints && !shouldHideSmallHint ) {
 					disableImeAndSuggestions();
 					$( '#deepcat-smallhint' ).slideDown( 'fast' );
 				} else {
@@ -376,7 +377,7 @@
 							+ '&nbsp;<a id="deepcat-hint-hide">' + mw.msg( 'deepcat-hintbox-close' ) + '</a>'
 						+ '</div></div>';
 		$( '#search' ).after( hintBox );
-		$( '#deepcat-hint-hide' ).on( 'click', hideHints );
+		$( '#deepcat-hint-hide' ).on( 'click', hideSmallHint );
 	}
 
 	function addSmallFormHint() {
@@ -396,10 +397,16 @@
 		shouldHideHints = true;
 
 		$( '#deepcat-hintbox' ).hide();
-		$( '#deepcat-smallhint' ).hide();
+		hideSmallHint();
 		enableImeAndSuggestions();
 
 		mw.cookie.set( "-deepcat-hintboxshown", makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ), { 'expires': 60 * 60 * 24 * 7 * 4 /*4 weeks*/ } );
+	}
+
+	function hideSmallHint() {
+		shouldHideSmallHint = true;
+
+		$( '#deepcat-smallhint' ).hide();
 	}
 
 	function disableImeAndSuggestions() {
