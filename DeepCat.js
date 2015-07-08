@@ -162,7 +162,7 @@
 			}
 		}
 
-		newSearchTerms = computeResponses( responses, newSearchTerms )
+		newSearchTerms = computeResponses( responses, newSearchTerms );
 		newSearchTerms = computeErrors( errors, newSearchTerms );
 
 		substituteSearchRequest( newSearchTerms.join( ' ' ) );
