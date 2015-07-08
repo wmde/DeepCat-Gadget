@@ -85,12 +85,12 @@
 		);
 		assert.deepEqual(
 			deepCat.getSearchTerms( 'deepcat:a"b' ),
-			[ 'deepcat:a', '"b' ],
+			[ 'deepcat:a"b' ],
 			'getSearchTerms: Unmatched quote does not introduce multi-word search term'
 		);
 		assert.deepEqual(
 			deepCat.getSearchTerms( 'deepcat:a" b' ),
-			[ 'deepcat:a', '"', 'b' ],
+			[ 'deepcat:a"', 'b' ],
 			'getSearchTerms: Unmatched quote does not introduce multi-word search term'
 		);
 	} );

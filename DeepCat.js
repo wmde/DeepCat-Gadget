@@ -262,10 +262,6 @@
 		$( '[name="search"]' ).val( input );
 	}
 
-	function searchTermRegExp( keyword ) {
-		return new RegExp( '(-?' + keyword + '([\\s]*)(("[^"]+")|([^"\\s\\)\\(]+)))|([^\\s]+)', 'g' );
-	}
-
 	function substituteTitle( input ) {
 		loadMessages( 'searchresults-title' ).done( function() {
 			$( document ).prop( 'title', mw.msg( 'searchresults-title', input ) );
@@ -284,7 +280,12 @@
 	 * @return {string[]}
 	 */
 	DeepCat.getSearchTerms = function( input ) {
-		return input.match( searchTermRegExp( keyString ) );
+		return input.match( new RegExp(
+							'-?\\b' + keyString + '\\s*(?:'
+							+ '"(?:[^\\\\"]|\\\\.)+"' //quoted strings including spaces and escaped quotes
+							+ '|(?!-?' + keyString + ')\\S+' //unquoted strings, but skip duplicate keywords
+							+ ')|\\S+', //fetch remaining non-deepcat stuff
+							'gi' ) );
 	};
 
 	/**
@@ -292,7 +293,7 @@
 	 * @return {boolean}
 	 */
 	function matchesDeepCatKeyword( input ) {
-		return input.match( new RegExp( keyString ) )
+		return new RegExp( '\\b' + keyString, 'i' ).test( input );
 	}
 
 	/**
@@ -300,9 +301,15 @@
 	 * @return {string}
 	 */
 	function extractDeepCatCategory( searchTerm ) {
-		var categoryString = searchTerm.replace( new RegExp( '-?' + keyString + '([\\s]*)' ), '' );
-		categoryString = categoryString.replace( / /g, '_' );
-		return categoryString.replace( /"/g, '' );
+		searchTerm = searchTerm.replace( new RegExp( '\\s*-?\\b' + keyString + '\\s*', 'i' ), '' );
+
+		if ( /^\s*"/.test( searchTerm ) ) {
+			searchTerm = searchTerm.replace( /^\s*"/, '' )
+				.replace( /"\s*$/, '' )
+				.replace( /\\(?=.)/g, '' );
+		}
+
+		return searchTerm.replace( /\s+/g, '_' );
 	}
 
 	function checkErrorMessage() {
