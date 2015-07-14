@@ -259,7 +259,7 @@
 	 *
 	 * @param {array} errors Errors from DeepCat
 	 * @param {array} newSearchTerms Original search terms provided by the user
-	 * @returns {array} Modified newSearchTerms
+	 * @return {array} Modified newSearchTerms
 	 */
 	DeepCat.computeErrors = function( errors, newSearchTerms ) {
 		var i,
