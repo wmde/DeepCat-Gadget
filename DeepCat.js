@@ -222,6 +222,7 @@
 				// ensure we only display the message once, even when we have multiple empty results
 				errorMessages[0] = createErrorMessage( 'deepcat-error-unexpected-response', null );
 				newSearchTerms[userParameters['searchTermNum']] = '';
+				continue;
 			}
 
 			if ( userParameters['negativeSearch'] ) {

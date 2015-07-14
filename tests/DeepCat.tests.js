@@ -133,7 +133,13 @@
 			responseWithNegativeSearch = {
 				result: [[6],[7]],
 				userparam: '{"negativeSearch":true,"searchTermNum":0}'
-			};
+			},
+			emptyResponse = {
+				result: [],
+				userparam: '{"negativeSearch":true,"searchTermNum":0}'
+			},
+			expectedErrors
+			;
 		assert.deepEqual(
 			deepCat.computeResponses( [], []),
 			[],
@@ -154,7 +160,18 @@
 			[ '-incategory:id:6|id:7', 'b' ],
 			'computeResponses: NegativeSearch in responses create minus prefix for incategory search terms'
 		);
-		// TODO test error handling for empty results when pull request https://github.com/wmde/DeepCat-Gadget/pull/39 is done.
+		deepCat.ResponseErrors.reset();
+		assert.deepEqual(
+			deepCat.computeResponses( [emptyResponse], ['-deepcat:c', 'b'] ),
+			[ '', 'b' ],
+			'computeResponses: Empty results in responses removes search term'
+		);
+		expectedErrors = deepCat.ResponseErrors.getErrors();
+		assert.deepEqual(
+			expectedErrors,
+			[{mwMessage: 'deepcat-error-unexpected-response', parameter: null}],
+			'computeResponses: Empty results in in responses create error message'
+		);
 	} );
 
 	QUnit.test( 'computeErrors', function( assert ) {
