@@ -239,7 +239,7 @@
 		return newSearchTerms;
 	};
 
-	DeepCat.computeErrors = function( errors, newSearchTerms ) 2{
+	DeepCat.computeErrors = function( errors, newSearchTerms ) {
 		var i,
 			userParameters,
 			categoryError;
