@@ -13,6 +13,8 @@
 		maxResults = 50,
 		ajaxTimeout = 10000,
 		deepCatSearchTerms,
+		shouldHideHints = false,
+		shouldHideSmallHint = false,
 		requestUrl = '//tools.wmflabs.org/catgraph-jsonp/' + mw.config.get( 'wgDBname' )
 			+ '_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
 
@@ -25,44 +27,41 @@
 				'deepcat-error-notfound': 'Die Kategorie \'{0}\' konnte nicht gefunden werden.',
 				'deepcat-error-tooldown': 'CatGraph-Tool ist zur Zeit nicht erreichbar.',
 				'deepcat-error-unknown-graph': 'Dieses Wiki wird von CatGraph nicht unterst&uuml;tzt.',
+				'deepcat-error-unexpected-response': "CatGraph-Tool lieferte ein unerwartetes Ergebnis.",
 				'deepcat-missing-category': 'Bitte gib eine Kategorie ein.',
-				'deepcat-hintbox-close': 'Ausblenden',
-				'deepcat-hintbox-text': 'Du benutzt die <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-basierte Erweiterung der Suche mit dem <a href="//github.com/wmde/DeepCat-Gadget">DeepCat-Gadget</a>. ' +
-				'Diese Funktionalit&auml;t befindet sich in Entwicklung und unterliegt derzeit folgenden Einschr&auml;nkungen:' +
-				'<ul>' +
-				'<li>Die maximale Suchtiefe (Unterkategorien von Unterkategorien... usw) betr&auml;gt 10</li>' +
-				'<li>Die maximale Anzahl durchsuchter Kategorien pro <i>deepcat</i>-Keyword betr&auml;gt 50</li>' +
-				'</ul>' +
-				'Solltest du Fragen oder Vorschl&auml;ge haben oder Fehler bemerken, beteilige dich bitte an der ' +
-				'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">Diskussion</a>.'
+				'deepcat-hintbox-close': 'Zuk&uuml;nftig ausblenden',
+				'deepcat-smallhint-close': 'Ausblenden',
+				'deepcat-hintbox-text': 'Momentane Einschränkung des DeepCat-Gadgets pro Suchbegriff:<br/>' +
+										'Max. Kategoriensuchtiefe: ' + maxDepth + ' / Max. Kategorienanzahl: ' + maxResults + '<br/>' +
+										'<a style="float:left" href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_W%C3%BCnsche/Top_20#Prototyp_.E2.80.9EDeepcat.E2.80.9C-Gadget:_Einladung_zum_ersten_Testen" target="_blank">Weitere Informationen</a>',
+				'deepcat-hintbox-small': 'Max. Kategoriensuchtiefe: ' + maxDepth + '<br/>Max. Kategorienanzahl: ' + maxResults + ''
 			} );
 			break;
-		case 'en':
 		default:
 			mw.messages.set( {
 				'deepcat-error-notfound': 'CatGraph could not find the category \'{0}\'.',
 				'deepcat-error-tooldown': 'CatGraph-Tool is not reachable.',
 				'deepcat-error-unknown-graph': 'The Wiki is not supported by CatGraph.',
+				'deepcat-error-unexpected-response': "CatGraph-Tool returned an unexpected response.",
 				'deepcat-missing-category': 'Please insert a category.',
-				'deepcat-hintbox-close': 'Hide',
-				'deepcat-hintbox-text': 'You are using the <a href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Documentation">Catgraph</a>-based search extension with the <a href="//github.com/wmde/DeepCat-Gadget">DeepCat Gadget</a>. ' +
-				'This functionality is under development. Currently it has the following limitations:' +
-				'<ul>' +
-				'<li>The maximum search depth (subcategories of subcategories... etc) is 10</li>' +
-				'<li>At most 50 categories are searched per <i>deepcat</i> keyword' +
-				'</ul>' +
-				'If you have questions or suggestions or if you experience problems, please join the ' +
-				'<a href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_Wünsche/Top_20#R.C3.BCckmeldungen_und_Fragen_zu_DeepCat">discussion</a>.'
+				'deepcat-hintbox-close': 'Do not show again',
+				'deepcat-smallhint-close': 'Close',
+				'deepcat-hintbox-text': 'Current limits of the DeepCat-Gadgets per search word:<br/>' +
+										'Max. search depth: ' + maxDepth + ' / Max. result categories: ' + maxResults + '<br/>' +
+										'<a style="float:left" href="//de.wikipedia.org/wiki/Wikipedia_Diskussion:Umfragen/Technische_W%C3%BCnsche/Top_20#Prototyp_.E2.80.9EDeepcat.E2.80.9C-Gadget:_Einladung_zum_ersten_Testen"  target="_blank">Additional information</a>',
+				'deepcat-hintbox-small': 'Max. category-depth: ' + maxDepth + '<br/>Max. categories: ' + maxResults + ''
 			} );
 			break;
 	}
 
 	$( function() {
+		shouldHideHints = hasHintCookie();
+
 		$( '#searchform, #search' ).on( 'submit', function( e ) {
 			var searchInput = $( this ).find( '[name="search"]' ).val();
 
 			if ( matchesDeepCatKeyword( searchInput ) ) {
-				deepCatSearchTerms = getSearchTerms( searchInput );
+				deepCatSearchTerms = DeepCat.getSearchTerms( searchInput );
 
 				e.preventDefault();
 
@@ -75,11 +74,70 @@
 			}
 		} );
 
+		if ( !shouldHideHints ) {
+			addSearchFormHint();
+			addSmallFormHint();
+
+			$( '#searchText' ).on( 'keyup', function() {
+				if ( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
+					$( '#deepcat-hintbox' ).slideDown();
+				} else {
+					$( '#deepcat-hintbox' ).slideUp();
+				}
+			} );
+
+			$( '#searchInput' ).on( 'keyup', function() {
+				if ( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints && !shouldHideSmallHint ) {
+					disableImeAndSuggestions();
+					$( '#deepcat-smallhint' ).slideDown( 'fast' );
+				} else {
+					enableImeAndSuggestions();
+					$( '#deepcat-smallhint' ).slideUp( 'fast' );
+				}
+			} );
+		}
+
 		if ( refreshSearchTermMock() ) {
-			showHint();
+			if( !shouldHideHints ) {
+				$( '#deepcat-hintbox' ).show();
+			}
 			checkErrorMessage();
 		}
 	} );
+
+	/**
+	 * ResponseErrors is a storage object that collects error messages in
+	 * methods that process the AJAX responses from CatGraph
+	 *
+	 * @type {{errors: Array}}
+	 */
+	DeepCat.ResponseErrors = {
+		errors:[]
+	};
+
+	/**
+	 * Remove all previously collected errors
+	 */
+	DeepCat.ResponseErrors.reset = function() {
+		this.errors = [];
+	};
+
+	/**
+	 * Append an error message
+	 * @param {Object} err Error message object containing mwMessage and parameters
+	 */
+	DeepCat.ResponseErrors.addError = function( err ) {
+		this.errors.push( err );
+	};
+
+	/**
+	 * Return collected errors
+	 * @returns {Array}
+	 */
+	DeepCat.ResponseErrors.getErrors = function() {
+		return this.errors || [];
+	};
+
 
 	function sendAjaxRequests( searchTerms ) {
 		var i,
@@ -96,12 +154,12 @@
 		$.when.apply( this, requests ).done( receiveAjaxResponses );
 	}
 
-	function getAjaxRequest( searchTerm, num ) {
-		var categoryString = extractDeepCatCategory( searchTerm );
-		var userParameter = {
-			negativeSearch: ( searchTerm.charAt( 0 ) === '-' ),
-			searchTermNum: ( num )
-		};
+	function getAjaxRequest( searchTerm, searchTermNum ) {
+		var categoryString = extractDeepCatCategory( searchTerm ),
+		 	userParameter = {
+				negativeSearch: ( searchTerm.charAt( 0 ) === '-' ),
+				searchTermNum: ( searchTermNum )
+			};
 
 		return $.ajax( {
 			url: stringFormat( requestUrl, categoryString ),
@@ -120,6 +178,7 @@
 			errors = [],
 			newSearchTerms = deepCatSearchTerms;
 
+		DeepCat.ResponseErrors.reset();
 		removeAjaxThrobber();
 
 		//single request leads to different variable structure
@@ -152,11 +211,18 @@
 	DeepCat.computeResponses = function( responses, newSearchTerms ) {
 		var i,
 			userParameters,
-			newSearchTermString;
+			newSearchTermString,
+			errorMessages = [];
 
 		for ( i = 0; i < responses.length; i++ ) {
 			userParameters = JSON.parse( responses[i]['userparam'] );
 			newSearchTermString = '';
+
+			if ( !responses[i]['result'] || responses[i]['result'].length == 0) {
+				// ensure we only display the message once, even when we have multiple empty results
+				errorMessages[0] = createErrorMessage( 'deepcat-error-unexpected-response', null );
+				newSearchTerms[userParameters['searchTermNum']] = '';
+			}
 
 			if ( userParameters['negativeSearch'] ) {
 				newSearchTermString += '-';
@@ -166,14 +232,17 @@
 			newSearchTerms[userParameters['searchTermNum']] = newSearchTermString;
 		}
 
+		for ( i = 0; i < errorMessages.length; i++ ) {
+			DeepCat.ResponseErrors.addError( errorMessages[i] );
+		}
+
 		return newSearchTerms;
 	};
 
-	DeepCat.computeErrors = function( errors, newSearchTerms ) {
+	DeepCat.computeErrors = function( errors, newSearchTerms ) 2{
 		var i,
 			userParameters,
-			categoryError,
-			errorMessages = [];
+			categoryError;
 
 		for ( i = 0; i < errors.length; i++ ) {
 			userParameters = JSON.parse( errors[i]['userparam'] );
@@ -181,16 +250,20 @@
 
 			if ( !categoryError ) {
 				if ( 'Graph not found' == errors[i].statusMessage ) {
-					errorMessages.push(
+					DeepCat.ResponseErrors.addError(
 						createErrorMessage( 'deepcat-error-unknown-graph', null )
+					);
+				} else { // Unknown error message, shouldn't happen
+					DeepCat.ResponseErrors.addError(
+						createErrorMessage( 'deepcat-error-unexpected-response', null )
 					);
 				}
 			} else if ( categoryError[2].length === 0 ) {
-				errorMessages.push(
+				DeepCat.ResponseErrors.addError(
 					createErrorMessage( 'deepcat-missing-category', null )
 				);
 			} else if ( categoryError[2].length > 0 ) {
-				errorMessages.push(
+				DeepCat.ResponseErrors.addError(
 					createErrorMessage( 'deepcat-error-notfound', categoryError[2] )
 				);
 			}
@@ -198,7 +271,7 @@
 			newSearchTerms[userParameters['searchTermNum']] = '';
 		}
 
-		DeepCat.addErrorMsgField( errorMessages );
+		DeepCat.addErrorMsgField( DeepCat.ResponseErrors.getErrors() );
 		return newSearchTerms;
 	};
 
@@ -262,10 +335,6 @@
 		$( '[name="search"]' ).val( input );
 	}
 
-	function searchTermRegExp( keyword ) {
-		return new RegExp( '(-?' + keyword + '([\\s]*)(("[^"]+")|([^"\\s\\)\\(]+)))|([^\\s]+)', 'g' );
-	}
-
 	function substituteTitle( input ) {
 		loadMessages( 'searchresults-title' ).done( function() {
 			$( document ).prop( 'title', mw.msg( 'searchresults-title', input ) );
@@ -284,7 +353,12 @@
 	 * @return {string[]}
 	 */
 	DeepCat.getSearchTerms = function( input ) {
-		return input.match( searchTermRegExp( keyString ) );
+		return input.match( new RegExp(
+							'-?\\b' + keyString + '\\s*(?:'
+							+ '"(?:[^\\\\"]|\\\\.)+"' //quoted strings including spaces and escaped quotes
+							+ '|(?!-?' + keyString + ')\\S+' //unquoted strings, but skip duplicate keywords
+							+ ')|\\S+', //fetch remaining non-deepcat stuff
+							'gi' ) );
 	};
 
 	/**
@@ -292,7 +366,7 @@
 	 * @return {boolean}
 	 */
 	function matchesDeepCatKeyword( input ) {
-		return input.match( new RegExp( keyString ) )
+		return new RegExp( '\\b' + keyString, 'i' ).test( input );
 	}
 
 	/**
@@ -300,9 +374,15 @@
 	 * @return {string}
 	 */
 	function extractDeepCatCategory( searchTerm ) {
-		var categoryString = searchTerm.replace( new RegExp( '-?' + keyString + '([\\s]*)' ), '' );
-		categoryString = categoryString.replace( / /g, '_' );
-		return categoryString.replace( /"/g, '' );
+		searchTerm = searchTerm.replace( new RegExp( '\\s*-?\\b' + keyString + '\\s*', 'i' ), '' );
+
+		if ( /^\s*"/.test( searchTerm ) ) {
+			searchTerm = searchTerm.replace( /^\s*"/, '' )
+				.replace( /"\s*$/, '' )
+				.replace( /\\(?=.)/g, '' );
+		}
+
+		return searchTerm.replace( /\s+/g, '_' );
 	}
 
 	function checkErrorMessage() {
@@ -349,30 +429,54 @@
 		$( '#searchText' ).removeClass( 'deep-cat-throbber-big' );
 	}
 
-	function showHint() {
-		if ( mw.cookie.get( '-deepcat-hintboxshown' ) != makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ) ) {
-			var parent = document.getElementById( 'mw-content-text' );
-			var sresults = document.getElementsByClassName( 'searchresults' )[0];
-			var d = parent.insertBefore( document.createElement( 'div' ), sresults );
-			d.style.marginTop = '1em';
-			d.style.marginBottom = '1em';
-			d.innerHTML =
-				'<div id="deepcat-hintbox" style="background:#8af; padding:.75em; width:75%">' +
-				mw.msg( 'deepcat-hintbox-text' ) +
-				'</div>';
-			var hideButton = document.createElement( 'button' );
-			hideButton.innerHTML = mw.msg( 'deepcat-hintbox-close' );
-			hideButton.onclick = hideHint;
-			var buttonContainer = document.createElement( 'div' );
-			buttonContainer.style.textAlign = 'right';
-			buttonContainer.appendChild( hideButton );
-			document.getElementById( 'deepcat-hintbox' ).appendChild( buttonContainer );
-		}
+	function addSearchFormHint() {
+		var hintBox = '<div id="deepcat-hintbox" style="display: none;">'
+						+ '<img id="deepcat-info-img" src="//upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Information_icon4.svg/40px-Information_icon4.svg.png"/>  '
+						+ '<div>'
+							+ mw.msg( 'deepcat-hintbox-text' )
+							+ '&nbsp;<a id="deepcat-hint-hide">' + mw.msg( 'deepcat-hintbox-close' ) + '</a>'
+						+ '</div></div>';
+		$( '#search' ).after( hintBox );
+		$( '#deepcat-hint-hide' ).on( 'click', hideHints );
 	}
 
-	function hideHint() {
-		document.getElementById( 'deepcat-hintbox' ).style.display = 'none';
-		mw.cookie.set( '-deepcat-hintboxshown', makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ), { 'expires': 60 * 60 * 24 * 7 * 4 /*4 weeks*/ } );
+	function addSmallFormHint() {
+		var smallHintBox = '<div id="deepcat-smallhint">'
+						+ '<img id="deepcat-smallhint-hide" title="' + mw.msg( 'deepcat-smallhint-close' ) + '" src="https://upload.wikimedia.org/wikipedia/commons/4/44/Curation_bar_icon_close.png">'
+						+ mw.msg( 'deepcat-hintbox-small' )
+						+ '</div>';
+		$( '#searchform' ).after( smallHintBox );
+		$( '#deepcat-smallhint-hide' ).on( 'click', hideSmallHint );
+	}
+
+	function hasHintCookie() {
+		return mw.cookie.get( "-deepcat-hintboxshown" ) == makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) );
+	}
+
+	function hideHints() {
+		shouldHideHints = true;
+
+		$( '#deepcat-hintbox' ).hide();
+		hideSmallHint();
+		enableImeAndSuggestions();
+
+		mw.cookie.set( "-deepcat-hintboxshown", makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ), { 'expires': 60 * 60 * 24 * 7 * 4 /*4 weeks*/ } );
+	}
+
+	function hideSmallHint() {
+		shouldHideSmallHint = true;
+
+		$( '#deepcat-smallhint' ).hide();
+	}
+
+	function disableImeAndSuggestions() {
+		$( '.suggestions' ).css( 'z-index', -1 );
+		$( '.imeselector' ).css( 'z-index', -1 );
+	}
+
+	function enableImeAndSuggestions() {
+		$( '.suggestions' ).css( 'z-index', 'auto' );
+		$( '.imeselector' ).css( 'z-index', 'auto' );
 	}
 
 	/**
@@ -401,17 +505,17 @@
 	}
 
 	/**
+	 * @param {string} message
 	 * @return {string}
 	 */
-	function stringFormat() {
-		var i,
-			s = arguments[0];
+	function stringFormat( message ) {
+		var i;
 
 		for ( i = 0; i < arguments.length - 1; i++ ) {
-			s = s.replace( new RegExp( '\\{' + i + '\\}', 'gm' ), arguments[i + 1] );
+			message = message.replace( new RegExp( '\\{' + i + '\\}', 'g' ), arguments[i + 1] );
 		}
 
-		return s;
+		return message;
 	}
 
 	/** @return instance of jQuery.Promise */

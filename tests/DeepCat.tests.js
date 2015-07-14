@@ -70,6 +70,16 @@
 			'getSearchTerms: empty DeepCat search terms are recognized'
 		);
 		assert.deepEqual(
+			deepCat.getSearchTerms( 'deepcat: deepcat:' ),
+			[ 'deepcat:', 'deepcat:' ],
+			'getSearchTerms: repeating empty DeepCat search terms are recognized'
+		);
+		assert.deepEqual(
+			deepCat.getSearchTerms( 'deepcat: "deepcat:"' ),
+			[ 'deepcat: "deepcat:"' ],
+			'getSearchTerms: match keyword as parameter when surrounded by colons'
+		);
+		assert.deepEqual(
 			deepCat.getSearchTerms( 'Foo: Bar' ),
 			[ 'Foo:', 'Bar' ],
 			'getSearchTerms: not every word followed by colon is considered a keyword'
@@ -86,14 +96,110 @@
 		);
 		assert.deepEqual(
 			deepCat.getSearchTerms( 'deepcat:a"b' ),
-			[ 'deepcat:a', '"b' ],
+			[ 'deepcat:a"b' ],
 			'getSearchTerms: Unmatched quote does not introduce multi-word search term'
 		);
 		assert.deepEqual(
 			deepCat.getSearchTerms( 'deepcat:a" b' ),
-			[ 'deepcat:a', '"', 'b' ],
+			[ 'deepcat:a"', 'b' ],
 			'getSearchTerms: Unmatched quote does not introduce multi-word search term'
 		);
+		assert.deepEqual(
+			deepCat.getSearchTerms( 'deepcat:Kunst (Berlin OR Hamburg)' ),
+			[ 'deepcat:Kunst', '(Berlin', 'OR', 'Hamburg)' ],
+			'getSearchTerms: Match complexer terms with brackets'
+		);
+		assert.deepEqual(
+			deepCat.getSearchTerms( 'deepcat:Physik intitle: System' ),
+			[ 'deepcat:Physik', 'intitle:', 'System' ],
+			'getSearchTerms: Match terms when used with other keywords'
+		);
+		assert.deepEqual(
+			deepCat.getSearchTerms( '-deepcat:Kunst' ),
+			[ '-deepcat:Kunst' ],
+			'getSearchTerms: Match keyword with minus'
+		);
+	} );
+
+	QUnit.test( 'computeResponses', function( assert ) {
+		var responseForTerm0 = {
+				result: [[1],[2],[3]],
+				userparam: '{"negativeSearch":false,"searchTermNum":0}'
+			},
+			responseForTerm2 = {
+				result: [[4],[5]],
+				userparam: '{"negativeSearch":false,"searchTermNum":2}'
+			},
+			responseWithNegativeSearch = {
+				result: [[6],[7]],
+				userparam: '{"negativeSearch":true,"searchTermNum":0}'
+			};
+		assert.deepEqual(
+			deepCat.computeResponses( [], []),
+			[],
+			'computeResponses: Empty response returns empty search terms'
+		);
+		assert.deepEqual(
+			deepCat.computeResponses( [responseForTerm0], ['deepcat:a', 'b']),
+			[ 'incategory:id:1|id:2|id:3', 'b' ],
+			'computeResponses: deepcat terms are replaced with incategory search terms computed from response'
+		);
+		assert.deepEqual(
+			deepCat.computeResponses( [responseForTerm2, responseForTerm0], ['deepcat:a', 'c', 'deepcat:b']),
+			[ 'incategory:id:1|id:2|id:3', 'c', 'incategory:id:4|id:5' ],
+			'computeResponses: Multiple responses are placed in the right order, regardless of response order'
+		);
+		assert.deepEqual(
+			deepCat.computeResponses( [responseWithNegativeSearch], ['-deepcat:c', 'b']),
+			[ '-incategory:id:6|id:7', 'b' ],
+			'computeResponses: NegativeSearch in responses create minus prefix for incategory search terms'
+		);
+		// TODO test error handling for empty results when pull request https://github.com/wmde/DeepCat-Gadget/pull/39 is done.
+	} );
+
+	QUnit.test( 'computeErrors', function( assert ) {
+		var oldAddErrorMsgField, lastError, testError,
+			searchTerms = ['deepcat:a', 'b'];
+		oldAddErrorMsgField = deepCat.addErrorMsgField;
+		// mock function to check for side effects of computeErrors
+		deepCat.addErrorMsgField = function (errors) {
+			lastError = errors;
+		};
+		testError = [{statusMessage:'Graph not found', userparam: '{"searchTermNum":0}'}];
+		assert.deepEqual(
+			deepCat.computeErrors(testError, searchTerms),
+			['', 'b'],
+			'computeErrors: Clear search term if wiki is not supported.'
+		);
+		assert.deepEqual(
+			lastError,
+			[{mwMessage: 'deepcat-error-unknown-graph', parameter: null}],
+			'computeErrors: "Graph not found" error creates correct message.'
+		);
+		testError = [{statusMessage:'RuntimeError: Category \'a\' not found in wiki', userparam: '{"searchTermNum":0}'}];
+		assert.deepEqual(
+			deepCat.computeErrors(testError, searchTerms),
+			['', 'b'],
+			'computeErrors: Clear search term if category is not found.'
+		);
+		assert.deepEqual(
+			lastError,
+			[{mwMessage: 'deepcat-error-notfound', parameter: 'a'}],
+			'computeErrors: "Category x not found" error creates correct message and returns x.'
+		);
+		testError = [{statusMessage:'RuntimeError: Category \'\' not found in wiki', userparam: '{"searchTermNum":0}'}];
+		assert.deepEqual(
+			deepCat.computeErrors(testError, searchTerms),
+			['', 'b'],
+			'computeErrors: Clear search term if category is missing.'
+		);
+		assert.deepEqual(
+			lastError,
+			[{mwMessage: 'deepcat-missing-category', parameter: null}],
+			'computeErrors: "Category not found" error creates correct message.'
+		);
+		// restore original function
+		deepCat.addErrorMsgField = oldAddErrorMsgField;
 	} );
 
 	QUnit.test( 'computeResponses', function( assert ) {
