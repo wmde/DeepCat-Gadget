@@ -78,7 +78,7 @@
 			addSearchFormHint();
 			addSmallFormHint();
 
-			$( '#searchText' ).on( 'keyup', function() {
+			$( '#searchText' ).find( ':input' ).on( 'keyup', function () {
 				if ( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
 					$( '#deepcat-hintbox' ).slideDown();
 				} else {
