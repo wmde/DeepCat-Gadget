@@ -201,19 +201,19 @@
 			}
 		}
 
-		newSearchTerms = DeepCat.computeResponses( responses );
+		newSearchTerms = deepCatSearchTerms.slice();
+		newSearchTerms = DeepCat.computeResponses( responses, newSearchTerms );
 		newSearchTerms = DeepCat.computeErrors( errors, newSearchTerms );
 
 		substituteSearchRequest( newSearchTerms.join( ' ' ) );
 		$( '#searchform' ).submit();
 	}
 
-	DeepCat.computeResponses = function( responses ) {
+	DeepCat.computeResponses = function( responses, newSearchTerms ) {
 		var i,
 			userParameters,
 			newSearchTermString,
-			errorMessages = [],
-			newSearchTerms = deepCatSearchTerms.slice();
+			errorMessages = [];
 
 		for ( i = 0; i < responses.length; i++ ) {
 			userParameters = JSON.parse( responses[i]['userparam'] );
