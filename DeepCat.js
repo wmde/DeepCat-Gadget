@@ -201,19 +201,19 @@
 			}
 		}
 
-		newSearchTerms = computeResponses( responses )
-		newSearchTerms = computeErrors( errors, newSearchTerms );
+		newSearchTerms = deepCatSearchTerms.slice();
+		newSearchTerms = DeepCat.computeResponses( responses, newSearchTerms );
+		newSearchTerms = DeepCat.computeErrors( errors, newSearchTerms );
 
 		substituteSearchRequest( newSearchTerms.join( ' ' ) );
 		$( '#searchform' ).submit();
 	}
 
-	function computeResponses( responses ) {
+	DeepCat.computeResponses = function( responses, newSearchTerms ) {
 		var i,
 			userParameters,
 			newSearchTermString,
-			errorMessages = [],
-			newSearchTerms = deepCatSearchTerms.slice();
+			errorMessages = [];
 
 		for ( i = 0; i < responses.length; i++ ) {
 			userParameters = JSON.parse( responses[i]['userparam'] );
@@ -223,6 +223,7 @@
 				// ensure we only display the message once, even when we have multiple empty results
 				errorMessages[0] = createErrorMessage( 'deepcat-error-unexpected-response', null );
 				newSearchTerms[userParameters['searchTermNum']] = '';
+				continue;
 			}
 
 			if ( userParameters['negativeSearch'] ) {
@@ -238,9 +239,9 @@
 		}
 
 		return newSearchTerms;
-	}
+	};
 
-	function computeErrors( errors, newSearchTerms ) {
+	DeepCat.computeErrors = function( errors, newSearchTerms ) {
 		var i,
 			userParameters,
 			categoryError;
@@ -272,9 +273,9 @@
 			newSearchTerms[userParameters['searchTermNum']] = '';
 		}
 
-		addErrorMsgField( DeepCat.ResponseErrors.getErrors() );
+		DeepCat.addErrorMsgField( DeepCat.ResponseErrors.getErrors() );
 		return newSearchTerms;
-	}
+	};
 
 	function createErrorMessage( mwMessage, parameter ) {
 		return {
@@ -295,7 +296,7 @@
 
 	function ajaxError( data ) {
 		mw.log( 'ajax request error: ' + JSON.stringify( data ) );
-		addErrorMsgField( [createErrorMessage( 'deepcat-error-tooldown', null )] );
+		DeepCat.addErrorMsgField( [createErrorMessage( 'deepcat-error-tooldown', null )] );
 
 		substituteSearchRequest( ' ' );
 		$( '#searchform' ).submit();
@@ -315,7 +316,7 @@
 		} ).appendTo( '#searchform' );
 	}
 
-	function addErrorMsgField( errorMessages ) {
+	DeepCat.addErrorMsgField = function( errorMessages ) {
 		if ( errorMessages.length > 0 ) {
 			$( '<input>' ).attr( {
 				type: 'hidden',
@@ -323,7 +324,7 @@
 				value: JSON.stringify( errorMessages )
 			} ).appendTo( '#searchform' );
 		}
-	}
+	};
 
 	function showErrorMessage( message ) {
 		var output = mw.html.element( 'div', { class: 'searchresults' }, new mw.html.Raw(
