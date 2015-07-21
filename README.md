@@ -5,18 +5,30 @@ https://github.com/wmde/catgraph-jsonp
 
 ### Prerequisites
 
-MediaWiki installation with CirrusSearch and patch:
-https://gerrit.wikimedia.org/r/#/c/191622/
+MediaWiki installation with CirrusSearch
+
+### Installation
+
+Save contents of DeepCat.js and DeepCat.css to your namespace
+- e.g. User:USERNAME/Gadgets/DeepCat.js & User:USERNAME/Gadgets/DeepCat.css
+
+Add scripts to your User:USERNAME/common.js
+```
+importScript( 'User:USERNAME/Gadgets/DeepCat.js' );
+importStylesheet(  'User:USERNAME/Gadgets/DeepCat.css' );
+```
 
 ### Testing
 
-Can be currently done here (Test Wiki with limited content and categories):
-- http://gptest1.wmflabs.org/
+The current official release of the gadget can be found here 
+```
+importScript( 'User:Christoph Fischer (WMDE)/Gadgets/DeepCat.js' );
+importStylesheet(  'User:Christoph Fischer (WMDE)/Gadgets/DeepCat.css' );
+```
 
-The Gadget is now per default activated in the MediaWiki:Common.js
-- http://gptest1.wmflabs.org/wiki/MediaWiki:Gadgets/DeepCat.js
+### Usage
 
-The default keyword to use the DeepCat-Search is "deepCat:" and can be combined with a term in Cirrus-Syntax
+The default keyword to use the DeepCat-Search is "deepcat:" and can be combined with a term in Cirrus-Syntax
 
 - 'deepcat:[category]'
 - 'deepcat:Kunstgeschichte' 
@@ -29,6 +41,8 @@ The default keyword to use the DeepCat-Search is "deepCat:" and can be combined 
 - 'deepcat:"Geschichte der Physik" Newton'
 - 'deepcat:Physik "Homogenes System"'
 - 'deepcat:"Geschichte der Physik" -deepcat:Kunstgeschichte'
+
+### Unit Tests
 
 There are some unit tests under `tests` directory. Tests may be run be by opening `tests/index.html` in a browser or from the command line e.g. using [node-qunit-phantomjs](https://github.com/jonkemp/node-qunit-phantomjs):
 ```bash
