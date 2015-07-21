@@ -20,7 +20,7 @@ importStylesheet(  'User:USERNAME/Gadgets/DeepCat.css' );
 
 ### Testing
 
-The current official release of the gadget can be found here 
+The current official release of the gadget can be found on wikipedia.org 
 ```
 importScript( 'User:Christoph Fischer (WMDE)/Gadgets/DeepCat.js' );
 importStylesheet(  'User:Christoph Fischer (WMDE)/Gadgets/DeepCat.css' );
