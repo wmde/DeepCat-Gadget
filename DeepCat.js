@@ -112,7 +112,7 @@
 	 * @type {{errors: Array}}
 	 */
 	DeepCat.ResponseErrors = {
-		errors:[]
+		errors: []
 	};
 
 	/**
