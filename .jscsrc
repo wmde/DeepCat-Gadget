@@ -1,6 +1,9 @@
 {
 	"preset": "wikimedia",
 
+	"disallowSpaceAfterKeywords": [
+		"if"
+	],
 	"requireSpaceAfterKeywords": [
 		"else"
 	],

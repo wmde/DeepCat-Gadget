@@ -59,7 +59,7 @@
 		$( '#searchform, #search' ).on( 'submit', function( e ) {
 			var searchInput = $( this ).find( '[name="search"]' ).val();
 
-			if ( matchesDeepCatKeyword( searchInput ) ) {
+			if( matchesDeepCatKeyword( searchInput ) ) {
 				deepCatSearchTerms = DeepCat.getSearchTerms( searchInput );
 
 				e.preventDefault();
@@ -73,12 +73,12 @@
 			}
 		} );
 
-		if ( !shouldHideHints ) {
+		if( !shouldHideHints ) {
 			addSearchFormHint();
 			addSmallFormHint();
 
 			$( '#searchText' ).find( ':input' ).on( 'keyup', function() {
-				if ( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
+				if( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
 					$( '#deepcat-hintbox' ).slideDown();
 				} else {
 					$( '#deepcat-hintbox' ).slideUp();
@@ -86,7 +86,7 @@
 			} );
 
 			$( '#searchInput' ).on( 'keyup', function() {
-				if ( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints && !shouldHideSmallHint ) {
+				if( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints && !shouldHideSmallHint ) {
 					disableImeAndSuggestions();
 					$( '#deepcat-smallhint' ).slideDown( 'fast' );
 				} else {
@@ -96,7 +96,7 @@
 			} );
 		}
 
-		if ( refreshSearchTermMock() ) {
+		if( refreshSearchTermMock() ) {
 			if( !shouldHideHints ) {
 				$( '#deepcat-hintbox' ).show();
 			}
@@ -144,7 +144,7 @@
 		addAjaxThrobber();
 
 		for ( i = 0; i < searchTerms.length; i++ ) {
-			if ( matchesDeepCatKeyword( searchTerms[ i ] ) ) {
+			if( matchesDeepCatKeyword( searchTerms[ i ] ) ) {
 				requests.push( getAjaxRequest( searchTerms[ i ], i ) );
 			}
 		}
@@ -186,17 +186,17 @@
 		removeAjaxThrobber();
 
 		// single request leads to different variable structure
-		if ( typeof arguments[ 1 ] === 'string' ) {
+		if( typeof arguments[ 1 ] === 'string' ) {
 			arguments = [ arguments ];
 		}
 
 		for ( i = 0; i < arguments.length; i++ ) {
 			ajaxResponse = arguments[ i ][ 0 ];
 
-			if ( arguments[ i ][ 1 ] !== 'success' ) {
+			if( arguments[ i ][ 1 ] !== 'success' ) {
 				ajaxError( arguments[ i ] );
 				return;
-			} else if ( ajaxResponse.status == 'OK' ) {
+			} else if( ajaxResponse.status == 'OK' ) {
 				ajaxSuccess( ajaxResponse );
 				responses.push( ajaxResponse );
 			} else {
@@ -230,14 +230,14 @@
 			userParameters = JSON.parse( responses[ i ].userparam );
 			newSearchTermString = '';
 
-			if ( !responses[ i ].result || responses[ i ].result.length == 0 ) {
+			if( !responses[ i ].result || responses[ i ].result.length == 0 ) {
 				// ensure we only display the message once, even when we have multiple empty results
 				errorMessages[ 0 ] = createErrorMessage( 'deepcat-error-unexpected-response', null );
 				newSearchTerms[ userParameters.searchTermNum ] = '';
 				continue;
 			}
 
-			if ( userParameters.negativeSearch ) {
+			if( userParameters.negativeSearch ) {
 				newSearchTermString += '-';
 			}
 			newSearchTermString += 'incategory:id:' + responses[ i ].result.join( '|id:' );
@@ -268,8 +268,8 @@
 			userParameters = JSON.parse( errors[ i ].userparam );
 			categoryError = errors[ i ].statusMessage.match( /(RuntimeError: Category \')(.*)(\' not found in wiki.*)/ );
 
-			if ( !categoryError ) {
-				if ( errors[ i ].statusMessage == 'Graph not found' ) {
+			if( !categoryError ) {
+				if( errors[ i ].statusMessage == 'Graph not found' ) {
 					DeepCat.ResponseErrors.addError(
 						createErrorMessage( 'deepcat-error-unknown-graph', null )
 					);
@@ -278,11 +278,11 @@
 						createErrorMessage( 'deepcat-error-unexpected-response', null )
 					);
 				}
-			} else if ( categoryError[ 2 ].length === 0 ) {
+			} else if( categoryError[ 2 ].length === 0 ) {
 				DeepCat.ResponseErrors.addError(
 					createErrorMessage( 'deepcat-missing-category', null )
 				);
-			} else if ( categoryError[ 2 ].length > 0 ) {
+			} else if( categoryError[ 2 ].length > 0 ) {
 				DeepCat.ResponseErrors.addError(
 					createErrorMessage( 'deepcat-error-notfound', categoryError[ 2 ] )
 				);
@@ -335,7 +335,7 @@
 	}
 
 	DeepCat.addErrorMsgField = function( errorMessages ) {
-		if ( errorMessages.length > 0 ) {
+		if( errorMessages.length > 0 ) {
 			$( '<input>' ).attr( {
 				type: 'hidden',
 				name: 'deepCatError',
@@ -400,7 +400,7 @@
 	function extractDeepCatCategory( searchTerm ) {
 		searchTerm = searchTerm.replace( new RegExp( '\\s*-?\\b' + keyString + '\\s*', 'i' ), '' );
 
-		if ( /^\s*"/.test( searchTerm ) ) {
+		if( /^\s*"/.test( searchTerm ) ) {
 			searchTerm = searchTerm.replace( /^\s*"/, '' )
 				.replace( /"\s*$/, '' )
 				.replace( /\\(?=.)/g, '' );
@@ -414,12 +414,12 @@
 			i,
 			message;
 
-		if ( deepCatErrors ) {
+		if( deepCatErrors ) {
 			deepCatErrors = JSON.parse( deepCatErrors );
 			deepCatErrors = deepCatErrors.reverse();
 
 			for ( i = 0; i < deepCatErrors.length; i++ ) {
-				if ( deepCatErrors[ i ].parameter ) {
+				if( deepCatErrors[ i ].parameter ) {
 					message = stringFormat( mw.msg( deepCatErrors[ i ].mwMessage ), deepCatErrors[ i ].parameter );
 				} else {
 					message = mw.msg( deepCatErrors[ i ].mwMessage );
@@ -432,7 +432,7 @@
 	function refreshSearchTermMock() {
 		var deepCatSearch = mw.util.getParamValue( 'deepCatSearch' );
 
-		if ( deepCatSearch && matchesDeepCatKeyword( deepCatSearch ) ) {
+		if( deepCatSearch && matchesDeepCatKeyword( deepCatSearch ) ) {
 			deepCatSearch = deepCatSearch.replace( /\+/g, ' ' );
 
 			substituteInputValues( deepCatSearch );
@@ -555,7 +555,7 @@
 			ammessages: messages
 		} ).done( function( data ) {
 			$.each( data.query.allmessages, function( index, message ) {
-				if ( message.missing !== '' ) {
+				if( message.missing !== '' ) {
 					mw.messages.set( message.name, message[ '*' ] );
 				}
 			} );
