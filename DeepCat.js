@@ -67,7 +67,7 @@
 
 				mw.log( 'deepCatSearchTerms: ' + deepCatSearchTerms );
 
-				//bugfix to sync search fields for better recovery of "deepCatSearch"
+				// bugfix to sync search fields for better recovery of "deepCatSearch"
 				substituteInputValues( searchInput );
 
 				sendAjaxRequests( deepCatSearchTerms );
@@ -187,7 +187,7 @@
 		DeepCat.ResponseErrors.reset();
 		removeAjaxThrobber();
 
-		//single request leads to different variable structure
+		// single request leads to different variable structure
 		if ( typeof arguments[1] === 'string' ) {
 			arguments = [arguments];
 		}
@@ -381,9 +381,9 @@
 			// Search for keyword:"term including \"escaped\" quotes" as well as keyword:term.
 			new RegExp(
 				'-?\\b' + keyString + '\\s*(?:'
-					+ '"(?:[^\\\\"]|\\\\.)+"' //quoted strings including spaces and escaped quotes
-					+ '|(?!-?' + keyString + ')\\S+' //unquoted strings, but skip duplicate keywords
-					+ ')|\\S+', //fetch remaining non-deepcat stuff
+					+ '"(?:[^\\\\"]|\\\\.)+"' // quoted strings including spaces and escaped quotes
+					+ '|(?!-?' + keyString + ')\\S+' // unquoted strings, but skip duplicate keywords
+					+ ')|\\S+', // fetch remaining non-deepcat stuff
 				'gi' ) );
 	};
 
