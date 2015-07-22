@@ -6,9 +6,8 @@
  * @author Christoph Fischer < christoph.fischer@wikimedia.de >
  */
 ( function( $, mw ) {
-	var DeepCat = {};
-
-	var keyString = 'deepcat:',
+	var DeepCat = {},
+		keyString = 'deepcat:',
 		maxDepth = 10,
 		maxResults = 50,
 		ajaxTimeout = 10000,
