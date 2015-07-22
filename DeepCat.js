@@ -154,7 +154,7 @@
 
 	function getAjaxRequest( searchTerm, searchTermNum ) {
 		var categoryString = extractDeepCatCategory( searchTerm ),
-		 	userParameter = {
+			userParameter = {
 				negativeSearch: searchTerm.charAt( 0 ) === '-',
 				searchTermNum: searchTermNum
 			};
