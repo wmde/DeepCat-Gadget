@@ -488,7 +488,7 @@
 		mw.cookie.set(
 			'-deepcat-hintboxshown',
 			makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ),
-			{ 'expires': 60 * 60 * 24 * 7 * 4 } // 4 weeks
+			{ expires: 60 * 60 * 24 * 7 * 4 } // 4 weeks
 		);
 	}
 
