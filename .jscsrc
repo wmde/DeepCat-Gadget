@@ -2,7 +2,11 @@
 	"preset": "wikimedia",
 
 	"disallowSpaceAfterKeywords": [
-		"if"
+		"catch",
+		"for",
+		"if",
+		"switch",
+		"while"
 	],
 	"requireSpaceAfterKeywords": [
 		"else"

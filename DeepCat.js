@@ -17,7 +17,7 @@
 		requestUrl = '//tools.wmflabs.org/catgraph-jsonp/' + mw.config.get( 'wgDBname' )
 			+ '_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
 
-	switch ( mw.config.get( 'wgUserLanguage' ) ) {
+	switch( mw.config.get( 'wgUserLanguage' ) ) {
 		case 'de':
 		case 'de-at':
 		case 'de-ch':
@@ -143,7 +143,7 @@
 
 		addAjaxThrobber();
 
-		for ( i = 0; i < searchTerms.length; i++ ) {
+		for( i = 0; i < searchTerms.length; i++ ) {
 			if( matchesDeepCatKeyword( searchTerms[ i ] ) ) {
 				requests.push( getAjaxRequest( searchTerms[ i ], i ) );
 			}
@@ -190,7 +190,7 @@
 			arguments = [ arguments ];
 		}
 
-		for ( i = 0; i < arguments.length; i++ ) {
+		for( i = 0; i < arguments.length; i++ ) {
 			ajaxResponse = arguments[ i ][ 0 ];
 
 			if( arguments[ i ][ 1 ] !== 'success' ) {
@@ -226,7 +226,7 @@
 			newSearchTermString,
 			errorMessages = [];
 
-		for ( i = 0; i < responses.length; i++ ) {
+		for( i = 0; i < responses.length; i++ ) {
 			userParameters = JSON.parse( responses[ i ].userparam );
 			newSearchTermString = '';
 
@@ -245,7 +245,7 @@
 			newSearchTerms[ userParameters.searchTermNum ] = newSearchTermString;
 		}
 
-		for ( i = 0; i < errorMessages.length; i++ ) {
+		for( i = 0; i < errorMessages.length; i++ ) {
 			DeepCat.ResponseErrors.addError( errorMessages[ i ] );
 		}
 
@@ -264,7 +264,7 @@
 			userParameters,
 			categoryError;
 
-		for ( i = 0; i < errors.length; i++ ) {
+		for( i = 0; i < errors.length; i++ ) {
 			userParameters = JSON.parse( errors[ i ].userparam );
 			categoryError = errors[ i ].statusMessage.match( /(RuntimeError: Category \')(.*)(\' not found in wiki.*)/ );
 
@@ -418,7 +418,7 @@
 			deepCatErrors = JSON.parse( deepCatErrors );
 			deepCatErrors = deepCatErrors.reverse();
 
-			for ( i = 0; i < deepCatErrors.length; i++ ) {
+			for( i = 0; i < deepCatErrors.length; i++ ) {
 				if( deepCatErrors[ i ].parameter ) {
 					message = stringFormat( mw.msg( deepCatErrors[ i ].mwMessage ), deepCatErrors[ i ].parameter );
 				} else {
@@ -517,7 +517,7 @@
 		var hash = 5381,
 			i;
 
-		for ( i = 0; i < str.length; i++ ) {
+		for( i = 0; i < str.length; i++ ) {
 			hash = ( hash << 5 ) + hash + str.charCodeAt( i );
 		}
 
@@ -539,7 +539,7 @@
 	function stringFormat( message ) {
 		var i;
 
-		for ( i = 0; i < arguments.length - 1; i++ ) {
+		for( i = 0; i < arguments.length - 1; i++ ) {
 			message = message.replace( new RegExp( '\\{' + i + '\\}', 'g' ), arguments[ i + 1 ] );
 		}
 
