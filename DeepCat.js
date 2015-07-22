@@ -27,7 +27,7 @@
 				'deepcat-error-notfound': 'Die Kategorie \'{0}\' konnte nicht gefunden werden.',
 				'deepcat-error-tooldown': 'CatGraph-Tool ist zur Zeit nicht erreichbar.',
 				'deepcat-error-unknown-graph': 'Dieses Wiki wird von CatGraph nicht unterst&uuml;tzt.',
-				'deepcat-error-unexpected-response': "CatGraph-Tool lieferte ein unerwartetes Ergebnis.",
+				'deepcat-error-unexpected-response': 'CatGraph-Tool lieferte ein unerwartetes Ergebnis.',
 				'deepcat-missing-category': 'Bitte gib eine Kategorie ein.',
 				'deepcat-hintbox-close': 'Zuk&uuml;nftig ausblenden',
 				'deepcat-smallhint-close': 'Ausblenden',
@@ -42,7 +42,7 @@
 				'deepcat-error-notfound': 'CatGraph could not find the category \'{0}\'.',
 				'deepcat-error-tooldown': 'CatGraph-Tool is not reachable.',
 				'deepcat-error-unknown-graph': 'The Wiki is not supported by CatGraph.',
-				'deepcat-error-unexpected-response': "CatGraph-Tool returned an unexpected response.",
+				'deepcat-error-unexpected-response': 'CatGraph-Tool returned an unexpected response.',
 				'deepcat-missing-category': 'Please insert a category.',
 				'deepcat-hintbox-close': 'Do not show again',
 				'deepcat-smallhint-close': 'Close',
@@ -476,7 +476,7 @@
 	}
 
 	function hasHintCookie() {
-		return mw.cookie.get( "-deepcat-hintboxshown" ) == makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) );
+		return mw.cookie.get( '-deepcat-hintboxshown' ) == makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) );
 	}
 
 	function hideHints() {
