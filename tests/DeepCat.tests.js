@@ -3,12 +3,12 @@
  * @author Leszek Manicki <leszek.manicki@wikimedia.de>
  * @author Gabriel Birke <gabriel.birke@wikimedia.de>
  */
-( function ( deepCat, $, QUnit ) {
-	QUnit.test( 'load DeepCat', function ( assert ) {
+( function( deepCat, $, QUnit ) {
+	QUnit.test( 'load DeepCat', function( assert ) {
 		assert.ok( deepCat !== null, 'DeepCat is not null' );
 	} );
 
-	QUnit.test( 'getSearchTerms', function ( assert ) {
+	QUnit.test( 'getSearchTerms', function( assert ) {
 		assert.deepEqual(
 			deepCat.getSearchTerms( 'Foo' ),
 			[ 'Foo' ],
@@ -121,7 +121,7 @@
 		);
 	} );
 
-	QUnit.test( 'computeResponses', function ( assert ) {
+	QUnit.test( 'computeResponses', function( assert ) {
 		var responseForTerm0 = {
 				result: [ [ 1 ], [ 2 ], [ 3 ] ],
 				userparam: '{"negativeSearch":false,"searchTermNum":0}'
@@ -174,12 +174,12 @@
 		);
 	} );
 
-	QUnit.test( 'computeErrors', function ( assert ) {
+	QUnit.test( 'computeErrors', function( assert ) {
 		var oldAddErrorMsgField, lastError, testError,
 			searchTerms = [ 'deepcat:a', 'b' ];
 		oldAddErrorMsgField = deepCat.addErrorMsgField;
 		// mock function to check for side effects of computeErrors
-		deepCat.addErrorMsgField = function ( errors ) {
+		deepCat.addErrorMsgField = function( errors ) {
 			lastError = errors;
 		};
 		deepCat.ResponseErrors.reset();

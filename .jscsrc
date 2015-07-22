@@ -1,3 +1,10 @@
 {
-	"preset": "wikimedia"
+	"preset": "wikimedia",
+
+	"requireSpaceAfterKeywords": [
+		"else"
+	],
+	"disallowSpacesInFunctionExpression": {
+		"beforeOpeningRoundBrace": true
+	}
 }
