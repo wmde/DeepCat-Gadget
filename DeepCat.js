@@ -137,7 +137,6 @@
 		return this.errors || [];
 	};
 
-
 	function sendAjaxRequests( searchTerms ) {
 		var i,
 			requests = [];
