@@ -3,6 +3,8 @@
 Gadget for MediaWiki installations allowing recursive category search via CatGraph using the corresponding JSONP interface.
 https://github.com/wmde/catgraph-jsonp
 
+[![Build Status](https://travis-ci.org/wmde/DeepCat-Gadget.svg?branch=master)](https://travis-ci.org/wmde/DeepCat-Gadget)
+
 ### Prerequisites
 
 MediaWiki installation with CirrusSearch
