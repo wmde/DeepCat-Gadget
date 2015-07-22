@@ -171,6 +171,12 @@
 		} )
 	}
 
+	/**
+	 * Process all the AJAX responses from catgraph-jsonp, modify the search string and
+	 * re-submit the search form.
+	 *
+	 * This function can receive an arbitrary number of parameters.
+	 */
 	function receiveAjaxResponses() {
 		var i,
 			ajaxResponse,
@@ -209,6 +215,13 @@
 		$( '#searchform' ).submit();
 	}
 
+	/**
+	 * Replace "deepcat:" search terms with "incategory:" terms from DeepCat response
+	 *
+	 * @param {Array} responses Category search results
+	 * @param {string[]} newSearchTerms Original search terms provided by the user
+	 * @returns {string[]} Modified newSearchTerms
+	 */
 	DeepCat.computeResponses = function( responses, newSearchTerms ) {
 		var i,
 			userParameters,
@@ -241,6 +254,13 @@
 		return newSearchTerms;
 	};
 
+	/**
+	 * Add error messages to search form, remove erroneous search terms
+	 *
+	 * @param {Array} errors Errors from DeepCat
+	 * @param {string[]} newSearchTerms Original search terms provided by the user
+	 * @return {string[]} Modified newSearchTerms
+	 */
 	DeepCat.computeErrors = function( errors, newSearchTerms ) {
 		var i,
 			userParameters,
