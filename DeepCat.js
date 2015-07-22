@@ -198,7 +198,7 @@
 			if ( arguments[ i ][ 1 ] !== 'success' ) {
 				ajaxError( arguments[ i ] );
 				return;
-			} else if ( ajaxResponse[ 'status' ] == 'OK' ) {
+			} else if ( ajaxResponse.status == 'OK' ) {
 				ajaxSuccess( ajaxResponse );
 				responses.push( ajaxResponse );
 			} else {
@@ -229,22 +229,22 @@
 			errorMessages = [];
 
 		for ( i = 0; i < responses.length; i++ ) {
-			userParameters = JSON.parse( responses[ i ][ 'userparam' ] );
+			userParameters = JSON.parse( responses[ i ].userparam );
 			newSearchTermString = '';
 
-			if ( !responses[ i ][ 'result' ] || responses[ i ][ 'result' ].length == 0 ) {
+			if ( !responses[ i ].result || responses[ i ].result.length == 0 ) {
 				// ensure we only display the message once, even when we have multiple empty results
 				errorMessages[ 0 ] = createErrorMessage( 'deepcat-error-unexpected-response', null );
-				newSearchTerms[ userParameters[ 'searchTermNum' ] ] = '';
+				newSearchTerms[ userParameters.searchTermNum ] = '';
 				continue;
 			}
 
-			if ( userParameters[ 'negativeSearch' ] ) {
+			if ( userParameters.negativeSearch ) {
 				newSearchTermString += '-';
 			}
-			newSearchTermString += 'incategory:id:' + responses[ i ][ 'result' ].join( '|id:' );
+			newSearchTermString += 'incategory:id:' + responses[ i ].result.join( '|id:' );
 
-			newSearchTerms[ userParameters[ 'searchTermNum' ] ] = newSearchTermString;
+			newSearchTerms[ userParameters.searchTermNum ] = newSearchTermString;
 		}
 
 		for ( i = 0; i < errorMessages.length; i++ ) {
@@ -267,7 +267,7 @@
 			categoryError;
 
 		for ( i = 0; i < errors.length; i++ ) {
-			userParameters = JSON.parse( errors[ i ][ 'userparam' ] );
+			userParameters = JSON.parse( errors[ i ].userparam );
 			categoryError = errors[ i ].statusMessage.match( /(RuntimeError: Category \')(.*)(\' not found in wiki.*)/ );
 
 			if ( !categoryError ) {
@@ -290,7 +290,7 @@
 				);
 			}
 
-			newSearchTerms[ userParameters[ 'searchTermNum' ] ] = '';
+			newSearchTerms[ userParameters.searchTermNum ] = '';
 		}
 
 		DeepCat.addErrorMsgField( DeepCat.ResponseErrors.getErrors() );
@@ -306,12 +306,12 @@
 
 	function ajaxSuccess( data ) {
 		mw.log( 'graph & ajax request successful' );
-		mw.log( 'statusMessage: ' + data[ 'statusMessage' ] );
+		mw.log( 'statusMessage: ' + data.statusMessage );
 	}
 
 	function graphError( data ) {
 		mw.log( 'graph request failed' );
-		mw.log( 'statusMessage: ' + data[ 'statusMessage' ] );
+		mw.log( 'statusMessage: ' + data.statusMessage );
 	}
 
 	function ajaxError( data ) {
