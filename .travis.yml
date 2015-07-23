@@ -5,6 +5,8 @@ node_js:
 
 sudo: false
 
-install: travis_retry npm install --save-dev node-qunit-phantomjs
+install: travis_retry npm install --save-dev node-qunit-phantomjs jscs
 
-script: ./node_modules/node-qunit-phantomjs/bin/node-qunit-phantomjs ./tests/index.html
+script:
+  - ./node_modules/jscs/bin/jscs ./DeepCat.js tests/DeepCat.tests.js tests/mediaWiki.mock.js
+  - ./node_modules/node-qunit-phantomjs/bin/node-qunit-phantomjs ./tests/index.html
