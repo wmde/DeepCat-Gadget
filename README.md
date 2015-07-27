@@ -50,3 +50,7 @@ There are some unit tests under `tests` directory. Tests may be run be by openin
 ```bash
 $ node-qunit-phantomjs ./tests/index.html
 ```
+
+### Reporting Issues
+
+Please report bugs and feature requests on [Phabricator](https://phabricator.wikimedia.org/maniphest/task/create/?projects=tcb-team,deepcat-gadget&title=%5BDeepCat%5D).
