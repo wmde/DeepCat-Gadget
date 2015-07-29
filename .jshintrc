@@ -17,9 +17,10 @@
 	// Environment
 	"browser": true,
 	"jquery": true,
+	"qunit": true,
 
 	"globals": {
-		"mediaWiki": false,
+		"mediaWiki": true,
 		"JSON": false
 	}
 }
