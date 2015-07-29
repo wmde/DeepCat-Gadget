@@ -166,7 +166,7 @@
 			dataType: 'jsonp',
 			jsonp: 'callback',
 			error: fatalAjaxError
-		} )
+		} );
 	}
 
 	/**
@@ -196,7 +196,7 @@
 			if( arguments[ i ][ 1 ] !== 'success' ) {
 				ajaxError( arguments[ i ] );
 				return;
-			} else if( ajaxResponse.status == 'OK' ) {
+			} else if( ajaxResponse.status === 'OK' ) {
 				ajaxSuccess( ajaxResponse );
 				responses.push( ajaxResponse );
 			} else {
@@ -230,7 +230,7 @@
 			userParameters = JSON.parse( responses[ i ].userparam );
 			newSearchTermString = '';
 
-			if( !responses[ i ].result || responses[ i ].result.length == 0 ) {
+			if( !responses[ i ].result || responses[ i ].result.length === 0 ) {
 				// ensure we only display the message once, even when we have multiple empty results
 				errorMessages[ 0 ] = createErrorMessage( 'deepcat-error-unexpected-response', null );
 				newSearchTerms[ userParameters.searchTermNum ] = '';
@@ -269,7 +269,7 @@
 			categoryError = errors[ i ].statusMessage.match( /(RuntimeError: Category \')(.*)(\' not found in wiki.*)/ );
 
 			if( !categoryError ) {
-				if( errors[ i ].statusMessage == 'Graph not found' ) {
+				if( errors[ i ].statusMessage === 'Graph not found' ) {
 					DeepCat.ResponseErrors.addError(
 						createErrorMessage( 'deepcat-error-unknown-graph', null )
 					);
@@ -345,8 +345,8 @@
 	};
 
 	function showErrorMessage( message ) {
-		var output = mw.html.element( 'div', { class: 'searchresults' }, new mw.html.Raw(
-			mw.html.element( 'div', { class: 'error' }, message )
+		var output = mw.html.element( 'div', { 'class': 'searchresults' }, new mw.html.Raw(
+			mw.html.element( 'div', { 'class': 'error' }, message )
 		) );
 		$( '#search' ).after( output );
 	}
@@ -474,7 +474,7 @@
 	}
 
 	function hasHintCookie() {
-		return mw.cookie.get( '-deepcat-hintboxshown' ) == makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) );
+		return mw.cookie.get( '-deepcat-hintboxshown' ) === makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) );
 	}
 
 	function hideHints() {
