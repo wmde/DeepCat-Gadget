@@ -2,7 +2,7 @@
  * DeepCat Gadget for MediaWiki
  * using JSONP CatGraph interface https://github.com/wmde/catgraph-jsonp
  * report issues / feature requests https://github.com/wmde/DeepCat-Gadget
- * @licence GNU GPL v2+
+ * @license GNU GPL v2+
  * @author Christoph Fischer < christoph.fischer@wikimedia.de >
  */
 ( function( $, mw ) {
