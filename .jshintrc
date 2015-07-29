@@ -12,10 +12,10 @@
 
 	// Environment
 	"browser": true,
+	"jquery": true,
 
 	"globals": {
-		"mediaWiki": false,
-		"jQuery": false
+		"mediaWiki": false
 	}
 }
 
