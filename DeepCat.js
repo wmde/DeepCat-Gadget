@@ -187,7 +187,7 @@
 
 		// single request leads to different variable structure
 		if( typeof arguments[ 1 ] === 'string' ) {
-			arguments = [ arguments ];
+			arguments = [ arguments ]; // jshint ignore:line
 		}
 
 		for( i = 0; i < arguments.length; i++ ) {
