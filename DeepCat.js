@@ -2,7 +2,7 @@
  * DeepCat Gadget for MediaWiki
  * using JSONP CatGraph interface https://github.com/wmde/catgraph-jsonp
  * report issues / feature requests https://github.com/wmde/DeepCat-Gadget
- * @licence GNU GPL v2+
+ * @license GNU GPL v2+
  * @author Christoph Fischer < christoph.fischer@wikimedia.de >
  */
 ( function( $, mw ) {
@@ -131,7 +131,7 @@
 
 	/**
 	 * Return collected errors
-	 * @returns {Array}
+	 * @return {Array}
 	 */
 	DeepCat.ResponseErrors.getErrors = function() {
 		return this.errors || [];
@@ -218,7 +218,7 @@
 	 *
 	 * @param {Array} responses Category search results
 	 * @param {string[]} newSearchTerms Original search terms provided by the user
-	 * @returns {string[]} Modified newSearchTerms
+	 * @return {string[]} Modified newSearchTerms
 	 */
 	DeepCat.computeResponses = function( responses, newSearchTerms ) {
 		var i,

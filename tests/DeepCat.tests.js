@@ -1,5 +1,5 @@
 /**
- * @licence GNU GPL v2+
+ * @license GNU GPL v2+
  * @author Leszek Manicki <leszek.manicki@wikimedia.de>
  * @author Gabriel Birke <gabriel.birke@wikimedia.de>
  */
