@@ -18,5 +18,10 @@
 	"jsDoc": {
 		"checkAnnotations": true,
 		"checkTypes": "strictNativeCase"
-	}
+	},
+
+	"excludeFiles": [
+		"node_modules/**",
+		"tests/lib/**"
+	]
 }
