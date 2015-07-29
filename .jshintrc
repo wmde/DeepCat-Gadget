@@ -11,6 +11,9 @@
 	"undef": true,
 	"unused": true,
 
+	//Relaxing
+	"laxbreak":true,
+
 	// Environment
 	"browser": true,
 	"jquery": true,
