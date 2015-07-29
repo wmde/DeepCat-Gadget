@@ -514,6 +514,7 @@
 	 * @return {number}
 	 */
 	function djb2Code( str ) {
+		/*jshint bitwise: false*/
 		var hash = 5381,
 			i;
 
