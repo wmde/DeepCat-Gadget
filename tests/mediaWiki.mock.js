@@ -5,7 +5,7 @@ mediaWiki = {
 				return {
 					done: function() {
 					}
-				}
+				};
 			}
 		};
 	},
