@@ -13,5 +13,10 @@
 	],
 	"disallowSpacesInFunctionExpression": {
 		"beforeOpeningRoundBrace": true
+	},
+
+	"jsDoc": {
+		"checkAnnotations": true,
+		"checkTypes": "strictNativeCase"
 	}
 }
