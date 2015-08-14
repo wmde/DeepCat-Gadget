@@ -8,8 +8,8 @@
 ( function( $, mw ) {
 	var DeepCat = {},
 		keyString = 'deepcat:',
-		maxDepth = 10,
-		maxResults = 50,
+		maxDepth = 15,
+		maxResults = 100,
 		ajaxTimeout = 10000,
 		deepCatSearchTerms,
 		shouldHideHints = false,
