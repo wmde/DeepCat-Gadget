@@ -156,7 +156,8 @@
 		var categoryString = extractDeepCatCategory( searchTerm ),
 			userParameter = {
 				negativeSearch: searchTerm.charAt( 0 ) === '-',
-				searchTermNum: searchTermNum
+				searchTermNum: searchTermNum,
+				gadgetUUID: getGadgetUUID()
 			};
 
 		return $.ajax( {
@@ -531,6 +532,41 @@
 	 */
 	function makeHintboxCookieToken( str ) {
 		return String( djb2Code( str ) );
+	}
+
+	/**
+	 * @return {string}|null
+	 */
+	function getGadgetUUID() {
+		var gadgetUUID = mw.cookie.get( '-deepcat-uuid' );
+
+		if( gadgetUUID === null ) {
+			gadgetUUID = generateUUID();
+
+			mw.cookie.set(
+				'-deepcat-uuid',
+				gadgetUUID,
+				{ expires: 60 * 60 * 24 * 7 * 4 } // 4 weeks
+			);
+		}
+		return mw.cookie.get( '-deepcat-uuid' ); // returns null if the user does not allow cookies
+	}
+
+	/**
+	 * Generate random UUID
+	 *
+	 * @see https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+	 * @return {string}
+	 */
+	function generateUUID() {
+		function s4() {
+			return Math.floor( ( 1 + Math.random() ) * 0x10000 )
+				.toString( 16 )
+				.substring( 1 );
+		}
+
+		return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+			s4() + '-' + s4() + s4() + s4();
 	}
 
 	/**
