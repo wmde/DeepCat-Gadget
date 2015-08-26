@@ -183,7 +183,6 @@
 			newSearchTerms;
 
 		DeepCat.ResponseErrors.reset();
-		removeAjaxThrobber();
 
 		// single request leads to different variable structure
 		if( typeof arguments[ 1 ] === 'string' ) {
@@ -209,7 +208,24 @@
 		newSearchTerms = DeepCat.computeResponses( responses, newSearchTerms );
 		newSearchTerms = DeepCat.computeErrors( errors, newSearchTerms );
 
-		substituteSearchRequest( newSearchTerms.join( ' ' ) );
+		logAndFinishRequest( newSearchTerms.join( ' ' ) );
+	}
+
+	function logAndFinishRequest( newSearchTermString ) {
+		var logRequestUrl = '//tools.wmflabs.org/catgraph-jsonp/logrequestlength?searchquerylength={0}';
+		return $.ajax( {
+			url: stringFormat( logRequestUrl, newSearchTermString.length ),
+			timeout: ajaxTimeout,
+			cache: false,
+			complete: function() {
+				finishDeepCatRequest( newSearchTermString );
+			}
+		} );
+	}
+
+	function finishDeepCatRequest( newSearchTermString ) {
+		substituteSearchRequest( newSearchTermString );
+		removeAjaxThrobber();
 		$( '#searchform' ).submit();
 	}
 
