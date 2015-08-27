@@ -14,8 +14,7 @@
 		deepCatSearchTerms,
 		shouldHideHints = false,
 		shouldHideSmallHint = false,
-		requestUrl = '//tools.wmflabs.org/catgraph-jsonp/' + mw.config.get( 'wgDBname' )
-			+ '_ns14/traverse-successors%20Category:{0}%20' + maxDepth + '%20' + maxResults;
+		interfaceUrl = '//tools.wmflabs.org/catgraph-jsonp/';
 
 	switch( mw.config.get( 'wgUserLanguage' ) ) {
 		case 'de':
@@ -160,13 +159,21 @@
 			};
 
 		return $.ajax( {
-			url: stringFormat( requestUrl, categoryString ),
+			url: getAjaxRequestUrl( categoryString ),
 			data: { userparam: JSON.stringify( userParameter ) },
 			timeout: ajaxTimeout,
 			dataType: 'jsonp',
 			jsonp: 'callback',
 			error: fatalAjaxError
 		} );
+	}
+
+	function getAjaxRequestUrl( categoryString ) {
+		return interfaceUrl + mw.config.get( 'wgDBname' )
+			+ '_ns14/traverse-successors%20Category:'
+			+ categoryString + '%20'
+			+ maxDepth + '%20'
+			+ maxResults;
 	}
 
 	/**
@@ -212,15 +219,19 @@
 	}
 
 	function logAndFinishRequest( newSearchTermString ) {
-		var logRequestUrl = '//tools.wmflabs.org/catgraph-jsonp/logrequestlength?searchquerylength={0}';
-		return $.ajax( {
-			url: stringFormat( logRequestUrl, newSearchTermString.length ),
+		$.ajax( {
+			url: getLogRequestUrl( newSearchTermString.length ),
 			timeout: ajaxTimeout,
 			cache: false,
 			complete: function() {
 				finishDeepCatRequest( newSearchTermString );
 			}
 		} );
+	}
+
+	function getLogRequestUrl( newSearchTermStringLength ) {
+		return interfaceUrl + 'logrequestlength?'
+			+ 'searchquerylength=' + newSearchTermStringLength;
 	}
 
 	function finishDeepCatRequest( newSearchTermString ) {
