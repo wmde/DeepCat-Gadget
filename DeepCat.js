@@ -9,7 +9,7 @@
 	var DeepCat = {},
 		keyString = 'deepcat:',
 		maxDepth = 15,
-		maxResults = 100,
+		maxResults = 70,
 		ajaxTimeout = 10000,
 		deepCatSearchTerms,
 		shouldHideHints = false,
