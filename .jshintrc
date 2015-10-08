@@ -1,5 +1,4 @@
 {
-	// Enforcing
 	"bitwise": true,
 	"curly": true,
 	"eqeqeq": true,
@@ -11,10 +10,8 @@
 	"undef": true,
 	"unused": true,
 
-	//Relaxing
 	"laxbreak":true,
 
-	// Environment
 	"browser": true,
 	"jquery": true,
 	"qunit": true,
