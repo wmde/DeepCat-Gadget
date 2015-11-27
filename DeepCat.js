@@ -14,7 +14,8 @@
 		deepCatSearchTerms,
 		shouldHideHints = false,
 		shouldHideSmallHint = false,
-		interfaceUrl = '//tools.wmflabs.org/catgraph-jsonp/';
+		interfaceUrl = '//tools.wmflabs.org/catgraph-jsonp/',
+		mainSearchFormId;
 
 	switch( mw.config.get( 'wgUserLanguage' ) ) {
 		case 'de':
@@ -30,8 +31,8 @@
 				'deepcat-hintbox-close': 'Zuk&uuml;nftig ausblenden',
 				'deepcat-smallhint-close': 'Ausblenden',
 				'deepcat-hintbox-text': 'Momentane Einschränkung des DeepCat-Gadgets pro Suchbegriff:<br/>' +
-										'Max. Kategoriensuchtiefe: ' + maxDepth + ' / Max. Kategorienanzahl: ' + maxResults + '<br/>' +
-										'<a style="float:left" href="//de.wikipedia.org/wiki/Hilfe:Suche/Deepcat" target="_blank">Weitere Informationen</a>',
+				'Max. Kategoriensuchtiefe: ' + maxDepth + ' / Max. Kategorienanzahl: ' + maxResults + '<br/>' +
+				'<a style="float:left" href="//de.wikipedia.org/wiki/Hilfe:Suche/Deepcat" target="_blank">Weitere Informationen</a>',
 				'deepcat-hintbox-small': 'Max. Kategoriensuchtiefe: ' + maxDepth + '<br/>Max. Kategorienanzahl: ' + maxResults
 			} );
 			break;
@@ -45,8 +46,8 @@
 				'deepcat-hintbox-close': 'Do not show again',
 				'deepcat-smallhint-close': 'Close',
 				'deepcat-hintbox-text': 'Current limits of the DeepCat-Gadgets per search word:<br/>' +
-										'Max. search depth: ' + maxDepth + ' / Max. result categories: ' + maxResults + '<br/>' +
-										'<a style="float:left" href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Deepcat"  target="_blank">Additional information</a>',
+				'Max. search depth: ' + maxDepth + ' / Max. result categories: ' + maxResults + '<br/>' +
+				'<a style="float:left" href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Deepcat"  target="_blank">Additional information</a>',
 				'deepcat-hintbox-small': 'Max. category-depth: ' + maxDepth + '<br/>Max. categories: ' + maxResults
 			} );
 			break;
@@ -54,8 +55,9 @@
 
 	$( function() {
 		shouldHideHints = hasHintCookie();
+		mainSearchFormId = getMainSearchFormId();
 
-		$( '#searchform, #search' ).on( 'submit', function( e ) {
+		$( '#searchform, #search, #powersearch' ).on( 'submit', function( e ) {
 			var searchInput = $( this ).find( '[name="search"]' ).val();
 
 			if( matchesDeepCatKeyword( searchInput ) ) {
@@ -77,6 +79,14 @@
 			addSmallFormHint();
 
 			$( '#searchText' ).find( ':input' ).on( 'keyup', function() {
+				if( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
+					$( '#deepcat-hintbox' ).slideDown();
+				} else {
+					$( '#deepcat-hintbox' ).slideUp();
+				}
+			} );
+
+			$( '#powerSearchText' ).find( ':input' ).on( 'keyup', function() {
 				if( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
 					$( '#deepcat-hintbox' ).slideDown();
 				} else {
@@ -237,7 +247,7 @@
 	function finishDeepCatRequest( newSearchTermString ) {
 		substituteSearchRequest( newSearchTermString );
 		removeAjaxThrobber();
-		$( '#searchform' ).submit();
+		$( mainSearchFormId ).submit();
 	}
 
 	/**
@@ -318,7 +328,7 @@
 			newSearchTerms[ userParameters.searchTermNum ] = '';
 		}
 
-		DeepCat.addErrorMsgField( DeepCat.ResponseErrors.getErrors() );
+		DeepCat.addErrorMsgField( DeepCat.ResponseErrors.getErrors(), mainSearchFormId );
 		return newSearchTerms;
 	};
 
@@ -341,10 +351,10 @@
 
 	function ajaxError( data ) {
 		mw.log( 'ajax request error: ' + JSON.stringify( data ) );
-		DeepCat.addErrorMsgField( [ createErrorMessage( 'deepcat-error-tooldown', null ) ] );
 
+		DeepCat.addErrorMsgField( [ createErrorMessage( 'deepcat-error-tooldown', null ) ] );
 		substituteSearchRequest( ' ' );
-		$( '#searchform' ).submit();
+		$( mainSearchFormId ).submit();
 	}
 
 	function fatalAjaxError( data, error ) {
@@ -358,7 +368,7 @@
 			type: 'hidden',
 			name: 'search',
 			value: searchString
-		} ).appendTo( '#searchform' );
+		} ).appendTo( mainSearchFormId );
 	}
 
 	DeepCat.addErrorMsgField = function( errorMessages ) {
@@ -367,7 +377,7 @@
 				type: 'hidden',
 				name: 'deepCatError',
 				value: JSON.stringify( errorMessages )
-			} ).appendTo( '#searchform' );
+			} ).appendTo( mainSearchFormId );
 		}
 	};
 
@@ -376,6 +386,7 @@
 			mw.html.element( 'div', { 'class': 'error' }, message )
 		) );
 		$( '#search' ).after( output );
+		$( '#powersearch' ).after( output );
 	}
 
 	function substituteInputValues( input ) {
@@ -395,6 +406,10 @@
 			var href = link.href.replace( /[?&]deepCatSearch=[^&]*/g, '' );
 			link.href = href + ( href.indexOf( '?' ) === -1 ? '?' : '&' ) + attr;
 		} );
+		$( '.mw-search-profile-tabs' ).find( 'a' ).each( function( index, link ) {
+			var href = link.href.replace( /[?&]deepCatSearch=[^&]*/g, '' );
+			link.href = href + ( href.indexOf( '?' ) === -1 ? '?' : '&' ) + attr;
+		} );
 	}
 
 	/**
@@ -406,9 +421,9 @@
 			// Search for keyword:"term including \"escaped\" quotes" as well as keyword:term.
 			new RegExp(
 				'-?\\b' + keyString + '\\s*(?:'
-					+ '"(?:[^\\\\"]|\\\\.)+"' // quoted strings including spaces and escaped quotes
-					+ '|(?!-?' + keyString + ')\\S+' // unquoted strings, but skip duplicate keywords
-					+ ')|\\S+', // fetch remaining non-deepcat stuff
+				+ '"(?:[^\\\\"]|\\\\.)+"' // quoted strings including spaces and escaped quotes
+				+ '|(?!-?' + keyString + ')\\S+' // unquoted strings, but skip duplicate keywords
+				+ ')|\\S+', // fetch remaining non-deepcat stuff
 				'gi' ) );
 	};
 
@@ -473,29 +488,32 @@
 	function addAjaxThrobber() {
 		$( '#searchButton, #mw-searchButton' ).addClass( 'deep-cat-throbber-small' );
 		$( '#searchText' ).addClass( 'deep-cat-throbber-big' );
+		$( '#powerSearchText' ).addClass( 'deep-cat-throbber-big' );
 	}
 
 	function removeAjaxThrobber() {
 		$( '#searchButton, #mw-searchButton' ).removeClass( 'deep-cat-throbber-small' );
 		$( '#searchText' ).removeClass( 'deep-cat-throbber-big' );
+		$( '#powerSearchText' ).removeClass( 'deep-cat-throbber-big' );
 	}
 
 	function addSearchFormHint() {
 		var hintBox = '<div id="deepcat-hintbox" style="display: none;">'
-						+ '<img id="deepcat-info-img" src="//upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Information_icon4.svg/40px-Information_icon4.svg.png"/>  '
-						+ '<div>'
-							+ mw.msg( 'deepcat-hintbox-text' )
-							+ '&nbsp;<a id="deepcat-hint-hide">' + mw.msg( 'deepcat-hintbox-close' ) + '</a>'
-						+ '</div></div>';
+			+ '<img id="deepcat-info-img" src="//upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Information_icon4.svg/40px-Information_icon4.svg.png"/>  '
+			+ '<div>'
+			+ mw.msg( 'deepcat-hintbox-text' )
+			+ '&nbsp;<a id="deepcat-hint-hide">' + mw.msg( 'deepcat-hintbox-close' ) + '</a>'
+			+ '</div></div>';
 		$( '#search' ).after( hintBox );
+		$( '#powersearch' ).after( hintBox );
 		$( '#deepcat-hint-hide' ).on( 'click', hideHints );
 	}
 
 	function addSmallFormHint() {
 		var smallHintBox = '<div id="deepcat-smallhint">'
-						+ '<img id="deepcat-smallhint-hide" title="' + mw.msg( 'deepcat-smallhint-close' ) + '" src="https://upload.wikimedia.org/wikipedia/commons/4/44/Curation_bar_icon_close.png">'
-						+ mw.msg( 'deepcat-hintbox-small' )
-						+ '</div>';
+			+ '<img id="deepcat-smallhint-hide" title="' + mw.msg( 'deepcat-smallhint-close' ) + '" src="https://upload.wikimedia.org/wikipedia/commons/4/44/Curation_bar_icon_close.png">'
+			+ mw.msg( 'deepcat-hintbox-small' )
+			+ '</div>';
 		$( '#searchform' ).after( smallHintBox );
 		$( '#deepcat-smallhint-hide' ).on( 'click', hideSmallHint );
 	}
@@ -532,6 +550,18 @@
 	function enableImeAndSuggestions() {
 		$( '.suggestions' ).css( 'z-index', 'auto' );
 		$( '.imeselector' ).css( 'z-index', 'auto' );
+	}
+
+	function getMainSearchFormId() {
+		if( advancedSearchFormIsPresent() ) {
+			return '#powersearch';
+		} else {
+			return '#searchform';
+		}
+	}
+
+	function advancedSearchFormIsPresent() {
+		return $( '#powersearch' ).length > 0;
 	}
 
 	/**
