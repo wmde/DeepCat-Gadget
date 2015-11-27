@@ -14,7 +14,8 @@
 		deepCatSearchTerms,
 		shouldHideHints = false,
 		shouldHideSmallHint = false,
-		interfaceUrl = '//tools.wmflabs.org/catgraph-jsonp/';
+		interfaceUrl = '//tools.wmflabs.org/catgraph-jsonp/',
+		mainSearchFormId;
 
 	switch( mw.config.get( 'wgUserLanguage' ) ) {
 		case 'de':
@@ -54,6 +55,7 @@
 
 	$( function() {
 		shouldHideHints = hasHintCookie();
+		mainSearchFormId = getMainSearchFormId();
 
 		$( '#searchform, #search, #powersearch' ).on( 'submit', function( e ) {
 			var searchInput = $( this ).find( '[name="search"]' ).val();
@@ -243,16 +245,9 @@
 	}
 
 	function finishDeepCatRequest( newSearchTermString ) {
-		var searchFormId;
-		if( $( '#powersearch' ) ) {
-			searchFormId = '#powersearch';
-		} else {
-			searchFormId = '#searchform';
-		}
-
-		substituteSearchRequest( newSearchTermString, searchFormId );
+		substituteSearchRequest( newSearchTermString );
 		removeAjaxThrobber();
-		$( searchFormId ).submit();
+		$( mainSearchFormId ).submit();
 	}
 
 	/**
@@ -333,10 +328,7 @@
 			newSearchTerms[ userParameters.searchTermNum ] = '';
 		}
 
-		if( $( '#powersearch' ) ) {
-			DeepCat.addErrorMsgField( DeepCat.ResponseErrors.getErrors(), '#powersearch' );
-		}
-		DeepCat.addErrorMsgField( DeepCat.ResponseErrors.getErrors(), '#searchform' );
+		DeepCat.addErrorMsgField( DeepCat.ResponseErrors.getErrors(), mainSearchFormId );
 		return newSearchTerms;
 	};
 
@@ -358,18 +350,11 @@
 	}
 
 	function ajaxError( data ) {
-		var searchFormId;
-		if( $( '#powersearch' ) ) {
-			searchFormId = '#powersearch';
-		} else {
-			searchFormId = '#searchform';
-		}
-
 		mw.log( 'ajax request error: ' + JSON.stringify( data ) );
 
-		DeepCat.addErrorMsgField( [ createErrorMessage( 'deepcat-error-tooldown', null ) ], searchFormId );
-		substituteSearchRequest( ' ', searchFormId );
-		$( searchFormId ).submit();
+		DeepCat.addErrorMsgField( [ createErrorMessage( 'deepcat-error-tooldown', null ) ] );
+		substituteSearchRequest( ' ' );
+		$( mainSearchFormId ).submit();
 	}
 
 	function fatalAjaxError( data, error ) {
@@ -377,22 +362,22 @@
 		ajaxError( error );
 	}
 
-	function substituteSearchRequest( searchString, searchForm ) {
+	function substituteSearchRequest( searchString ) {
 		$( '[name="search"]' ).attr( 'name', 'deepCatSearch' );
 		$( '<input>' ).attr( {
 			type: 'hidden',
 			name: 'search',
 			value: searchString
-		} ).appendTo( searchForm );
+		} ).appendTo( mainSearchFormId );
 	}
 
-	DeepCat.addErrorMsgField = function( errorMessages, searchForm ) {
+	DeepCat.addErrorMsgField = function( errorMessages ) {
 		if( errorMessages.length > 0 ) {
 			$( '<input>' ).attr( {
 				type: 'hidden',
 				name: 'deepCatError',
 				value: JSON.stringify( errorMessages )
-			} ).appendTo( searchForm );
+			} ).appendTo( mainSearchFormId );
 		}
 	};
 
@@ -565,6 +550,18 @@
 	function enableImeAndSuggestions() {
 		$( '.suggestions' ).css( 'z-index', 'auto' );
 		$( '.imeselector' ).css( 'z-index', 'auto' );
+	}
+
+	function getMainSearchFormId() {
+		if( advancedSearchFormIsPresent() ) {
+			return '#powersearch';
+		} else {
+			return '#searchform';
+		}
+	}
+
+	function advancedSearchFormIsPresent() {
+		return $( '#powersearch' ).length > 0;
 	}
 
 	/**
