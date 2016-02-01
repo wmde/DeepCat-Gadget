@@ -15,6 +15,7 @@
 		shouldHideHints = false,
 		shouldHideSmallHint = false,
 		interfaceUrl = '//tools.wmflabs.org/catgraph-jsonp/',
+		doNotCapitalizeSearchTerm = false,
 		mainSearchFormId;
 
 	switch( mw.config.get( 'wgUserLanguage' ) ) {
@@ -447,8 +448,12 @@
 				.replace( /"\s*$/, '' )
 				.replace( /\\(?=.)/g, '' );
 		}
+		searchTerm = searchTerm.replace( /\s+/g, '_' );
+		if( doNotCapitalizeSearchTerm ) {
+			return searchTerm;
+		}
 
-		return capitalizeFirstLetter( searchTerm.replace( /\s+/g, '_' ) );
+		return capitalizeFirstLetter( searchTerm );
 	}
 
 	function checkErrorMessage() {
