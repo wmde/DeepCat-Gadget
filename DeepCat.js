@@ -448,7 +448,7 @@
 				.replace( /\\(?=.)/g, '' );
 		}
 
-		return capitalizeFirstLetter( searchTerm.replace( /\s+/g, '_' ) );
+		return searchTerm.replace( /\s+/g, '_' );
 	}
 
 	function checkErrorMessage() {
@@ -602,14 +602,6 @@
 		}
 
 		return message;
-	}
-
-	/**
-	 * @param {string} string
-	 * @return {string}
-	 */
-	function capitalizeFirstLetter( string ) {
-		return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
 	}
 
 	/** @return instance of jQuery.Promise */
