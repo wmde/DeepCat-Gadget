@@ -583,7 +583,7 @@
 	}
 
 	/**
-	 * Hash function for generating hint box cookie token.
+	 * Filter to get rid of unprintable unicode chars.
 	 * @see https://stackoverflow.com/questions/11598786/how-to-replace-non-printable-unicode-characters-javascript/11598864#11598864
 	 * @param {string} str
 	 * @return {string}
