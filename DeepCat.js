@@ -162,7 +162,7 @@
 	}
 
 	function getAjaxRequest( searchTerm, searchTermNum ) {
-		var categoryString = extractDeepCatCategory( searchTerm ),
+		var categoryString = DeepCat.extractDeepCatCategory( searchTerm ),
 			userParameter = {
 				negativeSearch: searchTerm.charAt( 0 ) === '-',
 				searchTermNum: searchTermNum
@@ -439,7 +439,7 @@
 	 * @param {string} searchTerm
 	 * @return {string}
 	 */
-	function extractDeepCatCategory( searchTerm ) {
+	DeepCat.extractDeepCatCategory = function( searchTerm ) {
 		searchTerm = searchTerm.replace( new RegExp( '\\s*-?\\b' + keyString + '\\s*', 'i' ), '' );
 
 		if( /^\s*"/.test( searchTerm ) ) {
@@ -449,7 +449,7 @@
 		}
 
 		return removeUnicodeNonPrintables( searchTerm.replace( /\s+/g, '_' ) );
-	}
+	};
 
 	function checkErrorMessage() {
 		var deepCatErrors = mw.util.getParamValue( 'deepCatError' ),
