@@ -149,6 +149,31 @@
 			'extractDeepCatCategory: non-printable charachters should be removed from DeepCat-term'
 		);
 		/* jshint +W100 */
+		assert.deepEqual(
+			deepCat.extractDeepCatCategory( 'deepcat:"Waters\'_Edge_Park"' ),
+			'Waters\'_Edge_Park',
+			'extractDeepCatCategory: single quotes should stay the same in the DeepCat-term'
+		);
+		assert.deepEqual(
+			deepCat.extractDeepCatCategory( 'deepcat:"Springende Bälle"' ),
+			'Springende_Bälle',
+			'extractDeepCatCategory: umlauts should stay the same in the DeepCat-term'
+		);
+		assert.deepEqual(
+			deepCat.extractDeepCatCategory( 'deepcat:貓' ),
+			'貓',
+			'extractDeepCatCategory: chinese characters should stay the same in the DeepCat-term'
+		);
+		assert.deepEqual(
+			deepCat.extractDeepCatCategory( 'deepcat:Кошки' ),
+			'Кошки',
+			'extractDeepCatCategory: cyrillic characters should stay the same in the DeepCat-term'
+		);
+		assert.deepEqual(
+			deepCat.extractDeepCatCategory( 'deepcat:قطط' ),
+			'قطط',
+			'extractDeepCatCategory: arabic characters should stay the same in the DeepCat-term'
+		);
 	} );
 
 	QUnit.test( 'computeResponses', function( assert ) {
