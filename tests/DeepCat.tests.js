@@ -121,6 +121,36 @@
 		);
 	} );
 
+	QUnit.test( 'extractDeepCatCategory', function( assert ) {
+		assert.deepEqual(
+			deepCat.extractDeepCatCategory( 'deepcat:Physik' ),
+			'Physik',
+			'extractDeepCatCategory: the keyword should be removed from the DeepCat-term'
+		);
+		assert.deepEqual(
+			deepCat.extractDeepCatCategory( '  deepcat:   Physik' ),
+			'Physik',
+			'extractDeepCatCategory: whitspaces around the keyword should be removed from the DeepCat-term'
+		);
+		assert.deepEqual(
+			deepCat.extractDeepCatCategory( 'deepcat:"Geschichte_der_Physik"' ),
+			'Geschichte_der_Physik',
+			'extractDeepCatCategory: double-quotes should be removed from the DeepCat-term'
+		);
+		assert.deepEqual(
+			deepCat.extractDeepCatCategory( 'deepcat:"Geschichte der Physik"' ),
+			'Geschichte_der_Physik',
+			'extractDeepCatCategory: whitspaces should be replaced with underscores in the DeepCat-term'
+		);
+		/* jshint -W100 */
+		assert.deepEqual(
+			deepCat.extractDeepCatCategory( 'deepcat:"Classical mechanics stubs‎"' ),
+			'Classical_mechanics_stubs',
+			'extractDeepCatCategory: non-printable charachters should be removed from DeepCat-term'
+		);
+		/* jshint +W100 */
+	} );
+
 	QUnit.test( 'computeResponses', function( assert ) {
 		var responseForTerm0 = {
 				result: [ [ 1 ], [ 2 ], [ 3 ] ],
