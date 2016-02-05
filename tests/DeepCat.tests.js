@@ -140,12 +140,17 @@
 		assert.deepEqual(
 			deepCat.extractDeepCatCategory( 'deepcat:"Geschichte der Physik"' ),
 			'Geschichte_der_Physik',
-			'extractDeepCatCategory: space should be replaced with underscores in the DeepCat-term'
+			'extractDeepCatCategory: spaces should be replaced with underscore in the DeepCat-term'
 		);
 		assert.deepEqual(
 			deepCat.extractDeepCatCategory( 'deepcat:"Geschichte　der　Physik"' ),
 			'Geschichte_der_Physik',
-			'extractDeepCatCategory: ideographic space should be replaced with underscores in the DeepCat-term'
+			'extractDeepCatCategory: ideographic spaces should be replaced with underscore in the DeepCat-term'
+		);
+		assert.deepEqual(
+			deepCat.extractDeepCatCategory( 'deepcat:"Geschichte　 _ _der　Physik"' ),
+			'Geschichte_der_Physik',
+			'extractDeepCatCategory: mixed spaces/underscores should be replaced with one underscore in the DeepCat-term'
 		);
 		/* jshint -W100 */
 		assert.deepEqual(
