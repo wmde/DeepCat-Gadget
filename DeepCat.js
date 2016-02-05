@@ -448,7 +448,7 @@
 				.replace( /\\(?=.)/g, '' );
 		}
 
-		return removeUnicodeNonPrintables( searchTerm.replace( /\s+/g, '_' ) );
+		return removeUnicodeNonPrintables( replaceWhiteSpace( searchTerm ) );
 	};
 
 	function checkErrorMessage() {
@@ -591,6 +591,17 @@
 	function removeUnicodeNonPrintables( str ) {
 		var re = /[\u200E\u200F\u202A-\u202E]/g;
 		return str.replace( re, '' );
+	}
+
+	/**
+	 * Replace whits-paces with underscores
+	 * @see https://github.com/wikimedia/mediawiki/blob/master/includes/title/MediaWikiTitleCodec.php#L227
+	 * @param {string} str
+	 * @return {string}
+	 */
+	function replaceWhiteSpace( str ) {
+		var re = /[ _\u00A0\u1680}\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]+/g;
+		return str.replace( re, '_' );
 	}
 
 	/**
