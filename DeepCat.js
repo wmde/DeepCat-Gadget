@@ -600,7 +600,7 @@
 	 * @return {string}
 	 */
 	function replaceWhiteSpace( str ) {
-		var re = /[ _\u00A0\u1680}\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]+/g;
+		var re = /[ _\u00A0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]+/g;
 		return str.replace( re, '_' );
 	}
 
