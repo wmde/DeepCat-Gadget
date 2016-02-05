@@ -140,13 +140,18 @@
 		assert.deepEqual(
 			deepCat.extractDeepCatCategory( 'deepcat:"Geschichte der Physik"' ),
 			'Geschichte_der_Physik',
-			'extractDeepCatCategory: whitspaces should be replaced with underscores in the DeepCat-term'
+			'extractDeepCatCategory: space should be replaced with underscores in the DeepCat-term'
+		);
+		assert.deepEqual(
+			deepCat.extractDeepCatCategory( 'deepcat:"Geschichte　der　Physik"' ),
+			'Geschichte_der_Physik',
+			'extractDeepCatCategory: ideographic space should be replaced with underscores in the DeepCat-term'
 		);
 		/* jshint -W100 */
 		assert.deepEqual(
 			deepCat.extractDeepCatCategory( 'deepcat:"Classical mechanics stubs‎"' ),
 			'Classical_mechanics_stubs',
-			'extractDeepCatCategory: non-printable charachters should be removed from DeepCat-term'
+			'extractDeepCatCategory: LTR-mark character should be removed from DeepCat-term'
 		);
 		/* jshint +W100 */
 		assert.deepEqual(
