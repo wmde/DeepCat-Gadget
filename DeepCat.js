@@ -334,9 +334,7 @@
 	};
 
 	DeepCat.substituteTitle = function( input ) {
-		loadMessages( 'searchresults-title' ).done( function() {
-			$( document ).prop( 'title', mw.msg( 'searchresults-title', input ) );
-		} );
+		$( document ).prop( 'title', mw.msg( 'searchresults-title', input ) );
 	};
 
 	DeepCat.appendToSearchLinks = function( input ) {
@@ -566,22 +564,6 @@
 		return message;
 	}
 
-	/** @return instance of jQuery.Promise */
-	function loadMessages( messages ) {
-		return new mw.Api().get( {
-			action: 'query',
-			meta: 'allmessages',
-			amlang: mw.config.get( 'wgUserLanguage' ),
-			ammessages: messages
-		} ).done( function( data ) {
-			$.each( data.query.allmessages, function( index, message ) {
-				if( message.missing !== '' ) {
-					mw.messages.set( message.name, message[ '*' ] );
-				}
-			} );
-		} );
-	}
-
 	DeepCat.main = function() {
 		shouldHideHints = DeepCat.hasHintCookie();
 		mainSearchFormId = DeepCat.getMainSearchFormId();
@@ -643,7 +625,11 @@
 	};
 
 	$( function() {
-		DeepCat.main();
+		$.when( mw.loader.using( [ 'mediawiki.api.messages', 'mediawiki.jqueryMsg' ] ), $.ready ).done( function() {
+			new mw.Api().loadMessagesIfMissing( [ 'searchresults-title' ] ).done( function() {
+				DeepCat.main();
+			} );
+		} );
 	} );
 
 	mw.libs.deepCat = DeepCat;
