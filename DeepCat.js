@@ -53,66 +53,6 @@
 			break;
 	}
 
-	$( function() {
-		shouldHideHints = DeepCat.hasHintCookie();
-		mainSearchFormId = DeepCat.getMainSearchFormId();
-
-		$( '#searchform, #search, #powersearch' ).on( 'submit', function( e ) {
-			var searchInput = $( this ).find( '[name="search"]' ).val();
-
-			if( DeepCat.matchesDeepCatKeyword( searchInput ) ) {
-				deepCatSearchTerms = DeepCat.getSearchTerms( searchInput );
-
-				e.preventDefault();
-
-				mw.log( 'deepCatSearchTerms: ' + deepCatSearchTerms );
-
-				// bugfix to sync search fields for better recovery of "deepCatSearch"
-				DeepCat.substituteInputValues( searchInput );
-
-				DeepCat.sendAjaxRequests( deepCatSearchTerms );
-			}
-		} );
-
-		if( !shouldHideHints ) {
-			DeepCat.addSearchFormHint();
-			DeepCat.addSmallFormHint();
-
-			$( '#searchText' ).find( ':input' ).on( 'keyup', function() {
-				if( DeepCat.matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
-					$( '#deepcat-hintbox' ).slideDown();
-				} else {
-					$( '#deepcat-hintbox' ).slideUp();
-				}
-			} );
-
-			$( '#powerSearchText' ).find( ':input' ).on( 'keyup', function() {
-				if( DeepCat.matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
-					$( '#deepcat-hintbox' ).slideDown();
-				} else {
-					$( '#deepcat-hintbox' ).slideUp();
-				}
-			} );
-
-			$( '#searchInput' ).on( 'keyup', function() {
-				if( DeepCat.matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints && !shouldHideSmallHint ) {
-					DeepCat.disableImeAndSuggestions();
-					$( '#deepcat-smallhint' ).slideDown( 'fast' );
-				} else {
-					DeepCat.enableImeAndSuggestions();
-					$( '#deepcat-smallhint' ).slideUp( 'fast' );
-				}
-			} );
-		}
-
-		if( DeepCat.refreshSearchTermMock() ) {
-			if( !shouldHideHints ) {
-				$( '#deepcat-hintbox' ).show();
-			}
-			DeepCat.checkErrorMessage();
-		}
-	} );
-
 	/**
 	 * ResponseErrors is a storage object that collects error messages in
 	 * methods that process the AJAX responses from CatGraph
@@ -641,6 +581,70 @@
 			} );
 		} );
 	}
+
+	DeepCat.main = function() {
+		shouldHideHints = DeepCat.hasHintCookie();
+		mainSearchFormId = DeepCat.getMainSearchFormId();
+
+		$( '#searchform, #search, #powersearch' ).on( 'submit', function( e ) {
+			var searchInput = $( this ).find( '[name="search"]' ).val();
+
+			if( DeepCat.matchesDeepCatKeyword( searchInput ) ) {
+				deepCatSearchTerms = DeepCat.getSearchTerms( searchInput );
+
+				e.preventDefault();
+
+				mw.log( 'deepCatSearchTerms: ' + deepCatSearchTerms );
+
+				// bugfix to sync search fields for better recovery of "deepCatSearch"
+				DeepCat.substituteInputValues( searchInput );
+
+				DeepCat.sendAjaxRequests( deepCatSearchTerms );
+			}
+		} );
+
+		if( !shouldHideHints ) {
+			DeepCat.addSearchFormHint();
+			DeepCat.addSmallFormHint();
+
+			$( '#searchText' ).find( ':input' ).on( 'keyup', function() {
+				if( DeepCat.matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
+					$( '#deepcat-hintbox' ).slideDown();
+				} else {
+					$( '#deepcat-hintbox' ).slideUp();
+				}
+			} );
+
+			$( '#powerSearchText' ).find( ':input' ).on( 'keyup', function() {
+				if( DeepCat.matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
+					$( '#deepcat-hintbox' ).slideDown();
+				} else {
+					$( '#deepcat-hintbox' ).slideUp();
+				}
+			} );
+
+			$( '#searchInput' ).on( 'keyup', function() {
+				if( DeepCat.matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints && !shouldHideSmallHint ) {
+					DeepCat.disableImeAndSuggestions();
+					$( '#deepcat-smallhint' ).slideDown( 'fast' );
+				} else {
+					DeepCat.enableImeAndSuggestions();
+					$( '#deepcat-smallhint' ).slideUp( 'fast' );
+				}
+			} );
+		}
+
+		if( DeepCat.refreshSearchTermMock() ) {
+			if( !shouldHideHints ) {
+				$( '#deepcat-hintbox' ).show();
+			}
+			DeepCat.checkErrorMessage();
+		}
+	};
+
+	$( function() {
+		DeepCat.main();
+	} );
 
 	mw.libs.deepCat = DeepCat;
 
