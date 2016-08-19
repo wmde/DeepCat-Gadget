@@ -508,7 +508,7 @@
 	 * @param {string} str
 	 * @return {number}
 	 */
-	function djb2Code( str ) {
+	DeepCat.djb2Code = function( str ) {
 		/*jshint bitwise: false*/
 		var hash = 5381,
 			i;
@@ -518,7 +518,7 @@
 		}
 
 		return hash;
-	}
+	};
 
 	/**
 	 * Filter to get rid of unprintable unicode chars.
@@ -526,10 +526,10 @@
 	 * @param {string} str
 	 * @return {string}
 	 */
-	function removeUnicodeNonPrintables( str ) {
+	DeepCat.removeUnicodeNonPrintables = function( str ) {
 		var re = /[\u200E\u200F\u202A-\u202E]/g;
 		return str.replace( re, '' );
-	}
+	};
 
 	/**
 	 * Replace whits-paces with underscores
@@ -537,10 +537,10 @@
 	 * @param {string} str
 	 * @return {string}
 	 */
-	function replaceWhiteSpace( str ) {
+	DeepCat.replaceWhiteSpace = function( str ) {
 		var re = /[ _\u00A0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]+/g;
 		return str.replace( re, '_' );
-	}
+	};
 
 	/**
 	 * @param {string} str
@@ -548,13 +548,13 @@
 	 */
 	DeepCat.makeHintboxCookieToken = function( str ) {
 		return String( djb2Code( str ) );
-	}
+	};
 
 	/**
 	 * @param {string} message
 	 * @return {string}
 	 */
-	function stringFormat( message ) {
+	DeepCat.stringFormat = function( message ) {
 		var i;
 
 		for( i = 0; i < arguments.length - 1; i++ ) {
@@ -562,7 +562,7 @@
 		}
 
 		return message;
-	}
+	};
 
 	DeepCat.main = function() {
 		shouldHideHints = DeepCat.hasHintCookie();
