@@ -24,8 +24,10 @@ importStylesheet(  'User:USERNAME/Gadgets/DeepCat.css' );
 
 The current official release of the gadget can be found on wikipedia.org 
 ```
-mw.loader.load( "//de.wikipedia.org/w/index.php?title=User:Christoph Fischer (WMDE)/Gadgets/DeepCat.js&action=raw&ctype=text/javascript" );
-mw.loader.load( "//de.wikipedia.org/w/index.php?title=User:Christoph Fischer (WMDE)/Gadgets/DeepCat.css&action=raw&ctype=text/css" , "text/css" );
+$.when( mw.loader.using( [ 'mediawiki.api.messages', 'mediawiki.jqueryMsg' ] ), $.ready ).done( function() {
+	mw.loader.load( "//de.wikipedia.org/w/index.php?title=User:Christoph Fischer (WMDE)/gadget-test.js&action=raw&ctype=text/javascript" );
+	mw.loader.load( "//de.wikipedia.org/w/index.php?title=User:Christoph Fischer (WMDE)/gadget-test.css&action=raw&ctype=text/css" , "text/css" );
+} );
 ```
 
 ### Usage
