@@ -6,7 +6,8 @@ node_js:
 sudo: false
 
 install:
-  - travis_retry npm install node-qunit-phantomjs jscs jshint
+  - travis_retry npm install node-qunit-phantomjs jscs
+  - travis_retry npm install jshint@"=2.9.2"
 
 script:
   - ./node_modules/jshint/bin/jshint .
