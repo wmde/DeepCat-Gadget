@@ -53,66 +53,6 @@
 			break;
 	}
 
-	$( function() {
-		shouldHideHints = hasHintCookie();
-		mainSearchFormId = getMainSearchFormId();
-
-		$( '#searchform, #search, #powersearch' ).on( 'submit', function( e ) {
-			var searchInput = $( this ).find( '[name="search"]' ).val();
-
-			if( matchesDeepCatKeyword( searchInput ) ) {
-				deepCatSearchTerms = DeepCat.getSearchTerms( searchInput );
-
-				e.preventDefault();
-
-				mw.log( 'deepCatSearchTerms: ' + deepCatSearchTerms );
-
-				// bugfix to sync search fields for better recovery of "deepCatSearch"
-				substituteInputValues( searchInput );
-
-				sendAjaxRequests( deepCatSearchTerms );
-			}
-		} );
-
-		if( !shouldHideHints ) {
-			addSearchFormHint();
-			addSmallFormHint();
-
-			$( '#searchText' ).find( ':input' ).on( 'keyup', function() {
-				if( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
-					$( '#deepcat-hintbox' ).slideDown();
-				} else {
-					$( '#deepcat-hintbox' ).slideUp();
-				}
-			} );
-
-			$( '#powerSearchText' ).find( ':input' ).on( 'keyup', function() {
-				if( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
-					$( '#deepcat-hintbox' ).slideDown();
-				} else {
-					$( '#deepcat-hintbox' ).slideUp();
-				}
-			} );
-
-			$( '#searchInput' ).on( 'keyup', function() {
-				if( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints && !shouldHideSmallHint ) {
-					disableImeAndSuggestions();
-					$( '#deepcat-smallhint' ).slideDown( 'fast' );
-				} else {
-					enableImeAndSuggestions();
-					$( '#deepcat-smallhint' ).slideUp( 'fast' );
-				}
-			} );
-		}
-
-		if( refreshSearchTermMock() ) {
-			if( !shouldHideHints ) {
-				$( '#deepcat-hintbox' ).show();
-			}
-			checkErrorMessage();
-		}
-	} );
-
 	/**
 	 * ResponseErrors is a storage object that collects error messages in
 	 * methods that process the AJAX responses from CatGraph
@@ -146,45 +86,45 @@
 		return this.errors || [];
 	};
 
-	function sendAjaxRequests( searchTerms ) {
+	DeepCat.sendAjaxRequests = function( searchTerms ) {
 		var i,
 			requests = [];
 
-		addAjaxThrobber();
+		this.addAjaxThrobber();
 
 		for( i = 0; i < searchTerms.length; i++ ) {
-			if( matchesDeepCatKeyword( searchTerms[ i ] ) ) {
-				requests.push( getAjaxRequest( searchTerms[ i ], i ) );
+			if( this.matchesDeepCatKeyword( searchTerms[ i ] ) ) {
+				requests.push( this.getAjaxRequest( searchTerms[ i ], i ) );
 			}
 		}
 
-		$.when.apply( this, requests ).done( receiveAjaxResponses );
-	}
+		$.when.apply( this, requests ).done( this.receiveAjaxResponses, this );
+	};
 
-	function getAjaxRequest( searchTerm, searchTermNum ) {
-		var categoryString = DeepCat.extractDeepCatCategory( searchTerm ),
+	DeepCat.getAjaxRequest = function( searchTerm, searchTermNum ) {
+		var categoryString = this.extractDeepCatCategory( searchTerm ),
 			userParameter = {
 				negativeSearch: searchTerm.charAt( 0 ) === '-',
 				searchTermNum: searchTermNum
 			};
 
 		return $.ajax( {
-			url: getAjaxRequestUrl( categoryString ),
+			url: this.getAjaxRequestUrl( categoryString ),
 			data: { userparam: JSON.stringify( userParameter ) },
 			timeout: ajaxTimeout,
 			dataType: 'jsonp',
 			jsonp: 'callback',
-			error: fatalAjaxError
+			error: this.fatalAjaxError
 		} );
-	}
+	};
 
-	function getAjaxRequestUrl( categoryString ) {
+	DeepCat.getAjaxRequestUrl = function( categoryString ) {
 		return interfaceUrl + mw.config.get( 'wgDBname' )
 			+ '_ns14/traverse-successors%20Category:'
 			+ categoryString + '%20'
 			+ maxDepth + '%20'
 			+ maxResults;
-	}
+	};
 
 	/**
 	 * Process all the AJAX responses from catgraph-jsonp, modify the search string and
@@ -192,7 +132,7 @@
 	 *
 	 * This function can receive an arbitrary number of parameters.
 	 */
-	function receiveAjaxResponses() {
+	DeepCat.receiveAjaxResponses = function() {
 		var i,
 			ajaxResponse,
 			responses = [],
@@ -210,13 +150,13 @@
 			ajaxResponse = arguments[ i ][ 0 ];
 
 			if( arguments[ i ][ 1 ] !== 'success' ) {
-				ajaxError( arguments[ i ] );
+				DeepCat.ajaxError( arguments[ i ] );
 				return;
 			} else if( ajaxResponse.status === 'OK' ) {
-				ajaxSuccess( ajaxResponse );
+				DeepCat.ajaxSuccess( ajaxResponse );
 				responses.push( ajaxResponse );
 			} else {
-				graphError( ajaxResponse );
+				DeepCat.graphError( ajaxResponse );
 				errors.push( ajaxResponse );
 			}
 		}
@@ -225,30 +165,31 @@
 		newSearchTerms = DeepCat.computeResponses( responses, newSearchTerms );
 		newSearchTerms = DeepCat.computeErrors( errors, newSearchTerms );
 
-		logAndFinishRequest( newSearchTerms.join( ' ' ) );
-	}
+		DeepCat.logAndFinishRequest( newSearchTerms.join( ' ' ) );
+	};
 
-	function logAndFinishRequest( newSearchTermString ) {
+	DeepCat.logAndFinishRequest = function( newSearchTermString ) {
+		var self = this;
 		$.ajax( {
-			url: getLogRequestUrl( newSearchTermString.length ),
+			url: this.getLogRequestUrl( newSearchTermString.length ),
 			timeout: ajaxTimeout,
 			cache: false,
 			complete: function() {
-				finishDeepCatRequest( newSearchTermString );
+				self.finishDeepCatRequest( newSearchTermString );
 			}
 		} );
-	}
+	};
 
-	function getLogRequestUrl( newSearchTermStringLength ) {
+	DeepCat.getLogRequestUrl = function( newSearchTermStringLength ) {
 		return interfaceUrl + 'logrequestlength?'
 			+ 'searchquerylength=' + newSearchTermStringLength;
-	}
+	};
 
-	function finishDeepCatRequest( newSearchTermString ) {
-		substituteSearchRequest( newSearchTermString );
-		removeAjaxThrobber();
+	DeepCat.finishDeepCatRequest = function( newSearchTermString ) {
+		this.substituteSearchRequest( newSearchTermString );
+		this.removeAjaxThrobber();
 		$( mainSearchFormId ).submit();
-	}
+	};
 
 	/**
 	 * Replace "deepcat:" search terms with "incategory:" terms from DeepCat response
@@ -269,7 +210,7 @@
 
 			if( !responses[ i ].result || responses[ i ].result.length === 0 ) {
 				// ensure we only display the message once, even when we have multiple empty results
-				errorMessages[ 0 ] = createErrorMessage( 'deepcat-error-unexpected-response', null );
+				errorMessages[ 0 ] = this.createErrorMessage( 'deepcat-error-unexpected-response', null );
 				newSearchTerms[ userParameters.searchTermNum ] = '';
 				continue;
 			}
@@ -308,68 +249,68 @@
 			if( !categoryError ) {
 				if( errors[ i ].statusMessage === 'Graph not found' ) {
 					DeepCat.ResponseErrors.addError(
-						createErrorMessage( 'deepcat-error-unknown-graph', null )
+						this.createErrorMessage( 'deepcat-error-unknown-graph', null )
 					);
 				} else { // Unknown error message, shouldn't happen
 					DeepCat.ResponseErrors.addError(
-						createErrorMessage( 'deepcat-error-unexpected-response', null )
+						this.createErrorMessage( 'deepcat-error-unexpected-response', null )
 					);
 				}
 			} else if( categoryError[ 2 ].length === 0 ) {
 				DeepCat.ResponseErrors.addError(
-					createErrorMessage( 'deepcat-missing-category', null )
+					this.createErrorMessage( 'deepcat-missing-category', null )
 				);
 			} else if( categoryError[ 2 ].length > 0 ) {
 				DeepCat.ResponseErrors.addError(
-					createErrorMessage( 'deepcat-error-notfound', categoryError[ 2 ] )
+					this.createErrorMessage( 'deepcat-error-notfound', categoryError[ 2 ] )
 				);
 			}
 
 			newSearchTerms[ userParameters.searchTermNum ] = '';
 		}
 
-		DeepCat.addErrorMsgField( DeepCat.ResponseErrors.getErrors(), mainSearchFormId );
+		this.addErrorMsgField( DeepCat.ResponseErrors.getErrors(), mainSearchFormId );
 		return newSearchTerms;
 	};
 
-	function createErrorMessage( mwMessage, parameter ) {
+	DeepCat.createErrorMessage = function( mwMessage, parameter ) {
 		return {
 			mwMessage: mwMessage,
 			parameter: parameter
 		};
-	}
+	};
 
-	function ajaxSuccess( data ) {
+	DeepCat.ajaxSuccess = function( data ) {
 		mw.log( 'graph & ajax request successful' );
 		mw.log( 'statusMessage: ' + data.statusMessage );
-	}
+	};
 
-	function graphError( data ) {
+	DeepCat.graphError = function( data ) {
 		mw.log( 'graph request failed' );
 		mw.log( 'statusMessage: ' + data.statusMessage );
-	}
+	};
 
-	function ajaxError( data ) {
+	DeepCat.ajaxError = function( data ) {
 		mw.log( 'ajax request error: ' + JSON.stringify( data ) );
 
-		DeepCat.addErrorMsgField( [ createErrorMessage( 'deepcat-error-tooldown', null ) ] );
-		substituteSearchRequest( ' ' );
+		this.addErrorMsgField( [ this.createErrorMessage( 'deepcat-error-tooldown', null ) ] );
+		this.substituteSearchRequest( ' ' );
 		$( mainSearchFormId ).submit();
-	}
+	};
 
-	function fatalAjaxError( data, error ) {
-		removeAjaxThrobber();
-		ajaxError( error );
-	}
+	DeepCat.fatalAjaxError = function( data, error ) {
+		this.removeAjaxThrobber();
+		this.ajaxError( error );
+	};
 
-	function substituteSearchRequest( searchString ) {
+	DeepCat.substituteSearchRequest = function( searchString ) {
 		$( '[name="search"]' ).attr( 'name', 'deepCatSearch' );
 		$( '<input>' ).attr( {
 			type: 'hidden',
 			name: 'search',
 			value: searchString
 		} ).appendTo( mainSearchFormId );
-	}
+	};
 
 	DeepCat.addErrorMsgField = function( errorMessages ) {
 		if( errorMessages.length > 0 ) {
@@ -381,25 +322,25 @@
 		}
 	};
 
-	function showErrorMessage( message ) {
+	DeepCat.showErrorMessage = function( message ) {
 		var output = mw.html.element( 'div', { 'class': 'searchresults' }, new mw.html.Raw(
 			mw.html.element( 'div', { 'class': 'error' }, message )
 		) );
 		$( '#search' ).after( output );
 		$( '#powersearch' ).after( output );
-	}
+	};
 
-	function substituteInputValues( input ) {
+	DeepCat.substituteInputValues = function( input ) {
 		$( '[name="search"]' ).val( input );
-	}
+	};
 
-	function substituteTitle( input ) {
-		loadMessages( 'searchresults-title' ).done( function() {
+	DeepCat.substituteTitle = function( input ) {
+		new mw.Api().loadMessagesIfMissing( [ 'searchresults-title' ] ).done( function() {
 			$( document ).prop( 'title', mw.msg( 'searchresults-title', input ) );
 		} );
-	}
+	};
 
-	function appendToSearchLinks( input ) {
+	DeepCat.appendToSearchLinks = function( input ) {
 		var attr = 'deepCatSearch=' + input;
 
 		$( '.mw-prevlink, .mw-numlink, .mw-nextlink' ).each( function( index, link ) {
@@ -410,7 +351,7 @@
 			var href = link.href.replace( /[?&]deepCatSearch=[^&]*/g, '' );
 			link.href = href + ( href.indexOf( '?' ) === -1 ? '?' : '&' ) + attr;
 		} );
-	}
+	};
 
 	/**
 	 * @param {string} input
@@ -431,9 +372,9 @@
 	 * @param {string} input
 	 * @return {boolean}
 	 */
-	function matchesDeepCatKeyword( input ) {
+	DeepCat.matchesDeepCatKeyword = function( input ) {
 		return new RegExp( '\\b' + keyString, 'i' ).test( input );
-	}
+	};
 
 	/**
 	 * @param {string} searchTerm
@@ -448,10 +389,10 @@
 				.replace( /\\(?=.)/g, '' );
 		}
 
-		return removeUnicodeNonPrintables( replaceWhiteSpace( searchTerm ) );
+		return this.removeUnicodeNonPrintables( this.replaceWhiteSpace( searchTerm ) );
 	};
 
-	function checkErrorMessage() {
+	DeepCat.checkErrorMessage = function() {
 		var deepCatErrors = mw.util.getParamValue( 'deepCatError' ),
 			i,
 			message;
@@ -462,42 +403,42 @@
 
 			for( i = 0; i < deepCatErrors.length; i++ ) {
 				if( deepCatErrors[ i ].parameter ) {
-					message = stringFormat( mw.msg( deepCatErrors[ i ].mwMessage ), deepCatErrors[ i ].parameter );
+					message = this.stringFormat( mw.msg( deepCatErrors[ i ].mwMessage ), deepCatErrors[ i ].parameter );
 				} else {
 					message = mw.msg( deepCatErrors[ i ].mwMessage );
 				}
-				showErrorMessage( message );
+				this.showErrorMessage( message );
 			}
 		}
-	}
+	};
 
-	function refreshSearchTermMock() {
+	DeepCat.refreshSearchTermMock = function() {
 		var deepCatSearch = mw.util.getParamValue( 'deepCatSearch' );
 
-		if( deepCatSearch && matchesDeepCatKeyword( deepCatSearch ) ) {
+		if( deepCatSearch && this.matchesDeepCatKeyword( deepCatSearch ) ) {
 			deepCatSearch = deepCatSearch.replace( /\+/g, ' ' );
 
-			substituteInputValues( deepCatSearch );
-			substituteTitle( deepCatSearch );
-			appendToSearchLinks( deepCatSearch );
+			this.substituteInputValues( deepCatSearch );
+			this.substituteTitle( deepCatSearch );
+			this.appendToSearchLinks( deepCatSearch );
 			return true;
 		}
 		return false;
-	}
+	};
 
-	function addAjaxThrobber() {
+	DeepCat.addAjaxThrobber = function() {
 		$( '#searchButton, #mw-searchButton' ).addClass( 'deep-cat-throbber-small' );
 		$( '#searchText' ).addClass( 'deep-cat-throbber-big' );
 		$( '#powerSearchText' ).addClass( 'deep-cat-throbber-big' );
-	}
+	};
 
-	function removeAjaxThrobber() {
+	DeepCat.removeAjaxThrobber = function() {
 		$( '#searchButton, #mw-searchButton' ).removeClass( 'deep-cat-throbber-small' );
 		$( '#searchText' ).removeClass( 'deep-cat-throbber-big' );
 		$( '#powerSearchText' ).removeClass( 'deep-cat-throbber-big' );
-	}
+	};
 
-	function addSearchFormHint() {
+	DeepCat.addSearchFormHint = function() {
 		var hintBox = '<div id="deepcat-hintbox" style="display: none;">'
 			+ '<img id="deepcat-info-img" src="//upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Information_icon4.svg/40px-Information_icon4.svg.png"/>  '
 			+ '<div>'
@@ -506,63 +447,63 @@
 			+ '</div></div>';
 		$( '#search' ).after( hintBox );
 		$( '#powersearch' ).after( hintBox );
-		$( '#deepcat-hint-hide' ).on( 'click', hideHints );
-	}
+		$( '#deepcat-hint-hide' ).on( 'click', this.hideHints );
+	};
 
-	function addSmallFormHint() {
+	DeepCat.addSmallFormHint = function() {
 		var smallHintBox = '<div id="deepcat-smallhint">'
 			+ '<img id="deepcat-smallhint-hide" title="' + mw.msg( 'deepcat-smallhint-close' ) + '" src="https://upload.wikimedia.org/wikipedia/commons/4/44/Curation_bar_icon_close.png">'
 			+ mw.msg( 'deepcat-hintbox-small' )
 			+ '</div>';
 		$( '#searchform' ).after( smallHintBox );
-		$( '#deepcat-smallhint-hide' ).on( 'click', hideSmallHint );
-	}
+		$( '#deepcat-smallhint-hide' ).on( 'click', this.hideSmallHint );
+	};
 
-	function hasHintCookie() {
-		return mw.cookie.get( '-deepcat-hintboxshown' ) === makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) );
-	}
+	DeepCat.hasHintCookie = function() {
+		return mw.cookie.get( '-deepcat-hintboxshown' ) === this.makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) );
+	};
 
-	function hideHints() {
+	DeepCat.hideHints = function() {
 		shouldHideHints = true;
 
 		$( '#deepcat-hintbox' ).hide();
-		hideSmallHint();
-		enableImeAndSuggestions();
+		this.hideSmallHint();
+		this.enableImeAndSuggestions();
 
 		mw.cookie.set(
 			'-deepcat-hintboxshown',
-			makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ),
+			this.makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ),
 			{ expires: 60 * 60 * 24 * 7 * 4 } // 4 weeks
 		);
-	}
+	};
 
-	function hideSmallHint() {
+	DeepCat.hideSmallHint = function() {
 		shouldHideSmallHint = true;
 
 		$( '#deepcat-smallhint' ).hide();
-	}
+	};
 
-	function disableImeAndSuggestions() {
+	DeepCat.disableImeAndSuggestions = function() {
 		$( '.suggestions' ).css( 'z-index', -1 );
 		$( '.imeselector' ).css( 'z-index', -1 );
-	}
+	};
 
-	function enableImeAndSuggestions() {
+	DeepCat.enableImeAndSuggestions = function() {
 		$( '.suggestions' ).css( 'z-index', 'auto' );
 		$( '.imeselector' ).css( 'z-index', 'auto' );
-	}
+	};
 
-	function getMainSearchFormId() {
-		if( advancedSearchFormIsPresent() ) {
+	DeepCat.getMainSearchFormId = function() {
+		if( this.advancedSearchFormIsPresent() ) {
 			return '#powersearch';
 		} else {
 			return '#searchform';
 		}
-	}
+	};
 
-	function advancedSearchFormIsPresent() {
+	DeepCat.advancedSearchFormIsPresent = function() {
 		return $( '#powersearch' ).length > 0;
-	}
+	};
 
 	/**
 	 * Hash function for generating hint box cookie token.
@@ -570,7 +511,7 @@
 	 * @param {string} str
 	 * @return {number}
 	 */
-	function djb2Code( str ) {
+	DeepCat.djb2Code = function( str ) {
 		/*jshint bitwise: false*/
 		var hash = 5381,
 			i;
@@ -580,7 +521,7 @@
 		}
 
 		return hash;
-	}
+	};
 
 	/**
 	 * Filter to get rid of unprintable unicode chars.
@@ -588,10 +529,10 @@
 	 * @param {string} str
 	 * @return {string}
 	 */
-	function removeUnicodeNonPrintables( str ) {
+	DeepCat.removeUnicodeNonPrintables = function( str ) {
 		var re = /[\u200E\u200F\u202A-\u202E]/g;
 		return str.replace( re, '' );
-	}
+	};
 
 	/**
 	 * Replace whits-paces with underscores
@@ -599,24 +540,24 @@
 	 * @param {string} str
 	 * @return {string}
 	 */
-	function replaceWhiteSpace( str ) {
+	DeepCat.replaceWhiteSpace = function( str ) {
 		var re = /[ _\u00A0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]+/g;
 		return str.replace( re, '_' );
-	}
+	};
 
 	/**
 	 * @param {string} str
 	 * @return {string}
 	 */
-	function makeHintboxCookieToken( str ) {
-		return String( djb2Code( str ) );
-	}
+	DeepCat.makeHintboxCookieToken = function( str ) {
+		return String( this.djb2Code( str ) );
+	};
 
 	/**
 	 * @param {string} message
 	 * @return {string}
 	 */
-	function stringFormat( message ) {
+	DeepCat.stringFormat = function( message ) {
 		var i;
 
 		for( i = 0; i < arguments.length - 1; i++ ) {
@@ -624,23 +565,72 @@
 		}
 
 		return message;
-	}
+	};
 
-	/** @return instance of jQuery.Promise */
-	function loadMessages( messages ) {
-		return new mw.Api().get( {
-			action: 'query',
-			meta: 'allmessages',
-			amlang: mw.config.get( 'wgUserLanguage' ),
-			ammessages: messages
-		} ).done( function( data ) {
-			$.each( data.query.allmessages, function( index, message ) {
-				if( message.missing !== '' ) {
-					mw.messages.set( message.name, message[ '*' ] );
+	DeepCat.main = function() {
+		var self = this;
+		shouldHideHints = this.hasHintCookie();
+		mainSearchFormId = this.getMainSearchFormId();
+
+		$( '#searchform, #search, #powersearch' ).on( 'submit', function( e ) {
+			var searchInput = $( this ).find( '[name="search"]' ).val();
+
+			if( self.matchesDeepCatKeyword( searchInput ) ) {
+				deepCatSearchTerms = self.getSearchTerms( searchInput );
+
+				e.preventDefault();
+
+				mw.log( 'deepCatSearchTerms: ' + deepCatSearchTerms );
+
+				// bugfix to sync search fields for better recovery of "deepCatSearch"
+				self.substituteInputValues( searchInput );
+
+				self.sendAjaxRequests( deepCatSearchTerms );
+			}
+		} );
+
+		if( !shouldHideHints ) {
+			this.addSearchFormHint();
+			this.addSmallFormHint();
+
+			$( '#searchText' ).find( ':input' ).on( 'keyup', function() {
+				if( self.matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
+					$( '#deepcat-hintbox' ).slideDown();
+				} else {
+					$( '#deepcat-hintbox' ).slideUp();
 				}
 			} );
-		} );
-	}
+
+			$( '#powerSearchText' ).find( ':input' ).on( 'keyup', function() {
+				if( self.matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
+					$( '#deepcat-hintbox' ).slideDown();
+				} else {
+					$( '#deepcat-hintbox' ).slideUp();
+				}
+			} );
+
+			$( '#searchInput' ).on( 'keyup', function() {
+				if( self.matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints && !shouldHideSmallHint ) {
+					self.disableImeAndSuggestions();
+					$( '#deepcat-smallhint' ).slideDown( 'fast' );
+				} else {
+					self.enableImeAndSuggestions();
+					$( '#deepcat-smallhint' ).slideUp( 'fast' );
+				}
+			} );
+		}
+
+		if( this.refreshSearchTermMock() ) {
+			if( !shouldHideHints ) {
+				$( '#deepcat-hintbox' ).show();
+			}
+			this.checkErrorMessage();
+		}
+	};
+
+	$( function() {
+		DeepCat.main();
+	} );
 
 	mw.libs.deepCat = DeepCat;
 
