@@ -500,7 +500,33 @@
 	}
 
 	function hasHintCookie() {
-		return mw.cookie.get( '-deepcat-hintboxshown' ) === makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) );
+		var storedData;
+		if( typeof Storage !== 'undefined' ) {
+			storedData = JSON.parse( localStorage.getItem( 'mw-deepcat-hintboxshown' ) );
+			return storedData
+				&& storedData.hash === makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) )
+				&& storedData.expires > $.now();
+		} else {
+			return mw.cookie.get( '-deepcat-hintboxshown' ) === makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) );
+		}
+	}
+
+	function writeHintCookie() {
+		if( typeof Storage !== 'undefined' ) {
+			localStorage.setItem(
+				'mw-deepcat-hintboxshown',
+				JSON.stringify( {
+					hash: makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ),
+					expires: $.now() + ( 60 * 60 * 24 * 7 * 4 * 1000 ) // 4 weeks
+				} )
+			);
+		} else {
+			mw.cookie.set(
+				'-deepcat-hintboxshown',
+				makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ),
+				{ expires: 60 * 60 * 24 * 7 * 4 } // 4 weeks
+			);
+		}
 	}
 
 	function enableImeAndSuggestions() {
@@ -520,12 +546,7 @@
 		$( '#deepcat-hintbox' ).hide();
 		hideSmallHint();
 		enableImeAndSuggestions();
-
-		mw.cookie.set(
-			'-deepcat-hintboxshown',
-			makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ),
-			{ expires: 60 * 60 * 24 * 7 * 4 } // 4 weeks
-		);
+		writeHintCookie();
 	}
 
 	function addSearchFormHint() {
