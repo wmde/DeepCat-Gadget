@@ -45,7 +45,7 @@
 				'deepcat-missing-category': 'Please insert a category.',
 				'deepcat-hintbox-close': 'Do not show again',
 				'deepcat-smallhint-close': 'Close',
-				'deepcat-hintbox-text': 'Current limits of the DeepCat-Gadgets per search word:<br/>' +
+				'deepcat-hintbox-text': 'Current limits of the DeepCat gadget per search word:<br/>' +
 				'Max. search depth: ' + maxDepth + ' / Max. result categories: ' + maxResults + '<br/>' +
 				'<a style="float:left" href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Deepcat"  target="_blank">Additional information</a>',
 				'deepcat-hintbox-small': 'Max. category-depth: ' + maxDepth + '<br/>Max. categories: ' + maxResults
