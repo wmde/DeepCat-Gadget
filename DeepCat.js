@@ -353,24 +353,8 @@
 		$( '[name="search"]' ).val( input );
 	}
 
-	/** @return instance of jQuery.Promise */
-	function loadMessages( messages ) {
-		return new mw.Api().get( {
-			action: 'query',
-			meta: 'allmessages',
-			amlang: mw.config.get( 'wgUserLanguage' ),
-			ammessages: messages
-		} ).done( function( data ) {
-			$.each( data.query.allmessages, function( index, message ) {
-				if( message.missing !== '' ) {
-					mw.messages.set( message.name, message[ '*' ] );
-				}
-			} );
-		} );
-	}
-
 	function substituteTitle( input ) {
-		loadMessages( 'searchresults-title' ).done( function() {
+		new mw.Api().loadMessagesIfMissing( [ 'searchresults-title' ] ).done( function() {
 			$( document ).prop( 'title', mw.msg( 'searchresults-title', input ) );
 		} );
 	}
@@ -516,7 +500,33 @@
 	}
 
 	function hasHintCookie() {
-		return mw.cookie.get( '-deepcat-hintboxshown' ) === makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) );
+		var storedData;
+		if( typeof Storage !== 'undefined' ) {
+			storedData = JSON.parse( localStorage.getItem( 'mw-deepcat-hintboxshown' ) );
+			return storedData
+				&& storedData.hash === makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) )
+				&& storedData.expires > $.now();
+		} else {
+			return mw.cookie.get( '-deepcat-hintboxshown' ) === makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) );
+		}
+	}
+
+	function writeHintCookie() {
+		if( typeof Storage !== 'undefined' ) {
+			localStorage.setItem(
+				'mw-deepcat-hintboxshown',
+				JSON.stringify( {
+					hash: makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ),
+					expires: $.now() + ( 60 * 60 * 24 * 7 * 4 * 1000 ) // 4 weeks
+				} )
+			);
+		} else {
+			mw.cookie.set(
+				'-deepcat-hintboxshown',
+				makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ),
+				{ expires: 60 * 60 * 24 * 7 * 4 } // 4 weeks
+			);
+		}
 	}
 
 	function enableImeAndSuggestions() {
@@ -536,12 +546,7 @@
 		$( '#deepcat-hintbox' ).hide();
 		hideSmallHint();
 		enableImeAndSuggestions();
-
-		mw.cookie.set(
-			'-deepcat-hintboxshown',
-			makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ),
-			{ expires: 60 * 60 * 24 * 7 * 4 } // 4 weeks
-		);
+		writeHintCookie();
 	}
 
 	function addSearchFormHint() {
