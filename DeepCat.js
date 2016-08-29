@@ -642,9 +642,20 @@
 		}
 	}
 
-	$( function() {
-		deepCatMain();
-	} );
+	if( mw.loader.getState( 'ext.gadget.DeepCat' )  !==  'ready' ) {
+		mw.loader.state( 'ext.gadget.DeepCat', 'ready' );
+		mw.loader.using(
+			[
+				'mediawiki.api.messages',
+				'mediawiki.cookie',
+				'mediawiki.util',
+				'mediawiki.jqueryMsg'
+			],
+			function() {
+				$( deepCatMain );
+			}
+		);
+	}
 
 	mw.libs.deepCat = DeepCat;
 
