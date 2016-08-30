@@ -473,8 +473,13 @@
 		return false;
 	}
 
+	function toggleImeAndSuggestions( enable ) {
+		$( '.suggestions' ).css( 'z-index', enable === false ? -1 : 'auto' );
+		$( '.imeselector' ).css( 'z-index', enable === false ? -1 : 'auto' );
+	}
+
 	/**
-	 * Hash function for generating hint box cookie token.
+	 * Hash function for generating hint setting token.
 	 * @see http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
 	 * @param {string} str
 	 * @return {number}
@@ -495,43 +500,38 @@
 	 * @param {string} str
 	 * @return {string}
 	 */
-	function makeHintboxCookieToken( str ) {
+	function makeHintToken( str ) {
 		return String( djb2Code( str ) );
 	}
 
-	function hasHintCookie() {
+	function checkShouldHideHints() {
 		var storedData;
 		if( typeof Storage !== 'undefined' ) {
 			storedData = JSON.parse( localStorage.getItem( 'mw-deepcat-hintboxshown' ) );
 			return storedData
-				&& storedData.hash === makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) )
+				&& storedData.hash === makeHintToken( mw.msg( 'deepcat-hintbox-text' ) )
 				&& storedData.expires > $.now();
 		} else {
-			return mw.cookie.get( '-deepcat-hintboxshown' ) === makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) );
+			return mw.cookie.get( '-deepcat-hintboxshown' ) === makeHintToken( mw.msg( 'deepcat-hintbox-text' ) );
 		}
 	}
 
-	function writeHintCookie() {
+	function storeHintSetting() {
 		if( typeof Storage !== 'undefined' ) {
 			localStorage.setItem(
 				'mw-deepcat-hintboxshown',
 				JSON.stringify( {
-					hash: makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ),
+					hash: makeHintToken( mw.msg( 'deepcat-hintbox-text' ) ),
 					expires: $.now() + ( 60 * 60 * 24 * 7 * 4 * 1000 ) // 4 weeks
 				} )
 			);
 		} else {
 			mw.cookie.set(
 				'-deepcat-hintboxshown',
-				makeHintboxCookieToken( mw.msg( 'deepcat-hintbox-text' ) ),
+				makeHintToken( mw.msg( 'deepcat-hintbox-text' ) ),
 				{ expires: 60 * 60 * 24 * 7 * 4 } // 4 weeks
 			);
 		}
-	}
-
-	function enableImeAndSuggestions() {
-		$( '.suggestions' ).css( 'z-index', 'auto' );
-		$( '.imeselector' ).css( 'z-index', 'auto' );
 	}
 
 	function hideSmallHint() {
@@ -545,8 +545,8 @@
 
 		$( '#deepcat-hintbox' ).hide();
 		hideSmallHint();
-		enableImeAndSuggestions();
-		writeHintCookie();
+		toggleImeAndSuggestions( true );
+		storeHintSetting();
 	}
 
 	function addSearchFormHint() {
@@ -570,11 +570,6 @@
 		$( '#deepcat-smallhint-hide' ).on( 'click', hideSmallHint );
 	}
 
-	function disableImeAndSuggestions() {
-		$( '.suggestions' ).css( 'z-index', -1 );
-		$( '.imeselector' ).css( 'z-index', -1 );
-	}
-
 	function advancedSearchFormIsPresent() {
 		return $( '#powersearch' ).length > 0;
 	}
@@ -588,7 +583,7 @@
 	}
 
 	function deepCatMain() {
-		shouldHideHints = hasHintCookie();
+		shouldHideHints = checkShouldHideHints();
 		mainSearchFormId = getMainSearchFormId();
 
 		$( '#searchform, #search, #powersearch' ).on( 'submit', function( e ) {
@@ -630,10 +625,10 @@
 
 			$( '#searchInput' ).on( 'keyup', function() {
 				if( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints && !shouldHideSmallHint ) {
-					disableImeAndSuggestions();
+					toggleImeAndSuggestions( false );
 					$( '#deepcat-smallhint' ).slideDown( 'fast' );
 				} else {
-					enableImeAndSuggestions();
+					toggleImeAndSuggestions( true );
 					$( '#deepcat-smallhint' ).slideUp( 'fast' );
 				}
 			} );
