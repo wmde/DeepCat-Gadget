@@ -28,7 +28,7 @@
 				'deepcat-error-unknown-graph': 'Dieses Wiki wird von CatGraph nicht unterst&uuml;tzt.',
 				'deepcat-error-unexpected-response': 'CatGraph-Tool lieferte ein unerwartetes Ergebnis.',
 				'deepcat-missing-category': 'Bitte gib eine Kategorie ein.',
-				'deepcat-hintbox-close': 'Zuk&uuml;nftig ausblenden',
+				'deepcat-hintbox-close': 'Zukünftig ausblenden',
 				'deepcat-smallhint-close': 'Ausblenden',
 				'deepcat-hintbox-text': 'Momentane Einschränkung des DeepCat-Gadgets pro Suchbegriff:<br/>' +
 				'Max. Kategoriensuchtiefe: ' + maxDepth + ' / Max. Kategorienanzahl: ' + maxResults + '<br/>' +
@@ -550,24 +550,66 @@
 	}
 
 	function addSearchFormHint() {
-		var hintBox = '<div id="deepcat-hintbox" style="display: none;">'
-			+ '<img id="deepcat-info-img" src="//upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Information_icon4.svg/40px-Information_icon4.svg.png"/>  '
-			+ '<div>'
-			+ mw.msg( 'deepcat-hintbox-text' )
-			+ '&nbsp;<a id="deepcat-hint-hide">' + mw.msg( 'deepcat-hintbox-close' ) + '</a>'
-			+ '</div></div>';
-		$( '#search' ).after( hintBox );
-		$( '#powersearch' ).after( hintBox );
+		var $hintBox = $( '<div>' )
+			.attr( 'id', 'deepcat-hintbox' )
+			.css( {
+				display: 'none',
+				padding: '.75em',
+				width: '38em',
+				background: '#f3f3f3',
+				border: '1px solid silver',
+				'margin-top': '1em',
+				'margin-bottom': '1em',
+				'font-size': '13px'
+			} )
+			.append(
+				$( '<img>' )
+					.attr( 'id', 'deepcat-info-img' )
+					.attr( 'src', '//upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Information_icon4.svg/40px-Information_icon4.svg.png' )
+					.css( {
+						'float': 'left',
+						'margin-right': '0.75em',
+						'margin-bottom': '1em'
+					} ),
+				$( '<div>' ).append(
+					mw.msg( 'deepcat-hintbox-text' ) + '&nbsp;',
+					$( '<a>' )
+						.attr( 'id', 'deepcat-hint-hide' )
+						.css( {
+							cursor: 'pointer',
+							'float': 'right'
+						} )
+						.text( mw.msg( 'deepcat-hintbox-close' ) )
+				)
+			);
+		$( '#search' ).after( $hintBox );
+		$( '#powersearch' ).after( $hintBox );
 		$( '#deepcat-hint-hide' ).on( 'click', hideHints );
 	}
 
 	function addSmallFormHint() {
-		var smallHintBox = '<div id="deepcat-smallhint">'
-			+ '<img id="deepcat-smallhint-hide" title="' + mw.msg( 'deepcat-smallhint-close' ) + '" src="https://upload.wikimedia.org/wikipedia/commons/4/44/Curation_bar_icon_close.png">'
-			+ mw.msg( 'deepcat-hintbox-small' )
-			+ '</div>';
-		$( '#searchform' ).after( smallHintBox );
-		$( '#deepcat-smallhint-hide' ).on( 'click', hideSmallHint );
+		var $smallHintBox = $( '<div>' )
+			.attr( 'id', 'deepcat-smallhint' )
+			.css( {
+				display: 'none',
+				padding: '.30em',
+				background: '#f3f3f3',
+				border: '1px solid silver',
+				'font-size': '13px'
+			} )
+			.append(
+				$( '<img>' )
+					.attr( 'id', 'deepcat-smallhint-hide' )
+					.attr( 'src', '//upload.wikimedia.org/wikipedia/commons/4/44/Curation_bar_icon_close.png' )
+					.attr( 'title', mw.msg( 'deepcat-smallhint-close' ) )
+					.css( {
+						cursor: 'pointer',
+						'float': 'right'
+					} )
+					.on( 'click', hideSmallHint ),
+				mw.msg( 'deepcat-hintbox-small' )
+			);
+		$( '#searchform' ).after( $smallHintBox );
 	}
 
 	function advancedSearchFormIsPresent() {
@@ -582,9 +624,24 @@
 		}
 	}
 
+	function addThrobberCSS() {
+		$( '<style>' +
+			'.deep-cat-throbber-small {' +
+				'background-image: url( "//upload.wikimedia.org/wikipedia/commons/4/42/Loading.gif" ) !important;' +
+			'}' +
+			'.deep-cat-throbber-big {' +
+				'background-image: url( "//upload.wikimedia.org/wikipedia/commons/8/85/Throbber_allbackgrounds_circledots_32.gif" );' +
+				'background-position: 99% center;' +
+				'background-repeat: no-repeat;' +
+				'background-size: 24px auto;' +
+			'}' +
+			'</style>' ).appendTo( 'head' );
+	}
+
 	function deepCatMain() {
 		shouldHideHints = checkShouldHideHints();
 		mainSearchFormId = getMainSearchFormId();
+		addThrobberCSS();
 
 		$( '#searchform, #search, #powersearch' ).on( 'submit', function( e ) {
 			var searchInput = $( this ).find( '[name="search"]' ).val();
