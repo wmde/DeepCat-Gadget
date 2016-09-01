@@ -40,5 +40,10 @@ mediaWiki = {
 		getParamValue: function() {
 			return '';
 		}
+	},
+	loader: {
+		getState: function() {
+			return 'ready';
+		}
 	}
 };
