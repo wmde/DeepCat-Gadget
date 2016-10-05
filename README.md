@@ -25,7 +25,6 @@ importStylesheet(  'User:USERNAME/Gadgets/DeepCat.css' );
 The current official release of the gadget can be found on wikipedia.org 
 ```
 mw.loader.load( "//de.wikipedia.org/w/index.php?title=User:Christoph Fischer (WMDE)/Gadgets/DeepCat.js&action=raw&ctype=text/javascript" );
-mw.loader.load( "//de.wikipedia.org/w/index.php?title=User:Christoph Fischer (WMDE)/Gadgets/DeepCat.css&action=raw&ctype=text/css" , "text/css" );
 ```
 
 ### Usage
