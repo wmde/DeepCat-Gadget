@@ -3,7 +3,7 @@
  * using JSONP CatGraph interface https://github.com/wmde/catgraph-jsonp
  * report issues / feature requests https://github.com/wmde/DeepCat-Gadget
  * @license GNU GPL v2+
- * @author Christoph Fischer < christoph.fischer@wikimedia.de >
+ * @author Christoph Jauera < christoph.jauera@wikimedia.de >
  */
 ( function( $, mw ) {
 	var DeepCat = {},
