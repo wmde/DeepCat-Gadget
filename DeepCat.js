@@ -11,10 +11,13 @@
 		maxDepth = 15,
 		maxResults = 70,
 		ajaxTimeout = 10000,
-		deepCatSearchTerms,
+		interfaceUrl = '//tools.wmflabs.org/catgraph-jsonp/',
+		cssPath = '//de.wikipedia.org/w/index.php?title=User:Christoph Fischer (WMDE)/Gadgets/',
 		shouldHideHints = false,
 		shouldHideSmallHint = false,
-		interfaceUrl = '//tools.wmflabs.org/catgraph-jsonp/',
+		hintBoxesInitialized = false,
+		throbberStylesLoaded = false,
+		deepCatSearchTerms,
 		mainSearchFormId;
 
 	switch( mw.config.get( 'wgUserLanguage' ) ) {
@@ -549,7 +552,7 @@
 		storeHintSetting();
 	}
 
-	function addSearchFormHint() {
+	function addSearchFormHintBox() {
 		var hintBox = '<div id="deepcat-hintbox" style="display: none;">'
 			+ '<img id="deepcat-info-img" src="//upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Information_icon4.svg/40px-Information_icon4.svg.png"/>  '
 			+ '<div>'
@@ -561,13 +564,31 @@
 		$( '#deepcat-hint-hide' ).on( 'click', hideHints );
 	}
 
-	function addSmallFormHint() {
-		var smallHintBox = '<div id="deepcat-smallhint">'
+	function addSmallFormHintBox() {
+		var smallHintBox = '<div id="deepcat-smallhint" style="display: none;">'
 			+ '<img id="deepcat-smallhint-hide" title="' + mw.msg( 'deepcat-smallhint-close' ) + '" src="https://upload.wikimedia.org/wikipedia/commons/4/44/Curation_bar_icon_close.png">'
 			+ mw.msg( 'deepcat-hintbox-small' )
 			+ '</div>';
 		$( '#searchform' ).after( smallHintBox );
 		$( '#deepcat-smallhint-hide' ).on( 'click', hideSmallHint );
+	}
+
+	function initializeHintBoxes() {
+		if( hintBoxesInitialized ) {
+			return;
+		}
+		mw.loader.load( cssPath + 'DeepCat.hintbox.css&action=raw&ctype=text/css', 'text/css' );
+		addSearchFormHintBox();
+		addSmallFormHintBox();
+		hintBoxesInitialized = true;
+	}
+
+	function loadThrobberStyles() {
+		if( throbberStylesLoaded ) {
+			return;
+		}
+		mw.loader.load( cssPath + 'DeepCat.throbber.css&action=raw&ctype=text/css', 'text/css' );
+		throbberStylesLoaded = true;
 	}
 
 	function advancedSearchFormIsPresent() {
@@ -598,17 +619,15 @@
 
 				// bugfix to sync search fields for better recovery of "deepCatSearch"
 				substituteInputValues( searchInput );
-
+				loadThrobberStyles();
 				sendAjaxRequests( deepCatSearchTerms );
 			}
 		} );
 
 		if( !shouldHideHints ) {
-			addSearchFormHint();
-			addSmallFormHint();
-
 			$( '#searchText' ).find( ':input' ).on( 'keyup', function() {
 				if( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
+					initializeHintBoxes();
 					$( '#deepcat-hintbox' ).slideDown();
 				} else {
 					$( '#deepcat-hintbox' ).slideUp();
@@ -617,6 +636,7 @@
 
 			$( '#powerSearchText' ).find( ':input' ).on( 'keyup', function() {
 				if( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints ) {
+					initializeHintBoxes();
 					$( '#deepcat-hintbox' ).slideDown();
 				} else {
 					$( '#deepcat-hintbox' ).slideUp();
@@ -625,6 +645,7 @@
 
 			$( '#searchInput' ).on( 'keyup', function() {
 				if( matchesDeepCatKeyword( $( this ).val() ) && !shouldHideHints && !shouldHideSmallHint ) {
+					initializeHintBoxes();
 					toggleImeAndSuggestions( false );
 					$( '#deepcat-smallhint' ).slideDown( 'fast' );
 				} else {
@@ -636,6 +657,7 @@
 
 		if( refreshSearchTermMock() ) {
 			if( !shouldHideHints ) {
+				initializeHintBoxes();
 				$( '#deepcat-hintbox' ).show();
 			}
 			checkErrorMessage();
