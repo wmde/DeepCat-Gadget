@@ -1,30 +1,37 @@
 # DeepCat-Gadget
 
-Gadget for MediaWiki installations allowing recursive category search via CatGraph using the corresponding JSONP interface.
-https://github.com/wmde/catgraph-jsonp
+Gadget for MediaWiki installations allowing recursive category search via CatGraph using the corresponding [JSONP interface](https://github.com/wmde/catgraph-jsonp).
 
 [![Build Status](https://travis-ci.org/wmde/DeepCat-Gadget.svg?branch=master)](https://travis-ci.org/wmde/DeepCat-Gadget)
 
 ### Prerequisites
 
-MediaWiki installation with CirrusSearch
+This MediaWiki Gadget only works for wikis covered by [Catgraph](https://wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph).
 
-### Installation
+### Full customized installation
 
-Save contents of DeepCat.js and DeepCat.css to your namespace
-- e.g. User:USERNAME/Gadgets/DeepCat.js & User:USERNAME/Gadgets/DeepCat.css
+To have your own private version of the gadget follow these steps:
 
-Add scripts to your User:USERNAME/common.js
+Save the contents of `DeepCat.js`, `DeepCat.hintbox.css` and `DeepCat.throbber.css` to your namespace. e.g.:
+- `User:USERNAME/Gadgets/DeepCat.js`
+- `User:USERNAME/Gadgets/DeepCat.hintbox.css` 
+- `User:USERNAME/Gadgets/DeepCat.throbber.css`
+
+Edit the `cssPath` variable in `DeepCat.js` to the full path where the files can be found e.g.:
+```
+cssPath = '//de.wikipedia.org/w/index.php?title=User:USERNAME/Gadgets/',
+```
+
+Add the main script to your `User:USERNAME/common.js` e.g.:
 ```
 importScript( 'User:USERNAME/Gadgets/DeepCat.js' );
-importStylesheet(  'User:USERNAME/Gadgets/DeepCat.css' );
 ```
 
-### Testing
+### Official version on Wikipedia
 
-The current official release of the gadget can be found on wikipedia.org 
+The current official release of the gadget can be found on de.wikipedia.org and can be used by adding the following line to your `User:USERNAME/common.js`: 
 ```
-mw.loader.load( "//de.wikipedia.org/w/index.php?title=User:Christoph Fischer (WMDE)/Gadgets/DeepCat.js&action=raw&ctype=text/javascript" );
+mw.loader.load( "//de.wikipedia.org/w/index.php?title=MediaWiki:Gadget-DeepCat.js&action=raw&ctype=text/javascript" );
 ```
 
 ### Usage
