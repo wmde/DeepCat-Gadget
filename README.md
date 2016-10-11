@@ -29,7 +29,9 @@ importScript( 'User:USERNAME/Gadgets/DeepCat.js' );
 
 ### Official version on Wikipedia
 
-The current official release of the gadget can be found on de.wikipedia.org and can be used by adding the following line to your `User:USERNAME/common.js`: 
+The current official release of the gadget can be found on [de.wikipedia.org](https://de.wikipedia.org). You can use it there by activating it on the [preferences/gadgets page](https://de.wikipedia.org/w/index.php?title=Special:Preferences#mw-prefsection-gadgets).
+
+If you want to use it on any of the other supported wikis add the following line to your corrosponding `User:USERNAME/common.js`:
 ```
 mw.loader.load( "//de.wikipedia.org/w/index.php?title=MediaWiki:Gadget-DeepCat.js&action=raw&ctype=text/javascript" );
 ```
