@@ -509,7 +509,7 @@
 
 	function checkShouldHideHints() {
 		var storedData;
-		if( typeof Storage !== 'undefined' ) {
+		if( typeof Storage !== 'undefined' && localStorage !== null ) {
 			storedData = JSON.parse( localStorage.getItem( 'mw-deepcat-hintboxshown' ) );
 			return storedData
 				&& storedData.hash === makeHintToken( mw.msg( 'deepcat-hintbox-text' ) )
