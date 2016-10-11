@@ -508,27 +508,28 @@
 	}
 
 	function checkShouldHideHints() {
-		var storedData;
-		if( typeof Storage !== 'undefined' ) {
-			storedData = JSON.parse( localStorage.getItem( 'mw-deepcat-hintboxshown' ) );
-			return storedData
-				&& storedData.hash === makeHintToken( mw.msg( 'deepcat-hintbox-text' ) )
-				&& storedData.expires > $.now();
-		} else {
+		var storedData = mw.storage.get( 'mw-deepcat-hintboxshown' );
+
+		if( !storedData ) { // use cookie when localStorage is not available
 			return mw.cookie.get( '-deepcat-hintboxshown' ) === makeHintToken( mw.msg( 'deepcat-hintbox-text' ) );
 		}
+
+		storedData = JSON.parse( storedData );
+		return storedData
+			&& storedData.hash === makeHintToken( mw.msg( 'deepcat-hintbox-text' ) )
+			&& storedData.expires > $.now();
 	}
 
 	function storeHintSetting() {
-		if( typeof Storage !== 'undefined' ) {
-			localStorage.setItem(
-				'mw-deepcat-hintboxshown',
-				JSON.stringify( {
-					hash: makeHintToken( mw.msg( 'deepcat-hintbox-text' ) ),
-					expires: $.now() + ( 60 * 60 * 24 * 7 * 4 * 1000 ) // 4 weeks
-				} )
-			);
-		} else {
+		var success = mw.storage.set(
+			'mw-deepcat-hintboxshown',
+			JSON.stringify( {
+				hash: makeHintToken( mw.msg( 'deepcat-hintbox-text' ) ),
+				expires: $.now() + ( 60 * 60 * 24 * 7 * 4 * 1000 ) // 4 weeks
+			} )
+		);
+
+		if( !success ) { // use cookie when localStorage is not available
 			mw.cookie.set(
 				'-deepcat-hintboxshown',
 				makeHintToken( mw.msg( 'deepcat-hintbox-text' ) ),
@@ -671,7 +672,8 @@
 				'mediawiki.api.messages',
 				'mediawiki.cookie',
 				'mediawiki.util',
-				'mediawiki.jqueryMsg'
+				'mediawiki.jqueryMsg',
+				'mediawiki.storage'
 			],
 			function() {
 				$( deepCatMain );
