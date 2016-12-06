@@ -123,66 +123,96 @@
 
 	QUnit.test( 'extractDeepCatCategory', function( assert ) {
 		assert.deepEqual(
-			deepCat.extractDeepCatCategory( 'deepcat:Physik' ),
+			deepCat.extractDeepCatCategory( 'deepcat:Physik' ).categoryString,
 			'Physik',
 			'extractDeepCatCategory: the keyword should be removed from the DeepCat-term'
 		);
 		assert.deepEqual(
-			deepCat.extractDeepCatCategory( '  deepcat:   Physik' ),
+			deepCat.extractDeepCatCategory( '  deepcat:   Physik' ).categoryString,
 			'Physik',
 			'extractDeepCatCategory: whitspaces around the keyword should be removed from the DeepCat-term'
 		);
 		assert.deepEqual(
-			deepCat.extractDeepCatCategory( 'deepcat:"Geschichte_der_Physik"' ),
+			deepCat.extractDeepCatCategory( 'deepcat:"Geschichte_der_Physik"' ).categoryString,
 			'Geschichte_der_Physik',
 			'extractDeepCatCategory: double-quotes should be removed from the DeepCat-term'
 		);
 		assert.deepEqual(
-			deepCat.extractDeepCatCategory( 'deepcat:"Geschichte der Physik"' ),
+			deepCat.extractDeepCatCategory( 'deepcat:"Geschichte der Physik"' ).categoryString,
 			'Geschichte_der_Physik',
 			'extractDeepCatCategory: spaces should be replaced with underscore in the DeepCat-term'
 		);
 		assert.deepEqual(
-			deepCat.extractDeepCatCategory( 'deepcat:"Geschichte　der　Physik"' ),
+			deepCat.extractDeepCatCategory( 'deepcat:"Geschichte　der　Physik"' ).categoryString,
 			'Geschichte_der_Physik',
 			'extractDeepCatCategory: ideographic spaces should be replaced with underscore in the DeepCat-term'
 		);
 		assert.deepEqual(
-			deepCat.extractDeepCatCategory( 'deepcat:"Geschichte　 _ _der　Physik"' ),
+			deepCat.extractDeepCatCategory( 'deepcat:"Geschichte　 _ _der　Physik"' ).categoryString,
 			'Geschichte_der_Physik',
 			'extractDeepCatCategory: mixed spaces/underscores should be replaced with one underscore in the DeepCat-term'
 		);
 		/* jshint -W100 */
 		assert.deepEqual(
-			deepCat.extractDeepCatCategory( 'deepcat:"Classical mechanics stubs‎"' ),
+			deepCat.extractDeepCatCategory( 'deepcat:"Classical mechanics stubs‎"' ).categoryString,
 			'Classical_mechanics_stubs',
 			'extractDeepCatCategory: LTR-mark character should be removed from DeepCat-term'
 		);
 		/* jshint +W100 */
 		assert.deepEqual(
-			deepCat.extractDeepCatCategory( 'deepcat:"Waters\'_Edge_Park"' ),
+			deepCat.extractDeepCatCategory( 'deepcat:"Waters\'_Edge_Park"' ).categoryString,
 			'Waters\'_Edge_Park',
 			'extractDeepCatCategory: single quotes should stay the same in the DeepCat-term'
 		);
 		assert.deepEqual(
-			deepCat.extractDeepCatCategory( 'deepcat:"Springende Bälle"' ),
+			deepCat.extractDeepCatCategory( 'deepcat:"Springende Bälle"' ).categoryString,
 			'Springende_Bälle',
 			'extractDeepCatCategory: umlauts should stay the same in the DeepCat-term'
 		);
 		assert.deepEqual(
-			deepCat.extractDeepCatCategory( 'deepcat:貓' ),
+			deepCat.extractDeepCatCategory( 'deepcat:貓' ).categoryString,
 			'貓',
 			'extractDeepCatCategory: chinese characters should stay the same in the DeepCat-term'
 		);
 		assert.deepEqual(
-			deepCat.extractDeepCatCategory( 'deepcat:Кошки' ),
+			deepCat.extractDeepCatCategory( 'deepcat:Кошки' ).categoryString,
 			'Кошки',
 			'extractDeepCatCategory: cyrillic characters should stay the same in the DeepCat-term'
 		);
 		assert.deepEqual(
-			deepCat.extractDeepCatCategory( 'deepcat:قطط' ),
+			deepCat.extractDeepCatCategory( 'deepcat:قطط' ).categoryString,
 			'قطط',
 			'extractDeepCatCategory: arabic characters should stay the same in the DeepCat-term'
+		);
+		assert.deepEqual(
+			deepCat.extractDeepCatCategory( 'deepcat:Physik' ).depth,
+			'15',
+			'extractDeepCatCategory: defaut depth should be 15'
+		);
+		assert.deepEqual(
+			deepCat.extractDeepCatCategory( 'deepcat:Physik~21' ).depth,
+			'21',
+			'extractDeepCatCategory: number after ~ should be parsed as depth'
+		);
+		assert.deepEqual(
+			deepCat.extractDeepCatCategory( 'deepcat:Physik~foo' ).categoryString,
+			'Physik~foo',
+			'extractDeepCatCategory: text after ~ should not be parsed as depth'
+		);
+		assert.deepEqual(
+			deepCat.extractDeepCatCategory( 'deepcat:Physik~foo' ).depth,
+			'15',
+			'extractDeepCatCategory: text after ~ should not be parsed as depth'
+		);
+		assert.deepEqual(
+			deepCat.extractDeepCatCategory( 'deepcat:Physik~14~21' ).depth,
+			'21',
+			'extractDeepCatCategory: number after last ~ should be parsed as depth'
+		);
+		assert.deepEqual(
+			deepCat.extractDeepCatCategory( 'deepcat:Physik~14~21' ).categoryString,
+			'Physik~14',
+			'extractDeepCatCategory: every before last ~ should be parsed as Category-Name'
 		);
 	} );
 

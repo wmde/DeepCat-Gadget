@@ -414,9 +414,10 @@
 
 	/**
 	 * @param {string} searchTerm
-	 * @return {string}
+	 * @return {depth: {string}, searchTerm: {string}}
 	 */
 	DeepCat.extractDeepCatCategory = function( searchTerm ) {
+		let depth = defaultDepth;
 		searchTerm = searchTerm.replace( new RegExp( '\\s*-?\\b' + keyString + '\\s*', 'i' ), '' );
 
 		if( /^\s*"/.test( searchTerm ) ) {
@@ -425,11 +426,9 @@
 				.replace( /\\(?=.)/g, '' );
 		}
 		if( /~[0-9]+$/.test ( searchTerm ) ) {
-			depth      = searchTerm.split("~")[1];
-			searchTerm = searchTerm.split("~")[0];
-		}
-		else {
-			depth = defaultDepth;
+			var split      = searchTerm.split("~");
+			searchTerm = split[0];
+			depth      = split[split.length - 1];
 		}
 
 		return {
