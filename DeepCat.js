@@ -424,7 +424,7 @@
 				.replace( /"\s*$/, '' )
 				.replace( /\\(?=.)/g, '' );
 		}
-		if( /~[0-9]*$/.test ( searchTerm ) ) {
+		if( /~[0-9]+$/.test ( searchTerm ) ) {
 			depth      = searchTerm.split("~")[1];
 			searchTerm = searchTerm.split("~")[0];
 		}
