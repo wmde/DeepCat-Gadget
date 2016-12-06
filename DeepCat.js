@@ -8,7 +8,7 @@
 ( function( $, mw ) {
 	var DeepCat = {},
 		keyString = 'deepcat:',
-		maxDepth = 15,
+		defaultDepth = 15,
 		maxResults = 70,
 		ajaxTimeout = 10000,
 		interfaceUrl = '//tools.wmflabs.org/catgraph-jsonp/',
@@ -34,9 +34,9 @@
 				'deepcat-hintbox-close': 'Zuk&uuml;nftig ausblenden',
 				'deepcat-smallhint-close': 'Ausblenden',
 				'deepcat-hintbox-text': 'Momentane Einschränkung des DeepCat-Gadgets pro Suchbegriff:<br/>' +
-				'Max. Kategoriensuchtiefe: ' + maxDepth + ' / Max. Kategorienanzahl: ' + maxResults + '<br/>' +
+				'Standard Kategoriensuchtiefe: ' + defaultDepth + ' / Max. Kategorienanzahl: ' + maxResults + '<br/>' +
 				'<a style="float:left" href="//de.wikipedia.org/wiki/Hilfe:Suche/Deepcat" target="_blank">Weitere Informationen</a>',
-				'deepcat-hintbox-small': 'Max. Kategoriensuchtiefe: ' + maxDepth + '<br/>Max. Kategorienanzahl: ' + maxResults
+				'deepcat-hintbox-small': 'Standard Kategoriensuchtiefe: ' + defaultDepth + '<br/>Max. Kategorienanzahl: ' + maxResults
 			} );
 			break;
 		default:
@@ -49,9 +49,9 @@
 				'deepcat-hintbox-close': 'Do not show again',
 				'deepcat-smallhint-close': 'Close',
 				'deepcat-hintbox-text': 'Current limits of the DeepCat gadget per search word:<br/>' +
-				'Max. search depth: ' + maxDepth + ' / Max. result categories: ' + maxResults + '<br/>' +
+				'Default search depth: ' + defaultDepth + ' / Max. result categories: ' + maxResults + '<br/>' +
 				'<a style="float:left" href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Deepcat"  target="_blank">Additional information</a>',
-				'deepcat-hintbox-small': 'Max. category-depth: ' + maxDepth + '<br/>Max. categories: ' + maxResults
+				'deepcat-hintbox-small': 'Default category-depth: ' + defaultDepth + '<br/>Max. categories: ' + maxResults
 			} );
 			break;
 	}
@@ -89,11 +89,11 @@
 		return this.errors || [];
 	};
 
-	function getAjaxRequestUrl( categoryString ) {
+	function getAjaxRequestUrl( categoryString, depth ) {
 		return interfaceUrl + mw.config.get( 'wgDBname' )
 			+ '_ns14/traverse-successors%20Category:'
 			+ categoryString + '%20'
-			+ maxDepth + '%20'
+			+ depth + '%20'
 			+ maxResults;
 	}
 
@@ -139,14 +139,14 @@
 	}
 
 	function getAjaxRequest( searchTerm, searchTermNum ) {
-		var categoryString = DeepCat.extractDeepCatCategory( searchTerm ),
-			userParameter = {
+		({  categoryString, depth } = DeepCat.extractDeepCatCategory( searchTerm ));
+		var	userParameter = {
 				negativeSearch: searchTerm.charAt( 0 ) === '-',
 				searchTermNum: searchTermNum
 			};
 
 		return $.ajax( {
-			url: getAjaxRequestUrl( categoryString ),
+			url: getAjaxRequestUrl( categoryString, depth ),
 			data: { userparam: JSON.stringify( userParameter ) },
 			timeout: ajaxTimeout,
 			dataType: 'jsonp',
@@ -424,8 +424,18 @@
 				.replace( /"\s*$/, '' )
 				.replace( /\\(?=.)/g, '' );
 		}
+		if( /~[0-9]*$/.test ( searchTerm ) ) {
+			depth      = searchTerm.split("~")[1];
+			searchTerm = searchTerm.split("~")[0];
+		}
+		else {
+			depth = defaultDepth;
+		}
 
-		return removeUnicodeNonPrintables( replaceWhiteSpace( searchTerm ) );
+		return {
+			categoryString: removeUnicodeNonPrintables( replaceWhiteSpace( searchTerm ) ),
+			depth: depth
+		};
 	};
 
 	/**
