@@ -35,9 +35,9 @@
 				'deepcat-hintbox-close': 'Zuk&uuml;nftig ausblenden',
 				'deepcat-smallhint-close': 'Ausblenden',
 				'deepcat-hintbox-text': 'Momentane Einschränkung des DeepCat-Gadgets pro Suchbegriff:<br/>' +
-				'Standard Kategoriensuchtiefe: ' + defaultDepth + ' / Max. Kategorienanzahl: ' + maxResults + '<br/>' +
+				'Max. Kategoriensuchtiefe: ' + maxDepth + ' / Max. Kategorienanzahl: ' + maxResults + '<br/>' +
 				'<a style="float:left" href="//de.wikipedia.org/wiki/Hilfe:Suche/Deepcat" target="_blank">Weitere Informationen</a>',
-				'deepcat-hintbox-small': 'Standard Kategoriensuchtiefe: ' + defaultDepth + '<br/>Max. Kategorienanzahl: ' + maxResults
+'deepcat-hintbox-small': 'Max. Kategoriensuchtiefe: ' + maxDepth + '<br/>Max. Kategorienanzahl: ' + maxResults
 			} );
 			break;
 		default:
@@ -50,9 +50,9 @@
 				'deepcat-hintbox-close': 'Do not show again',
 				'deepcat-smallhint-close': 'Close',
 				'deepcat-hintbox-text': 'Current limits of the DeepCat gadget per search word:<br/>' +
-				'Default search depth: ' + defaultDepth + ' / Max. result categories: ' + maxResults + '<br/>' +
+				'Max. search depth: ' + maxDepth + ' / Max. result categories: ' + maxResults + '<br/>' +
 				'<a style="float:left" href="//wikitech.wikimedia.org/wiki/Nova_Resource:Catgraph/Deepcat"  target="_blank">Additional information</a>',
-				'deepcat-hintbox-small': 'Default category-depth: ' + defaultDepth + '<br/>Max. categories: ' + maxResults
+'deepcat-hintbox-small': 'Max. category-depth: ' + maxDepth + '<br/>Max. categories: ' + maxResults
 			} );
 			break;
 	}
@@ -140,7 +140,8 @@
 	}
 
 	function getAjaxRequest( searchTerm, searchTermNum ) {
-		({  categoryString, depth } = DeepCat.extractDeepCatCategory( searchTerm ));
+		categoryString = DeepCat.extractDeepCatCategory( searchTerm );
+		depth = DeepCat.extractDeepCatCategoryDepth( searchTerm );
 		var	userParameter = {
 				negativeSearch: searchTerm.charAt( 0 ) === '-',
 				searchTermNum: searchTermNum
@@ -415,10 +416,9 @@
 
 	/**
 	 * @param {string} searchTerm
-	 * @return {depth: {string}, searchTerm: {string}}
+	 * @return {string}
 	 */
 	DeepCat.extractDeepCatCategory = function( searchTerm ) {
-		let depth = defaultDepth;
 		searchTerm = searchTerm.replace( new RegExp( '\\s*-?\\b' + keyString + '\\s*', 'i' ), '' );
 
 		if( /^\s*"/.test( searchTerm ) ) {
@@ -429,13 +429,25 @@
 		if( /~[0-9]+$/.test ( searchTerm ) ) {
 			var split      = searchTerm.split("~");
 			searchTerm = split[0];
+		}
+
+		return removeUnicodeNonPrintables( replaceWhiteSpace( searchTerm ) );
+	};
+
+	/**
+	 * @param {string} searchTerm
+	 * @return {string}
+	 */
+	DeepCat.extractDeepCatCategoryDepth = function( searchTerm ) {
+		let depth = defaultDepth;
+		searchTerm = searchTerm.trim();
+
+		if( /~[0-9]+$/.test ( searchTerm ) ) {
+			var split      = searchTerm.split("~");
 			depth      = Math.min(split[split.length - 1], maxDepth);
 		}
 
-		return {
-			categoryString: removeUnicodeNonPrintables( replaceWhiteSpace( searchTerm ) ),
-			depth: depth
-		};
+		return depth;
 	};
 
 	/**
