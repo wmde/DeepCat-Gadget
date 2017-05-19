@@ -9,6 +9,7 @@
 	var DeepCat = {},
 		keyString = 'deepcat:',
 		defaultDepth = 15,
+		maxDepth = 20,
 		maxResults = 70,
 		ajaxTimeout = 10000,
 		interfaceUrl = '//tools.wmflabs.org/catgraph-jsonp/',
@@ -428,7 +429,7 @@
 		if( /~[0-9]+$/.test ( searchTerm ) ) {
 			var split      = searchTerm.split("~");
 			searchTerm = split[0];
-			depth      = split[split.length - 1];
+			depth      = Math.min(split[split.length - 1], maxDepth);
 		}
 
 		return {
