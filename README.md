@@ -1,3 +1,5 @@
+DISCONTINUED: The feature has been implemented in [Cirrus Search Mediawiki Extension](https://www.mediawiki.org/wiki/Help:CirrusSearch#Deepcategory)
+
 # DeepCat-Gadget
 
 Gadget for MediaWiki installations allowing recursive category search via CatGraph using the corresponding [JSONP interface](https://github.com/wmde/catgraph-jsonp).
